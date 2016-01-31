@@ -1,0 +1,6 @@
+D:\Documents\Compiler\Swift\Swift\bin\Debug\Swift.exe.config
+D:\Documents\Compiler\Swift\Swift\bin\Debug\Swift.exe
+D:\Documents\Compiler\Swift\Swift\bin\Debug\Swift.pdb
+D:\Documents\Compiler\Swift\Swift\obj\Debug\Swift.csprojResolveAssemblyReference.cache
+D:\Documents\Compiler\Swift\Swift\obj\Debug\Swift.exe
+D:\Documents\Compiler\Swift\Swift\obj\Debug\Swift.pdb
