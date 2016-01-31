@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEmitter.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="Lexeme.cs" />
     <Compile Include="LexicalAnalyzer.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Swift.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
