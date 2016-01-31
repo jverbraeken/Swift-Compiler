@@ -13,8 +13,8 @@ namespace Swift
             Console.WriteLine("Swift Compiler by Joost Verbraeken");
             string[] text = System.IO.File.ReadAllLines(args[0]);
 
-            List<Lexeme> lexemes = LexicalAnalyzer.GetLexemes(text);
-            foreach (Lexeme line in lexemes)
+            List<Token> lexemes = LexicalAnalyzer.GetLexemes(text);
+            foreach (Token line in lexemes)
             {
                 Console.WriteLine(line.line);
             }

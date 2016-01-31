@@ -8,13 +8,17 @@ namespace Swift
 {
     class LexicalAnalyzer
     {
-        public static List<Lexeme> GetLexemes(string[] input)
+        public static List<Token> GetLexemes(string[] input)
         {
-            List<Lexeme> output = new List<Lexeme>();
+            List<Token> output = new List<Token>();
             foreach (string line_raw in input)
             {
-                string line = eat_whitespace(line_raw);
-                output.Add(new Lexeme(line));
+                List<string> lexemes = stringToLexemes(line_raw);
+                foreach (string lexeme in lexemes)
+                {
+                    if (isFunction(lexeme))
+                        output.Add(new Token(lexeme));
+                }
             }
             return output;
         }
@@ -26,7 +30,7 @@ namespace Swift
             while (true)
             {
                 char c = line[i];
-                if (c != ' ')
+                if (!isSpace(c))
                     break;
                 i++;
             }
@@ -36,6 +40,31 @@ namespace Swift
             }*/
             line = line.Substring(i);
             return line;
+        }
+
+        static List<string> stringToLexemes(string lineIn)
+        {
+            string line = lineIn;
+            List<string> output = new List<string>();
+            while (true)
+            {
+                line = eat_whitespace(line);
+                int i = 0;
+                while (true)
+                {
+                    if (line[i] != ' ')
+                        i++;
+                    else
+                        break;
+                }
+                output.Add(line.Substring(0, i));
+                line = line.Substring(i);
+            }
+        }
+
+        static bool isSpace(char c)
+        {
+            return (c == '\u0020' || c == '\u000A' || c == '\u000D' || c == '\u0009' || c == '\u000B' || c == '\u000C' || c == '\u0000');
         }
     }
 }
