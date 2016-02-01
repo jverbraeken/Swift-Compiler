@@ -12,7 +12,7 @@ namespace Swift
     /// </summary>
     class Table
     {
-        Hashtable hashtable;
+        Dictionary<string, Symbol> dictionary;
         Table reference; //For scoping a table references its parent.
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Swift
         /// </summary>
         public Table()
         {
-            hashtable = new Hashtable();
+            dictionary = new Dictionary<string, Symbol>();
         }
 
         /// <summary>
@@ -28,13 +28,12 @@ namespace Swift
         /// </summary>
         public void insert(Symbol symbol)
         {
-            Object[] data = new Object[3];
-            data[0] = symbol.type;
-            data[1] =
-        public object value; //for constants
-        public int length; //for arrays
-        public List<>
-            hashtable.Add(symbol.name, data);
+            dictionary.Add(symbol.name, symbol);
+        }
+
+        public Symbol lookup(string name)
+        {
+            return dictionary[name];
         }
     }
 }
