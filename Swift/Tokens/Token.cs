@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
+    /// <summary>
+    /// An analysis of a lexeme. Its the first step of lexeme processing.
+    /// </summary>
     class Token
     {
         public Global.DataType type;
-        public object value;
-        public Token(Global.DataType type, Object value)
+        public string value; // Often the name, the string, the number, ... (all stored as a string)
+        public Token(Global.DataType type, string value)
         {
             this.type = type;
             this.value = value;

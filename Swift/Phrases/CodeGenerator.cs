@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class CodeEmitter
+    class CodeGenerator
     {
         public static System.IO.StreamWriter file;
         public static void MakeAssembly(string source, string dest)
