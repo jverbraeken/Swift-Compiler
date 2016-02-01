@@ -9,13 +9,14 @@ namespace Swift
     /// <summary>
     /// An analysis of a lexeme. Its the first step of lexeme processing.
     /// </summary>
-    class Token
+    public class Token
     {
+        public Global.PrimitiveType primType;
         public Global.DataType type;
         public string value; // Often the name, the string, the number, ... (all stored as a string)
-        public Token(Global.DataType type, string value)
+        public Token(Global.PrimitiveType primType, string value)
         {
-            this.type = type;
+            this.primType = primType;
             this.value = value;
         }
     }

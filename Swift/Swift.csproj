@@ -43,12 +43,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeEmitter.cs" />
+    <Compile Include="Expressions\MinusExp.cs" />
+    <Compile Include="Expressions\MultiplicationExp.cs" />
+    <Compile Include="Expressions\DivisionExp.cs" />
+    <Compile Include="Expressions\PowerExp.cs" />
+    <Compile Include="Expressions\ModuloExp.cs" />
+    <Compile Include="Expressions\ExclamationExp.cs" />
+    <Compile Include="Expressions\AndExp.cs" />
+    <Compile Include="Expressions\OrExp.cs" />
+    <Compile Include="Expressions\BitwiseComplementExp.cs" />
+    <Compile Include="Expressions\PlusExp.cs" />
+    <Compile Include="Phrases\CodeGenerator.cs" />
+    <Compile Include="Phrases\CodeOptimizer.cs" />
+    <Compile Include="Expressions\Exp.cs" />
     <Compile Include="Global.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="LexicalAnalyzer.cs" />
+    <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
+    <Compile Include="Phrases\SemanticAnalyzer.cs" />
+    <Compile Include="Symbol.cs" />
+    <Compile Include="Phrases\SyntaxAnalyzer.cs" />
+    <Compile Include="Table.cs" />
+    <Compile Include="Tokens\Token.cs" />
+    <Compile Include="Phrases\LexicalAnalyzer.cs" />
     <Compile Include="Swift.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

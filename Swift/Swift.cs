@@ -10,15 +10,44 @@ namespace Swift
     {
         static void Main(string[] args)
         {
+            string lookingFor = "";
+            string source = "";
+            string output = "";
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (lookingFor == "")
+                {
+                    if (args[i][0] == '-')
+                    {
+                        if (args[i] == "-o")
+                            lookingFor = "output";
+                        else
+                            error("An invalid argument was supplied: " + args[i], -1);
+                    }
+                    else
+                    {
+                        if (source == "")
+                            source = args[i];
+                        else
+                            error("The source can be supplied only once: " + args[i], -1);
+                    }
+                }
+                else
+                {
+                    if (lookingFor == "output")
+                        output = args[i];
+                }
+            }
             Console.WriteLine("Swift Compiler by Joost Verbraeken");
-            string[] text = System.IO.File.ReadAllLines(args[0]);
+            string[] text = System.IO.File.ReadAllLines(source);
 
             List<Token> lexemes = LexicalAnalyzer.GetLexemes(text);
             foreach (Token line in lexemes)
             {
-                Console.WriteLine(line.line);
+                Console.WriteLine(line.ToString());
             }
-            CodeEmitter.MakeAssembly(args[0], args[1]);
+            CodeGenerator.MakeAssembly(source, output);
 
             Console.ReadLine();
         }
