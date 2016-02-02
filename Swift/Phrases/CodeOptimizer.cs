@@ -8,5 +8,9 @@ namespace Swift
 {
     class CodeOptimizer
     {
+        public static List<string> OptimizeCode(List<string> code)
+        {
+            return code;
+        }
     }
 }

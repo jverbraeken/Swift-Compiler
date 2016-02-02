@@ -19,7 +19,7 @@ namespace SwiftTests
         public void TestGetLexemes()
         {
             string[] input = new string[2] { "     print(\"hoi\") //comments", "let a = 3 + 2" };
-            List<Token> result = LexicalAnalyzer.GetLexemes(input);
+            List<Token> result = LexicalAnalyzer.GetTokens(input);
             Assert.AreEqual(result[0].value, "print");
             Assert.AreEqual(result[1].value, "(");
             Assert.AreEqual(result[2].value, "\"hoi\"");

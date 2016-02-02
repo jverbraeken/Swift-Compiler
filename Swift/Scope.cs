@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class SyntaxAnalyzer
+    class Scope
     {
-        public static void CheckSyntax(List<Token> lexemes)
-        {
-
-        }
     }
 }

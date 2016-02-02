@@ -9,7 +9,7 @@ namespace Swift
     class CodeGenerator
     {
         public static System.IO.StreamWriter file;
-        public static void MakeAssembly(string source, string dest)
+        public static void MakeAssembly(string source, string dest, List<string> intercode)
         {
             using (file = new System.IO.StreamWriter(dest))
             {

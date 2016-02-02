@@ -10,7 +10,7 @@ namespace Swift
     public class LexicalAnalyzer
     {
         static int MultilineCommentLevel = 0;
-        public static List<Token> GetLexemes(string[] input)
+        public static List<Token> GetTokens(string[] input)
         {
             List<Token> output = new List<Token>();
 
@@ -29,6 +29,7 @@ namespace Swift
                         output.Add(new Token(Global.PrimitiveType.LITERAL, lexeme));
                     else
                         output.Add(new Token(Global.PrimitiveType.IDENTIFIER, lexeme));
+
                 }
             }
             return output;
@@ -159,10 +160,50 @@ namespace Swift
                 || s == "Int8" || s == "UInt8" || s == "Int16" || s == "UInt16" || s == "Int32" || s == "Uint32" || s == "Int64" || s == "UInt64" || s == "Float" || s == "Double");
         }
 
+   /*     public static void SetKeyword(Token tok, string lexeme)
+        {
+            switch (lexeme)
+            {
+                case "class": tok.type = Global.DataType.Class; break;
+                case "deinit": tok.type = Global.DataType.Deinit; break;
+                case "enum": tok.type = Global.DataType.Class; break;
+                case "extension": tok.type = Global.DataType.Class; break;
+                case "func": tok.type = Global.DataType.Class; break;
+                case "import": tok.type = Global.DataType.Class; break;
+                case "init": tok.type = Global.DataType.Class; break;
+                case "inout": tok.type = Global.DataType.Class; break;
+                case "internal": tok.type = Global.DataType.Class; break;
+                case "let": tok.type = Global.DataType.Class; break;
+                    //Todo
+                default: Swift.error("Internal compliation error: Lexical Analyzer : trying to set keyword to " + lexeme, 1); break;
+            }
+        }*/
+
         public static bool isPunctuation(string s)
         {
             return (s == "(" || s == ")" || s == "[" || s == "]" || s == "{" || s == "}" || s == "," || s == ":" || s == ";" || s == "@" || s == "#"  || s == "`");
         }
+/*
+        public static void SetPunctuation(Token tok, string lexeme)
+        {
+            switch (lexeme)
+            {
+                case "(": tok.type = Global.DataType.Open_round_bracket; break;
+                case ")": tok.type = Global.DataType.Close_round_bracket; break;
+                case "[": tok.type = Global.DataType.Open_square_bracket; break;
+                case "]": tok.type = Global.DataType.Close_square_bracket; break;
+                case "{": tok.type = Global.DataType.Open_brace; break;
+                case "}": tok.type = Global.DataType.Close_brace; break;
+                case ",": tok.type = Global.DataType.Comma; break;
+                case ";": tok.type = Global.DataType.Semicolon; break;
+                case ":": tok.type = Global.DataType.Colon; break;
+                case "@": tok.type = Global.DataType.At; break;
+                case "#": tok.type = Global.DataType.Hashtag; break;
+                case "~": tok.type = Global.DataType.Accent_grave; break;
+                //Todo
+                default: Swift.error("Internal compliation error: Lexical Analyzer : trying to set punctuation to " + lexeme, 1); break;
+            }
+        }*/
 
         public static bool isOperator(string s)
         {
@@ -170,6 +211,29 @@ namespace Swift
             /*Division, Equals, Minus, Plus, Exclamation, Multiplication, Percentage, Less, More, And, Or, Caret, Tilde, Question, Open_round_bracket, Close_round_bracket, Open_square_bracket, Close_square_bracket, Open_brace, Close_brace, Dot, Point, Colon, Semicolon, At, Hashtag, Single_quotation, Double_quotation, Slash, Backslash*/
         }
 
+   /*     public static void SetOperator(Token tok, string lexeme)
+        {
+            switch (lexeme)
+            {
+                case "/": tok.type = Global.DataType.Division; break;
+                case "=": tok.type = Global.DataType.Equals; break;
+                case "-": tok.type = Global.DataType.Minus; break;
+                case "+": tok.type = Global.DataType.Plus; break;
+                case "!": tok.type = Global.DataType.Exclamation; break;
+                case "*": tok.type = Global.DataType.Multiplication; break;
+                case "%": tok.type = Global.DataType.Percentage; break;
+                case "<": tok.type = Global.DataType.Less; break;
+                case ">": tok.type = Global.DataType.More; break;
+                case "&": tok.type = Global.DataType.And; break;
+                case "|": tok.type = Global.DataType.Or; break;
+                case "^": tok.type = Global.DataType.Caret; break;
+                case "?": tok.type = Global.DataType.Question; break;
+                case "~": tok.type = Global.DataType.Tilde; break;
+                //Todo
+                default: Swift.error("Internal compliation error: Lexical Analyzer : trying to set operator to " + lexeme, 1); break;
+            }
+        }
+        */
         public static bool isLiteral(string s)
         {
             return (s[0] == '"' || s == "true" || s == "false" || Regex.Match(s, @"[0-9]*\.?[0-9]+").Value == s);

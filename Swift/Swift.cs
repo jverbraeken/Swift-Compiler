@@ -42,12 +42,13 @@ namespace Swift
             Console.WriteLine("Swift Compiler by Joost Verbraeken");
             string[] text = System.IO.File.ReadAllLines(source);
 
-            List<Token> lexemes = LexicalAnalyzer.GetLexemes(text);
-            foreach (Token line in lexemes)
-            {
-                Console.WriteLine(line.ToString());
-            }
-            CodeGenerator.MakeAssembly(source, output);
+            List<Token> tokens = LexicalAnalyzer.GetTokens(text);
+            SyntaxAnalyzer.CheckSyntax(tokens);
+            List<Table> symbolTables = SemanticAnalyzer.GenerateSymbolTables(tokens);
+            SemanticAnalyzer.CheckSemantic(tokens);
+            List<string> interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
+            interCode = CodeOptimizer.OptimizeCode(interCode);
+            CodeGenerator.MakeAssembly(source, output, intercode);
 
             Console.ReadLine();
         }

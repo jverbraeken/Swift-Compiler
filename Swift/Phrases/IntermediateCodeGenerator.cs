@@ -8,5 +8,9 @@ namespace Swift
 {
     class IntermediateCodeGenerator
     {
+        public static List<string> GenerateCode(List<Token> tokens, List<Table> tables)
+        {
+            return new List<string>();
+        }
     }
 }

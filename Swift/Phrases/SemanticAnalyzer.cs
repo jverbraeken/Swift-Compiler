@@ -8,5 +8,14 @@ namespace Swift
 {
     class SemanticAnalyzer
     {
+        public static List<Table> GenerateSymbolTables(List<Token> tokens)
+        {
+            return new List<Table>();
+        }
+
+        public static void CheckSemantic(List<Token> tokens)
+        {
+
+        }
     }
 }
