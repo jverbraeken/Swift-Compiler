@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Swift
@@ -22,6 +23,10 @@ namespace Swift
                         output.Add(new Token(Global.PrimitiveType.KEYWORD, lexeme));
                     if (isPunctuation(lexeme))
                         output.Add(new Token(Global.PrimitiveType.PUNCTUATION, lexeme));
+                    if (isOperator(lexeme))
+                        output.Add(new Token(Global.PrimitiveType.OPERATOR, lexeme));
+                    if (isLiteral(lexeme))
+                        output.Add(new Token(Global.PrimitiveType.LITERAL, lexeme));
                 }
             }
             return output;
@@ -84,17 +89,35 @@ namespace Swift
                         }
                     }
                     else {
-                        if (line[i] == '/' && line[i + 1] == '/') // A comment starts
-                            comment = true;
-                        if (line[i] == '/' && line[i + 1] == '*') // A new multiline comment starts
-                            MultilineCommentLevel++;
-                        if (line[i] == '*' && line[i + 1] == '\\') // A multiline comment ends
-                            MultilineCommentLevel--;
+                        if (line.Length > i + 1)
+                        {
+                            if (line[i] == '/' && line[i + 1] == '/') // A comment starts
+                            {
+                                comment = true;
+                                i = line.Length;
+                                break;
+                            }
+                            if (line[i] == '/' && line[i + 1] == '*') // A new multiline comment starts
+                                MultilineCommentLevel++;
+                            if (line[i] == '*' && line[i + 1] == '/') // A multiline comment ends
+                            {
+                                MultilineCommentLevel--;
+                                if (MultilineCommentLevel < 0)
+                                {
+                                    Swift.error("You cannot end a multiline comment you didn't start: " + line, 1);
+                                }
+                                line = line.Substring(i + 2);
+                                i = 0;
+                                break;
+                            }
+                        }
+                        if (MultilineCommentLevel > 0)
+                            i++;
                         if (!comment && MultilineCommentLevel == 0)
                         {
                             if (isSpace(line[i]))
                                 break;
-                            else if (isPunctuation(line[i].ToString()))
+                            else if (isPunctuation(line[i].ToString()) || isOperator(line[i].ToString()))
                             {
                                 if (i > 0)
                                     output.Add(line.Substring(0, i));
@@ -106,10 +129,10 @@ namespace Swift
                                 i++;
                         }
                     }
-                    if (i > line.Length)
+                    if (i >= line.Length)
                         break;
                 }
-                if (!comment && MultilineCommentLevel == 0)
+                if (!comment && MultilineCommentLevel == 0 && line.Substring(0, i).Length > 0)
                     output.Add(line.Substring(0, i));
                 line = line.Substring(i);
                 if (line.Length == 0)
@@ -133,13 +156,18 @@ namespace Swift
 
         public static bool isPunctuation(string s)
         {
-            return (s == "(" || s == ")" || s == "[" || s == "]" || s == "{" || s == "}" || s == "." || s == "," || s == ":" || s == ";" || s == "=" || s == "@" || s == "#" || s == "&" || s == "`" || s == "?" || s == "!");
+            return (s == "(" || s == ")" || s == "[" || s == "]" || s == "{" || s == "}" || s == "," || s == ":" || s == ";" || s == "=" || s == "@" || s == "#" || s == "&" || s == "`" || s == "?" || s == "!");
         }
 
         public static bool isOperator(string s)
         {
             return (s == "/" || s == "=" || s == "-" || s == "+" || s == "!" || s == "*" || s == "%" || s == "<" || s == ">" || s == "&" || s == "|" || s == "^" || s == "?" || s == "~");
             /*Division, Equals, Minus, Plus, Exclamation, Multiplication, Percentage, Less, More, And, Or, Caret, Tilde, Question, Open_round_bracket, Close_round_bracket, Open_square_bracket, Close_square_bracket, Open_brace, Close_brace, Dot, Point, Colon, Semicolon, At, Hashtag, Single_quotation, Double_quotation, Slash, Backslash*/
+        }
+
+        public static bool isLiteral(string s)
+        {
+            return (s[0] == '"' || s == "true" || s == "false" || Regex.Match(s, @"[0-9]*\.?[0-9]+").Value == s);
         }
     }
 }
