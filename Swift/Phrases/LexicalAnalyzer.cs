@@ -21,12 +21,14 @@ namespace Swift
                 {
                     if (isKeyword(lexeme))
                         output.Add(new Token(Global.PrimitiveType.KEYWORD, lexeme));
-                    if (isPunctuation(lexeme))
+                    else if (isPunctuation(lexeme))
                         output.Add(new Token(Global.PrimitiveType.PUNCTUATION, lexeme));
-                    if (isOperator(lexeme))
+                    else if (isOperator(lexeme))
                         output.Add(new Token(Global.PrimitiveType.OPERATOR, lexeme));
-                    if (isLiteral(lexeme))
+                    else if (isLiteral(lexeme))
                         output.Add(new Token(Global.PrimitiveType.LITERAL, lexeme));
+                    else
+                        output.Add(new Token(Global.PrimitiveType.IDENTIFIER, lexeme));
                 }
             }
             return output;
@@ -148,15 +150,18 @@ namespace Swift
 
         public static bool isKeyword(string s)
         {
-            return (s == "Class" || s == "Deinit" || s == "Enum" || s == "Extension" || s == "Func" || s == "Import" || s == "Init" || s == "Inout" || s == "Internal" || s == "Let" || s == "Private");
-        /*        Class, Deinit, Enum, Extension, Func, Import, Init, Inout, Internal, Let, Private, Protocol, Public, Static, Struct, Subscript, Typealias, Var
-            , Break, Case, Continue, Default, Defer, Do, Else, Fallthrough, For, Guard, If, In, Repeat, Return, Switch, Where, While
-            , As, Catch, DynamicType, False, Is, Nil, Rethrows, Super, Self, Throw, Throws, True, Try, __COLUMN__, __FILE__, __FUNCTION__, __LINE__*/
+            return (s == "class" || s == "deinit" || s == "enum" || s == "extension" || s == "func" || s == "import" || s == "init" || s == "inout" || s == "internal" || s == "let"
+                || s == "private" || s == "protocol" || s == "public" || s == "static" || s == "struct" || s == "subscript" || s == "typealias" || s == "var"
+                || s == "break" || s == "case" || s == "continue" || s == "default" || s == "defer" || s == "do" || s == "else" || s == "fallthrough"
+                || s == "for" || s == "guard" || s == "if" || s == "in" || s == "repeat" || s == "return" || s == "switch" || s == "where" || s == "while"
+                || s == "as" || s == "catch" || s == "dynamictype" || s == "is" || s == "nil" || s == "rethrows" || s == "super" || s == "self"
+                || s == "throw" || s == "throws" || s == "try" || s == "__COLUMN__" || s == "__FILE__" || s == "__FUNCTION__" || s == "__LINE__"
+                || s == "Int8" || s == "UInt8" || s == "Int16" || s == "UInt16" || s == "Int32" || s == "Uint32" || s == "Int64" || s == "UInt64" || s == "Float" || s == "Double");
         }
 
         public static bool isPunctuation(string s)
         {
-            return (s == "(" || s == ")" || s == "[" || s == "]" || s == "{" || s == "}" || s == "," || s == ":" || s == ";" || s == "=" || s == "@" || s == "#" || s == "&" || s == "`" || s == "?" || s == "!");
+            return (s == "(" || s == ")" || s == "[" || s == "]" || s == "{" || s == "}" || s == "," || s == ":" || s == ";" || s == "@" || s == "#"  || s == "`");
         }
 
         public static bool isOperator(string s)
