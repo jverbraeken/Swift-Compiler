@@ -9,9 +9,15 @@ namespace Swift
 {
     public class AST : ASTNode
     {
+        private List<ASTNode> children;
         public AST(LineContext context) : base(context)
         {
+            children = new List<ASTNode>();
+        }
 
+        public void AddNode(ASTNode node)
+        {
+            children.Add(node);
         }
     }
 }

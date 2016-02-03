@@ -35,7 +35,7 @@ namespace Swift
         regexComment = "^\\/\\/";
 
         static int MultilineCommentLevel = 0;
-        public static List<Token> GetTokens(string[] input)
+        public static Tuple<List<Token>, List<LineContext>> GetTokens(string[] input)
         {
             List<Token> tokens = new List<Token>();
             List<LineContext> context = new List<LineContext>();
@@ -193,7 +193,7 @@ namespace Swift
                 }
                 lineY++;
             }
-            return tokens;
+            return Tuple.Create(tokens, context);
         }
 
         /// <summary>

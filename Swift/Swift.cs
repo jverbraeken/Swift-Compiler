@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,8 +45,10 @@ namespace Swift
             Console.WriteLine("Swift Compiler by Joost Verbraeken");
             string[] text = System.IO.File.ReadAllLines(source);
 
-            List<Token> tokens = LexicalAnalyzer.GetTokens(text);
-            SyntaxAnalyzer.CheckSyntax(tokens);
+            Tuple<List<Token>, List<LineContext>> lexicalOutput = LexicalAnalyzer.GetTokens(text);
+            List<Token> tokens = lexicalOutput.Item1;
+            List<LineContext> context = lexicalOutput.Item2;
+            AST ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
             List<Table> symbolTables = SemanticAnalyzer.GenerateSymbolTables(tokens);
             SemanticAnalyzer.CheckSemantic(tokens);
             interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
