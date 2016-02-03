@@ -9,7 +9,7 @@ namespace Swift
     public static class Global
     {
         //public static int MAX_LINE_LENGTH = 10;
-        public enum DataType { Identifier, Keyword, Class, Deinit, Enum, Extension, Func, Import, Init, Inout, Internal, Let, Private, Protocol, Public, Static, Struct, Subscript, Typealias, Var /*Identifiers*/
+        public enum DataType { Identifier, Class, Deinit, Enum, Extension, Func, Import, Init, Inout, Internal, Let, Private, Protocol, Public, Static, Struct, Subscript, Typealias, Var /*Identifiers*/
             , Break, Case, Continue, Default, Defer, Do, Else, Fallthrough, For, Guard, If, In, Repeat, Return, Switch, Where, While
             , As, Catch, DynamicType, False, Is, Nil, Rethrows, Super, Self, Throw, Throws, True, Try, __COLUMN__, __FILE__, __FUNCTION__, __LINE__
             , Int, UInt, Float, Double, Bool, String, Character, Optional

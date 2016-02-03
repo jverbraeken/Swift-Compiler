@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class SyntaxAnalyzer
+    public class AST : ASTNode
     {
-        public static AST CheckSyntax(List<Token> tokens, List<LineContext> context)
+        public AST(LineContext context) : base(context)
         {
-            AST astBase = new AST(context[0]);
-            return astBase;
+
         }
     }
 }

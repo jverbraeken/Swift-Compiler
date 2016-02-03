@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,8 @@ namespace Swift
         regexInt = "^[0-9]+",
         regexString = "^\"[^\"]*\"",
         //Keywords
-        regexVar = "^var\\(? +" + regexIdentifier,
-        regexLet = "^let\\(? +" + regexIdentifier,
+        regexVar = "^var\\(? +",
+        regexLet = "^let\\(? +",
         //Punctuation
         regexOpenRoundBracket = "^\\(",
         regexCloseRoundBracket = "^\\)",
@@ -36,128 +37,21 @@ namespace Swift
         static int MultilineCommentLevel = 0;
         public static List<Token> GetTokens(string[] input)
         {
-            List<Token> output = new List<Token>();
+            List<Token> tokens = new List<Token>();
+            List<LineContext> context = new List<LineContext>();
             Match match;
+            int lineX;     //The character at the line
+            int lineY = 1; //The nth line as seen from the top
 
             foreach (string line_raw in input)
             {
+                lineX = 1;
                 string line = line_raw;
                 while (line != "")
                 {
-                    line = EatWhitespace(line);
-
-
-                    //Identifiers
-                    match = Regex.Match(line, regexIdentity);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Identifier, match.Groups[0].Value));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-
-                    //Literals
-
-                    
-                    //Integer
-                    match = Regex.Match(line, regexInt);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Int));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //String
-                    match = Regex.Match(line, regexString);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.String));
-                        line = line.Substring(match.Length+1); continue;
-                    };
-
-
-                    //Keywords
-
-
-                    //Let
-                    match = Regex.Match(line, regexLet);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Let));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Var
-                    match = Regex.Match(line, regexVar);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Var));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-
-                    //Punctuation
-
-
-                    //Open Round Bracket
-                    match = Regex.Match(line, regexOpenRoundBracket);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Open_round_bracket));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Close Round Bracket
-                    match = Regex.Match(line, regexCloseRoundBracket);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Close_round_bracket));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Open Square Bracket
-                    match = Regex.Match(line, regexOpenSquareBracket);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Open_square_bracket));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Close Square Bracket
-                    match = Regex.Match(line, regexCloseSquareBracket);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Close_square_bracket));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Open Braces
-                    match = Regex.Match(line, regexOpenBraces);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Open_brace));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-                    //Close Braces
-                    match = Regex.Match(line, regexCloseBraces);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Close_brace));
-                        line = line.Substring(match.Length); continue;
-                    };
-
-
-                    //Operator
-
-
-                    //Operator
-                    match = Regex.Match(line, regexOperator);
-                    if (match.Success)
-                    {
-                        output.Add(new Token(Global.DataType.Close_brace));
-                        line = line.Substring(match.Length); continue;
-                    };
+                    string[] tmp = EatWhitespace(line);
+                    line = tmp[0];
+                    lineX += int.Parse(tmp[1]);
 
 
                     //Comments
@@ -170,10 +64,136 @@ namespace Swift
                         break;
                     };
 
+
+                    //Literals
+
+
+                    //Integer
+                    match = Regex.Match(line, regexInt);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Int, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //String
+                    match = Regex.Match(line, regexString);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.String, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+
+                    //Keywords
+
+
+                    //Let
+                    match = Regex.Match(line, regexLet);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Let));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Var
+                    match = Regex.Match(line, regexVar);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Var));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+
+                    //Punctuation
+
+
+                    //Open Round Bracket
+                    match = Regex.Match(line, regexOpenRoundBracket);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Open_round_bracket));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Close Round Bracket
+                    match = Regex.Match(line, regexCloseRoundBracket);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Close_round_bracket));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Open Square Bracket
+                    match = Regex.Match(line, regexOpenSquareBracket);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Open_square_bracket));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Close Square Bracket
+                    match = Regex.Match(line, regexCloseSquareBracket);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Close_square_bracket));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Open Braces
+                    match = Regex.Match(line, regexOpenBraces);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Open_brace));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Close Braces
+                    match = Regex.Match(line, regexCloseBraces);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Close_brace));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+
+                    //Operator
+
+
+                    //Operator
+                    match = Regex.Match(line, regexOperator);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Operator, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+
+                    //Identifiers
+                    match = Regex.Match(line, regexIdentity);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.Identifier, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
                     Swift.error("Syntax error: \"" + Regex.Match(line, "/^[^\\s]+").Value + "\" could not be identified", 1);
                 }
+                lineY++;
             }
-            return output;
+            return tokens;
         }
 
         /// <summary>
@@ -182,7 +202,7 @@ namespace Swift
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        public static string EatWhitespace(string line)
+        public static string[] EatWhitespace(string line)
         {
             int i = 0;
             int cap = 0;
@@ -202,89 +222,9 @@ namespace Swift
                 line = line.Substring(i);
             else
                 line = line.Substring(i, cap);
-            return line;
+            return new string[] { line, i.ToString()} ;
         }
-
-        public static List<string> StringToLexemes(string lineIn)
-        {
-            string line = lineIn;
-            List<string> output = new List<string>();
-            Boolean comment = false;
-            Boolean str = false;
-            while (true)
-            {
-                line = EatWhitespace(line);
-                int i = 0;
-                if (line[i] == '"')
-                {
-                    str = true;
-                    i++;
-                }
-                while (true)
-                {
-                    if (str)
-                    {
-                        if (line[i] != '"')
-                            i++;
-                        else {
-                            i++;
-                            str = false;
-                            break;
-                        }
-                    }
-                    else {
-                        if (line.Length > i + 1)
-                        {
-                            if (line[i] == '/' && line[i + 1] == '/') // A comment starts
-                            {
-                                comment = true;
-                                i = line.Length;
-                                break;
-                            }
-                            if (line[i] == '/' && line[i + 1] == '*') // A new multiline comment starts
-                                MultilineCommentLevel++;
-                            if (line[i] == '*' && line[i + 1] == '/') // A multiline comment ends
-                            {
-                                MultilineCommentLevel--;
-                                if (MultilineCommentLevel < 0)
-                                {
-                                    Swift.error("You cannot end a multiline comment you didn't start: " + line, 1);
-                                }
-                                line = line.Substring(i + 2);
-                                i = 0;
-                                break;
-                            }
-                        }
-                        if (MultilineCommentLevel > 0)
-                            i++;
-                        if (!comment && MultilineCommentLevel == 0)
-                        {
-                            if (isSpace(line[i]))
-                                break;
-                            else if (isPunctuation(line[i].ToString()) || isOperator(line[i].ToString()))
-                            {
-                                if (i > 0)
-                                    output.Add(line.Substring(0, i));
-                                line = line.Substring(i);
-                                i = 1;
-                                break;
-                            }
-                            else
-                                i++;
-                        }
-                    }
-                    if (i >= line.Length)
-                        break;
-                }
-                if (!comment && MultilineCommentLevel == 0 && line.Substring(0, i).Length > 0)
-                    output.Add(line.Substring(0, i));
-                line = line.Substring(i);
-                if (line.Length == 0)
-                    break;
-            }
-            return output;
-        }
-
+        
         public static bool isSpace(char c)
         {
             return (c == '\u0020' || c == '\u000A' || c == '\u000D' || c == '\u0009' || c == '\u000B' || c == '\u000C' || c == '\u0000');

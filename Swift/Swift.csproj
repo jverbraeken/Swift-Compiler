@@ -43,19 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Expressions\MinusExp.cs" />
-    <Compile Include="Expressions\MultiplicationExp.cs" />
-    <Compile Include="Expressions\DivisionExp.cs" />
-    <Compile Include="Expressions\PowerExp.cs" />
-    <Compile Include="Expressions\ModuloExp.cs" />
-    <Compile Include="Expressions\ExclamationExp.cs" />
-    <Compile Include="Expressions\AndExp.cs" />
-    <Compile Include="Expressions\OrExp.cs" />
-    <Compile Include="Expressions\BitwiseComplementExp.cs" />
-    <Compile Include="Expressions\PlusExp.cs" />
+    <Compile Include="AST Nodes\AST.cs" />
+    <Compile Include="AST Nodes\ASTFile.cs" />
+    <Compile Include="AST Nodes\ASTNode.cs" />
+    <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
+    <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
+    <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />
+    <Compile Include="AST Nodes\Expressions\PowerExp.cs" />
+    <Compile Include="AST Nodes\Expressions\ModuloExp.cs" />
+    <Compile Include="AST Nodes\Expressions\ExclamationExp.cs" />
+    <Compile Include="AST Nodes\Expressions\AndExp.cs" />
+    <Compile Include="AST Nodes\Expressions\OrExp.cs" />
+    <Compile Include="AST Nodes\Expressions\BitwiseComplementExp.cs" />
+    <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
     <Compile Include="Phrases\CodeGenerator.cs" />
     <Compile Include="Phrases\CodeOptimizer.cs" />
-    <Compile Include="Expressions\Exp.cs" />
+    <Compile Include="AST Nodes\Expressions\Exp.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
     <Compile Include="Phrases\LexicalRepresentation.cs" />
