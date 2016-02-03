@@ -11,12 +11,15 @@ namespace Swift
     /// </summary>
     public class Token
     {
-        public Global.PrimitiveType primType;
         public Global.DataType type;
         public string value; // Often the name, the string, the number, ... (all stored as a string)
-        public Token(Global.PrimitiveType primType, string value)
+        public Token(Global.DataType type)
         {
-            this.primType = primType;
+            this.type = type;
+        }
+        public Token(Global.DataType type, string value)
+        {
+            this.type = type;
             this.value = value;
         }
     }

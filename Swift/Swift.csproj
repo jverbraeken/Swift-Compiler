@@ -58,10 +58,13 @@
     <Compile Include="Expressions\Exp.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
+    <Compile Include="Phrases\LexicalRepresentation.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
     <Compile Include="Table.cs" />
+    <Compile Include="Tokens\LineContext.cs" />
     <Compile Include="Tokens\Token.cs" />
     <Compile Include="Phrases\LexicalAnalyzer.cs" />
     <Compile Include="Swift.cs" />

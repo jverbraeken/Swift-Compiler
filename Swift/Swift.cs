@@ -8,6 +8,8 @@ namespace Swift
 {
     class Swift
     {
+        private static List<string> interCode;
+
         static void Main(string[] args)
         {
             string lookingFor = "";
@@ -46,9 +48,9 @@ namespace Swift
             SyntaxAnalyzer.CheckSyntax(tokens);
             List<Table> symbolTables = SemanticAnalyzer.GenerateSymbolTables(tokens);
             SemanticAnalyzer.CheckSemantic(tokens);
-            List<string> interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
+            interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
             interCode = CodeOptimizer.OptimizeCode(interCode);
-            CodeGenerator.MakeAssembly(source, output, intercode);
+            CodeGenerator.MakeAssembly(source, output, interCode);
 
             Console.ReadLine();
         }

@@ -2,12 +2,23 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swift;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SwiftTests
 {
     [TestClass]
     public class LexicalAnalyzerTest
     {
+        [TestMethod]
+        public void TestRegex()
+        {
+            Assert.AreEqual(true, Regex.Match("print(\"hoi\") //comments", LexicalAnalyzer.regexIdentity).Success);
+            Assert.AreEqual(true, Regex.Match("(", LexicalAnalyzer.regexOpenRoundBracket).Success);
+            Assert.AreEqual(false, Regex.Match("//hoi", LexicalAnalyzer.regexOperator).Success);
+            Assert.AreEqual(true, Regex.Match("//hoi", LexicalAnalyzer.regexComment).Success);
+            Assert.AreEqual(true, Regex.Match("3 + 2", LexicalAnalyzer.regexInt).Success);
+        }
+
         [TestMethod]
         public void TestEatWhitespace()
         {
@@ -16,7 +27,7 @@ namespace SwiftTests
         }
 
         [TestMethod]
-        public void TestGetLexemes()
+        public void TestGetTokens()
         {
             string[] input = new string[2] { "     print(\"hoi\") //comments", "let a = 3 + 2" };
             List<Token> result = LexicalAnalyzer.GetTokens(input);
@@ -30,33 +41,16 @@ namespace SwiftTests
             Assert.AreEqual(result[7].value, "3");
             Assert.AreEqual(result[8].value, "+");
             Assert.AreEqual(result[9].value, "2");
-            Assert.AreEqual(result[0].primType, Global.PrimitiveType.IDENTIFIER);
-            Assert.AreEqual(result[1].primType, Global.PrimitiveType.PUNCTUATION);
-            Assert.AreEqual(result[2].primType, Global.PrimitiveType.LITERAL);
-            Assert.AreEqual(result[3].primType, Global.PrimitiveType.PUNCTUATION);
-            Assert.AreEqual(result[4].primType, Global.PrimitiveType.KEYWORD);
-            Assert.AreEqual(result[5].primType, Global.PrimitiveType.IDENTIFIER);
-            Assert.AreEqual(result[6].primType, Global.PrimitiveType.OPERATOR);
-            Assert.AreEqual(result[7].primType, Global.PrimitiveType.LITERAL);
-            Assert.AreEqual(result[8].primType, Global.PrimitiveType.OPERATOR);
-            Assert.AreEqual(result[9].primType, Global.PrimitiveType.LITERAL);
-        }
-
-        [TestMethod]
-        public void TestStringToLexemes()
-        {
-            List<string> result = LexicalAnalyzer.StringToLexemes("     print(\"hoi\") //comments");
-            Assert.AreEqual(result[0], "print");
-            Assert.AreEqual(result[1], "(");
-            Assert.AreEqual(result[2], "\"hoi\"");
-            Assert.AreEqual(result[3], ")");
-
-            result = LexicalAnalyzer.StringToLexemes("/* testje */");
-            Assert.AreEqual(result.Count, 0);
-
-            result = LexicalAnalyzer.StringToLexemes("  /* testje */      5.1234  hallo");
-            Assert.AreEqual(result[0], "5.1234");
-            Assert.AreEqual(result[1], "hallo");
+            Assert.AreEqual(result[0].type, Global.DataType.Identifier);
+            Assert.AreEqual(result[1].type, Global.DataType.Open_round_bracket);
+            Assert.AreEqual(result[2].type, Global.DataType.String);
+            Assert.AreEqual(result[3].type, Global.DataType.Close_round_bracket);
+            Assert.AreEqual(result[4].type, Global.DataType.Keyword);
+            Assert.AreEqual(result[5].type, Global.DataType.Identifier);
+            Assert.AreEqual(result[6].type, Global.DataType.Operator);
+            Assert.AreEqual(result[7].type, Global.DataType.Int);
+            Assert.AreEqual(result[8].type, Global.DataType.Operator);
+            Assert.AreEqual(result[9].type, Global.DataType.Int);
         }
 
         [TestMethod]
