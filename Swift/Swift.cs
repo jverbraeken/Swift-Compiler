@@ -48,11 +48,17 @@ namespace Swift
             Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
+
             AST ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
-            List<Table> symbolTables = SemanticAnalyzer.GenerateSymbolTables(tokens);
-            SemanticAnalyzer.CheckSemantic(tokens);
+
+            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+            List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);
+            semanticAnalyzer.CheckSemantic(ast);
+
             interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
+
             interCode = CodeOptimizer.OptimizeCode(interCode);
+
             CodeGenerator.MakeAssembly(source, output, interCode);
 
             Console.ReadLine();

@@ -15,6 +15,7 @@ namespace Swift
             , Int, UInt, Float, Double, Bool, String, Character, Optional
             , Operator
             , Open_round_bracket, Close_round_bracket, Open_square_bracket, Close_square_bracket, Open_brace, Close_brace, Comma, Colon, Semicolon, At, Hashtag, Single_quotation, Double_quotation, Accent_grave
+            , Builtin_Func, Builtin_Constant
         }
     }
 }

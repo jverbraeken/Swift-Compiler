@@ -10,17 +10,18 @@ namespace Swift
     /// <summary>
     /// A symbol table in which all symbols (variables, parameters, functions) of a certain scope are stored
     /// </summary>
-    class Table
+    public class Table
     {
-        Dictionary<string, Symbol> dictionary;
-        Table reference; //For scoping a table references its parent.
+        private Dictionary<string, Symbol> dictionary;
+        private Table reference; //For scoping a table references its parent.
 
         /// <summary>
         /// Creates a new Symbol Table
         /// </summary>
-        public Table()
+        public Table(Table reference)
         {
             dictionary = new Dictionary<string, Symbol>();
+            this.reference = reference;
         }
 
         /// <summary>
