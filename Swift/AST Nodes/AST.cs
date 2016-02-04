@@ -19,5 +19,10 @@ namespace Swift
         {
             children.Add(node);
         }
+
+        public List<ASTNode> getChildren()
+        {
+            return children;
+        }
     }
 }

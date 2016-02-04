@@ -1,5 +1,4 @@
-﻿using Swift.Expressions;
-using Swift.Tokens;
+﻿using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;

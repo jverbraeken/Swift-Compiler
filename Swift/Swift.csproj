@@ -44,8 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AST Nodes\AST.cs" />
-    <Compile Include="AST Nodes\ASTFile.cs" />
     <Compile Include="AST Nodes\ASTNode.cs" />
+    <Compile Include="AST Nodes\ASTFunctionCall.cs" />
+    <Compile Include="AST Nodes\ASTString.cs" />
     <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
     <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
     <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />

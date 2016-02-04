@@ -16,5 +16,15 @@ namespace Swift.Tokens
             this.pos = pos;
             this.line = line;
         }
+
+        public int GetPos()
+        {
+            return pos;
+        }
+
+        public int GetLine()
+        {
+            return line;
+        }
     }
 }

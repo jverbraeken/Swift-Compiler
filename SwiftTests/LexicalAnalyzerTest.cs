@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swift;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Swift.Tokens;
 
 namespace SwiftTests
 {
@@ -30,22 +31,24 @@ namespace SwiftTests
         public void TestGetTokens()
         {
             string[] input = new string[2] { "     print(\"hoi\") //comments", "let a = 3 + 2" };
-            List<Token> result = LexicalAnalyzer.GetTokens(input);
-            Assert.AreEqual(result[0].value, "print");
-            Assert.AreEqual(result[2].value, "\"hoi\"");
-            Assert.AreEqual(result[5].value, "a");
-            Assert.AreEqual(result[7].value, "3");
-            Assert.AreEqual(result[9].value, "2");
-            Assert.AreEqual(result[0].type, Global.DataType.Identifier);
-            Assert.AreEqual(result[1].type, Global.DataType.Open_round_bracket);
-            Assert.AreEqual(result[2].type, Global.DataType.String);
-            Assert.AreEqual(result[3].type, Global.DataType.Close_round_bracket);
-            Assert.AreEqual(result[4].type, Global.DataType.Let);
-            Assert.AreEqual(result[5].type, Global.DataType.Identifier);
-            Assert.AreEqual(result[6].type, Global.DataType.Operator);
-            Assert.AreEqual(result[7].type, Global.DataType.Int);
-            Assert.AreEqual(result[8].type, Global.DataType.Operator);
-            Assert.AreEqual(result[9].type, Global.DataType.Int);
+            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer();
+            Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
+            List<Token> tokens = result.Item1;
+            Assert.AreEqual(tokens[0].value, "print");
+            Assert.AreEqual(tokens[2].value, "\"hoi\"");
+            Assert.AreEqual(tokens[5].value, "a");
+            Assert.AreEqual(tokens[7].value, "3");
+            Assert.AreEqual(tokens[9].value, "2");
+            Assert.AreEqual(tokens[0].type, Global.DataType.Identifier);
+            Assert.AreEqual(tokens[1].type, Global.DataType.Open_round_bracket);
+            Assert.AreEqual(tokens[2].type, Global.DataType.String);
+            Assert.AreEqual(tokens[3].type, Global.DataType.Close_round_bracket);
+            Assert.AreEqual(tokens[4].type, Global.DataType.Let);
+            Assert.AreEqual(tokens[5].type, Global.DataType.Identifier);
+            Assert.AreEqual(tokens[6].type, Global.DataType.Operator);
+            Assert.AreEqual(tokens[7].type, Global.DataType.Int);
+            Assert.AreEqual(tokens[8].type, Global.DataType.Operator);
+            Assert.AreEqual(tokens[9].type, Global.DataType.Int);
         }
 
         [TestMethod]

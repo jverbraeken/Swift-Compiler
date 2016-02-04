@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    static public class LexicalAnalyzer
+    public class LexicalAnalyzer
     {
         internal static readonly string regexIdentifier = "[_a-z][a-z0-9]*",
         regexIdentity = "^([\\+\\-]{2,})?(" + regexIdentifier + ")([\\+\\-]{2,})?",
@@ -34,8 +34,8 @@ namespace Swift
         //Comments
         regexComment = "^\\/\\/";
 
-        static int MultilineCommentLevel = 0;
-        public static Tuple<List<Token>, List<LineContext>> GetTokens(string[] input)
+        int MultilineCommentLevel = 0;
+        public Tuple<List<Token>, List<LineContext>> GetTokens(string[] input)
         {
             List<Token> tokens = new List<Token>();
             List<LineContext> context = new List<LineContext>();

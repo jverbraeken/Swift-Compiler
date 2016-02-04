@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class SyntaxAnalyzer
+    public class SyntaxAnalyzer
     {
+        private int cutTokens = 0;
+        List<Token> tokens;
+        List<LineContext> context;
         public AST CheckSyntax(List<Token> tokens, List<LineContext> context)
         {
+            this.tokens = tokens;
+            this.context = context;
             AST astBase = new AST(context[0]);
             while (tokens.Count > 0)
             {
-                astBase.AddNode(EatStatement(tokens, context));
-                tokens.RemoveAt(0);
-                context.RemoveAt(0);
+                astBase.AddNode(EatStatement());
+                CutTokens();
             }
             return astBase;
         }
@@ -27,37 +31,70 @@ namespace Swift
         /// <param name="token"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private ASTNode EatStatement(List<Token> tokens, List<LineContext> context)
+        private ASTNode EatStatement(List<Token> tokensIn = null, List<LineContext> contextIn = null)
         {
-            switch (tokens[0].type)
+            List<Token> tmpTokens;
+            List<LineContext> tmpContext;
+            if (tokensIn == null)
+            {
+                tmpTokens = tokens;
+                tmpContext = context;
+            }
+            else
+            {
+                tmpTokens = tokensIn;
+                tmpContext = contextIn;
+            }
+            switch (tmpTokens[0].type)
             {
                 case Global.DataType.Identifier:
-                    if (tokens[1].type == Global.DataType.Open_round_bracket)
+                    if (tmpTokens[1].type == Global.DataType.Open_round_bracket)
                     {
-                        EatFunctionCall(tokens, context);
+                        return EatFunctionCall(tmpTokens, tmpContext);
                     }
                     else {
-                        EatExpression(tokens, context);
+                        return EatExpression(tmpTokens, tmpContext);
                     }
+                case Global.DataType.String:
+                    return new ASTString(tmpTokens[0].value, tmpContext[0]);
+                default:
+                    Swift.error("Syntax error: \"" + tmpTokens[0].value + "\" at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[0].GetPos().ToString() + " could not be identified", 1);
+                    return null;
             }
         }
 
-        private ASTNode EatFunctionCall(List<Token> tokens, List<LineContext> context)
+        private ASTNode EatFunctionCall(List<Token> tokensIn = null, List<LineContext> contextIn = null)
         {
-            int i = 0;
-            Token token = tokens[0];
-            List<Exp> args = new List<Exp>();
+            List<Token> tmpTokens;
+            List<LineContext> tmpContext;
+            if (tokensIn == null)
+            {
+                tmpTokens = tokens;
+                tmpContext = context;
+            }
+            else
+            {
+                tmpTokens = tokensIn;
+                tmpContext = contextIn;
+            }
+
+            int i = 2;
+            Token token = tmpTokens[i];
+            List<ASTNode> args = new List<ASTNode>();
             while (token.type != Global.DataType.Close_round_bracket)
             {
                 List<Token> arg = new List<Token>();
-                while (token.type != Global.DataType.Comma || token.type != Global.DataType.Close_round_bracket)
+                List<LineContext> argContext = new List<LineContext>();
+                while (token.type != Global.DataType.Comma && token.type != Global.DataType.Close_round_bracket)
                 {
                     arg.Add(token);
-                    token = tokens[++i];
+                    argContext.Add(tmpContext[i]);
+                    token = tmpTokens[++i];
                 }
-                EatArgument(arg);
+                cutTokens = i + 1;
+                args.Add(EatStatement(arg, argContext));
             }
-            return new ASTFunctionCall(context[0], args);
+            return new ASTFunctionCall(tmpTokens[0].value, args, context[0]);
         }
 
         /// <summary>
@@ -66,9 +103,21 @@ namespace Swift
         /// <param name="tokens"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private ASTNode EatExpression(List<Token> tokens, List<LineContext> context)
+        private ASTNode EatExpression(List<Token> tokensIn = null, List<LineContext> contextIn = null)
         {
+            List<Token> tmpTokens;
+            List<LineContext> tmpContext;
+            return null;
+        }
 
+        private void CutTokens()
+        {
+            for (int i = 0; i < cutTokens; i++)
+            {
+                tokens.RemoveAt(0);
+                context.RemoveAt(0);
+            }
+            cutTokens = 0;
         }
     }
 }
