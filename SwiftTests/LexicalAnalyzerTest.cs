@@ -39,16 +39,16 @@ namespace SwiftTests
             Assert.AreEqual(tokens[5].value, "a");
             Assert.AreEqual(tokens[7].value, "3");
             Assert.AreEqual(tokens[9].value, "2");
-            Assert.AreEqual(tokens[0].type, Global.DataType.Identifier);
-            Assert.AreEqual(tokens[1].type, Global.DataType.Open_round_bracket);
-            Assert.AreEqual(tokens[2].type, Global.DataType.String);
-            Assert.AreEqual(tokens[3].type, Global.DataType.Close_round_bracket);
-            Assert.AreEqual(tokens[4].type, Global.DataType.Let);
-            Assert.AreEqual(tokens[5].type, Global.DataType.Identifier);
-            Assert.AreEqual(tokens[6].type, Global.DataType.Operator);
-            Assert.AreEqual(tokens[7].type, Global.DataType.Int);
-            Assert.AreEqual(tokens[8].type, Global.DataType.Operator);
-            Assert.AreEqual(tokens[9].type, Global.DataType.Int);
+            Assert.AreEqual(tokens[0].type, Global.DataType.IDENTIFIER);
+            Assert.AreEqual(tokens[1].type, Global.DataType.OPEN_ROUND_BRACKET);
+            Assert.AreEqual(tokens[2].type, Global.DataType.STRING);
+            Assert.AreEqual(tokens[3].type, Global.DataType.CLOSE_ROUND_BRACKET);
+            Assert.AreEqual(tokens[4].type, Global.DataType.LET);
+            Assert.AreEqual(tokens[5].type, Global.DataType.IDENTIFIER);
+            Assert.AreEqual(tokens[6].type, Global.DataType.OPERATOR);
+            Assert.AreEqual(tokens[7].type, Global.DataType.INT);
+            Assert.AreEqual(tokens[8].type, Global.DataType.OPERATOR);
+            Assert.AreEqual(tokens[9].type, Global.DataType.INT);
         }
 
         [TestMethod]

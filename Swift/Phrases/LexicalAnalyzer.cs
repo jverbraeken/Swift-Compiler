@@ -72,7 +72,7 @@ namespace Swift
                     match = Regex.Match(line, regexInt);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Int, match.Groups[0].Value));
+                        tokens.Add(new Token(Global.DataType.INT, match.Groups[0].Value));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -81,7 +81,7 @@ namespace Swift
                     match = Regex.Match(line, regexString);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.String, match.Groups[0].Value));
+                        tokens.Add(new Token(Global.DataType.STRING, match.Groups[0].Value));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -94,7 +94,7 @@ namespace Swift
                     match = Regex.Match(line, regexLet);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Let));
+                        tokens.Add(new Token(Global.DataType.LET));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -103,7 +103,7 @@ namespace Swift
                     match = Regex.Match(line, regexVar);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Var));
+                        tokens.Add(new Token(Global.DataType.VAR));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -116,7 +116,7 @@ namespace Swift
                     match = Regex.Match(line, regexOpenRoundBracket);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Open_round_bracket));
+                        tokens.Add(new Token(Global.DataType.OPEN_ROUND_BRACKET));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -125,7 +125,7 @@ namespace Swift
                     match = Regex.Match(line, regexCloseRoundBracket);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Close_round_bracket));
+                        tokens.Add(new Token(Global.DataType.CLOSE_ROUND_BRACKET));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -134,7 +134,7 @@ namespace Swift
                     match = Regex.Match(line, regexOpenSquareBracket);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Open_square_bracket));
+                        tokens.Add(new Token(Global.DataType.OPEN_SQUARE_BRACKET));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -143,7 +143,7 @@ namespace Swift
                     match = Regex.Match(line, regexCloseSquareBracket);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Close_square_bracket));
+                        tokens.Add(new Token(Global.DataType.CLOSE_SQUARE_BRACKET));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -152,7 +152,7 @@ namespace Swift
                     match = Regex.Match(line, regexOpenBraces);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Open_brace));
+                        tokens.Add(new Token(Global.DataType.OPEN_BRACE));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -161,7 +161,7 @@ namespace Swift
                     match = Regex.Match(line, regexCloseBraces);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Close_brace));
+                        tokens.Add(new Token(Global.DataType.CLOSE_BRACE));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -174,7 +174,7 @@ namespace Swift
                     match = Regex.Match(line, regexOperator);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Operator, match.Groups[0].Value));
+                        tokens.Add(new Token(Global.DataType.OPERATOR, match.Groups[0].Value));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
@@ -184,7 +184,7 @@ namespace Swift
                     match = Regex.Match(line, regexIdentity);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.Identifier, match.Groups[0].Value));
+                        tokens.Add(new Token(Global.DataType.IDENTIFIER, match.Groups[0].Value));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };

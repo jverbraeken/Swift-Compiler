@@ -43,10 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AST Nodes\AST.cs" />
     <Compile Include="AST Nodes\ASTNode.cs" />
-    <Compile Include="AST Nodes\ASTFunctionCall.cs" />
-    <Compile Include="AST Nodes\ASTString.cs" />
     <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
     <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
     <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />
@@ -65,6 +62,7 @@
     <Compile Include="Phrases\LexicalRepresentation.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Type.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
     <Compile Include="Table.cs" />

@@ -17,15 +17,15 @@ namespace SwiftTests
             Token tmpToken;
             LineContext tmpContext;
             List<Token> tokens = new List<Token>();
-            tmpToken = new Token(Global.DataType.Identifier);
+            tmpToken = new Token(Global.DataType.IDENTIFIER);
             tmpToken.value = "print";
             tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.Open_round_bracket);
+            tmpToken = new Token(Global.DataType.OPEN_ROUND_BRACKET);
             tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.String);
+            tmpToken = new Token(Global.DataType.STRING);
             tmpToken.value = "\"hoi\"";
             tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.Close_round_bracket);
+            tmpToken = new Token(Global.DataType.CLOSE_ROUND_BRACKET);
             tokens.Add(tmpToken);
 
             List<LineContext> context = new List<LineContext>();

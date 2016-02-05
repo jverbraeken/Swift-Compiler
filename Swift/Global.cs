@@ -9,13 +9,18 @@ namespace Swift
     public static class Global
     {
         //public static int MAX_LINE_LENGTH = 10;
-        public enum DataType { Identifier, Class, Deinit, Enum, Extension, Func, Import, Init, Inout, Internal, Let, Private, Protocol, Public, Static, Struct, Subscript, Typealias, Var /*Identifiers*/
-            , Break, Case, Continue, Default, Defer, Do, Else, Fallthrough, For, Guard, If, In, Repeat, Return, Switch, Where, While
-            , As, Catch, DynamicType, False, Is, Nil, Rethrows, Super, Self, Throw, Throws, True, Try, __COLUMN__, __FILE__, __FUNCTION__, __LINE__
-            , Int, UInt, Float, Double, Bool, String, Character, Optional
-            , Operator
-            , Open_round_bracket, Close_round_bracket, Open_square_bracket, Close_square_bracket, Open_brace, Close_brace, Comma, Colon, Semicolon, At, Hashtag, Single_quotation, Double_quotation, Accent_grave
-            , Builtin_Func, Builtin_Constant
+        public enum DataType { IDENTIFIER, CLASS, DEINIT, ENUM, EXTENSION, FUNC, IMPORT, INIT, INOUT, INTERNAL, LET, PRIVATE, PROTOCOL, PUBLIC, STATIC, STRUCT, SUBSCRIPT, TYPEALIAS, VAR /*IDENTIFIERS*/
+            , BREAK, CASE, CONTINUE, DEFAULT, DEFER, DO, ELSE, FALLTHROUGH, FOR, GUARD, IF, IN, REPEAT, RETURN, SWITCH, WHERE, WHILE
+            , AS, CATCH, DYNAMICTYPE, FALSE, IS, NIL, RETHROWS, SUPER, SELF, THROW, THROWS, TRUE, TRY, __COLUMN__, __FILE__, __FUNCTION__, __LINE__
+            , INT, UINT, FLOAT, DOUBLE, BOOL, STRING, CHARACTER, OPTIONAL
+            , OPERATOR
+            , OPEN_ROUND_BRACKET, CLOSE_ROUND_BRACKET, OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, OPEN_BRACE, CLOSE_BRACE, COMMA, COLON, SEMICOLON, AT, HASHTAG, SINGLE_QUOTATION, DOUBLE_QUOTATION, ACCENT_GRAVE
+            , BUILTIN_FUNC, BUILTIN_CONSTANT
+        }
+
+        public enum ASTType
+        {
+            BASE, FUNCTION_CALL, VAR_DECLARATION, CONST_DECLARATION, STRING
         }
     }
 }

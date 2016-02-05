@@ -12,11 +12,13 @@ namespace Swift
         private int cutTokens = 0;
         List<Token> tokens;
         List<LineContext> context;
-        public AST CheckSyntax(List<Token> tokens, List<LineContext> context)
+        private ASTNode node;
+
+        public ASTNode CheckSyntax(List<Token> tokens, List<LineContext> context)
         {
             this.tokens = tokens;
             this.context = context;
-            AST astBase = new AST(context[0]);
+            ASTNode astBase = new ASTNode(Global.ASTType.BASE, context[0]);
             while (tokens.Count > 0)
             {
                 astBase.AddNode(EatStatement());
@@ -47,16 +49,18 @@ namespace Swift
             }
             switch (tmpTokens[0].type)
             {
-                case Global.DataType.Identifier:
-                    if (tmpTokens[1].type == Global.DataType.Open_round_bracket)
+                case Global.DataType.IDENTIFIER:
+                    if (tmpTokens[1].type == Global.DataType.OPEN_ROUND_BRACKET)
                     {
                         return EatFunctionCall(tmpTokens, tmpContext);
                     }
                     else {
                         return EatExpression(tmpTokens, tmpContext);
                     }
-                case Global.DataType.String:
-                    return new ASTString(tmpTokens[0].value, tmpContext[0]);
+                case Global.DataType.STRING:
+                    node = new ASTNode(Global.ASTType.STRING, tmpContext[0]);
+                    node.setName(tmpTokens[0].value);
+                    return node;
                 default:
                     Swift.error("Syntax error: \"" + tmpTokens[0].value + "\" at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[0].GetPos().ToString() + " could not be identified", 1);
                     return null;
@@ -81,11 +85,11 @@ namespace Swift
             int i = 2;
             Token token = tmpTokens[i];
             List<ASTNode> args = new List<ASTNode>();
-            while (token.type != Global.DataType.Close_round_bracket)
+            while (token.type != Global.DataType.CLOSE_ROUND_BRACKET)
             {
                 List<Token> arg = new List<Token>();
                 List<LineContext> argContext = new List<LineContext>();
-                while (token.type != Global.DataType.Comma && token.type != Global.DataType.Close_round_bracket)
+                while (token.type != Global.DataType.COMMA && token.type != Global.DataType.CLOSE_ROUND_BRACKET)
                 {
                     arg.Add(token);
                     argContext.Add(tmpContext[i]);
@@ -94,7 +98,10 @@ namespace Swift
                 cutTokens = i + 1;
                 args.Add(EatStatement(arg, argContext));
             }
-            return new ASTFunctionCall(tmpTokens[0].value, args, context[0]);
+            node = new ASTNode(Global.ASTType.FUNCTION_CALL, context[0]);
+            node.SetName(tmpTokens[0].value);
+            node.SetChildren(args);
+            return node;
         }
 
         /// <summary>

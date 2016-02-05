@@ -53,7 +53,7 @@ namespace Swift
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);
-            semanticAnalyzer.CheckSemantic(ast);
+            semanticAnalyzer.CheckSemantic(ast, symbolTables);
 
             interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
 
