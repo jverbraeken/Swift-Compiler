@@ -29,12 +29,25 @@ namespace Swift
         /// </summary>
         public void insert(Symbol symbol)
         {
-            dictionary.Add(symbol.name, symbol);
+            dictionary.Add(symbol.GetName(), symbol);
         }
 
         public Symbol lookup(string name)
         {
-            return dictionary[name];
+            Symbol value;
+            if (dictionary.TryGetValue(name, out value))
+                return value;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Get the "parent" of the table
+        /// </summary>
+        /// <returns></returns>
+        public Table GetReference()
+        {
+            return reference;
         }
     }
 }

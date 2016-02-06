@@ -59,7 +59,7 @@ namespace Swift
                     }
                 case Global.DataType.STRING:
                     node = new ASTNode(Global.ASTType.STRING, tmpContext[0]);
-                    node.setName(tmpTokens[0].value);
+                    node.SetName(tmpTokens[0].value);
                     return node;
                 default:
                     Swift.error("Syntax error: \"" + tmpTokens[0].value + "\" at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[0].GetPos().ToString() + " could not be identified", 1);

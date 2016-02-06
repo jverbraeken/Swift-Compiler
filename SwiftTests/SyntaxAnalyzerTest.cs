@@ -39,10 +39,11 @@ namespace SwiftTests
             context.Add(tmpContext);
 
             SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
-            AST result = syntaxAnalyer.CheckSyntax(tokens, context);
-            Assert.AreEqual("Swift.ASTFunctionCall", result.getChildren()[0].GetType().ToString());
-            Assert.AreEqual("print", (result.getChildren()[0] as ASTFunctionCall).GetName());
-            Assert.AreEqual("\"hoi\"", (((result.getChildren()[0] as ASTFunctionCall).GetArgs()[0]) as ASTString).GetValue());
+            ASTNode result = syntaxAnalyer.CheckSyntax(tokens, context);
+            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
+            Assert.AreEqual(Global.ASTType.FUNCTION_CALL, result.GetChildren()[0].GetType());
+            Assert.AreEqual("print", result.GetChildren()[0].GetName());
+            Assert.AreEqual("\"hoi\"", result.GetChildren()[0].GetChildren()[0].GetName());
         }
     }
 }

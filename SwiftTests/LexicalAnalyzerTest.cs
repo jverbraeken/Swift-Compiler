@@ -23,8 +23,8 @@ namespace SwiftTests
         [TestMethod]
         public void TestEatWhitespace()
         {
-            Assert.AreEqual("asdf", LexicalAnalyzer.EatWhitespace("     asdf"));
-            Assert.AreEqual("asdf/1234", LexicalAnalyzer.EatWhitespace("     asdf/1234"));
+            Assert.AreEqual((new string[] { "asdf", "5" }).ToString(), LexicalAnalyzer.EatWhitespace("     asdf").ToString());
+            Assert.AreEqual((new string[] { "asdf/1234", "5" }).ToString(), LexicalAnalyzer.EatWhitespace("     asdf/1234").ToString());
         }
 
         [TestMethod]

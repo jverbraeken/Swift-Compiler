@@ -49,11 +49,11 @@ namespace Swift
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
 
-            AST ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
+            ASTNode ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);
-            semanticAnalyzer.CheckSemantic(ast, symbolTables);
+            semanticAnalyzer.CheckSemantic(ast);
 
             interCode = IntermediateCodeGenerator.GenerateCode(tokens, symbolTables);
 

@@ -16,6 +16,16 @@ namespace Swift
         private ASTNode returnType;
         private Table scope;
 
+        /// <summary>
+        /// Should not be called directly, but only by its children
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="context"></param>
+        public ASTNode(LineContext context)
+        {
+            this.context = context;
+        }
+
         public ASTNode(Global.ASTType type, LineContext context)
         {
             children = new List<ASTNode>();

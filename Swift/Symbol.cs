@@ -19,8 +19,8 @@ namespace Swift
         private bool isStatic;
         private object value; //for constants
         private int length; //for arrays
-        private List<Type> parameters; //for functions
-        private List<Type> returnTypes; //for functions
+        private List<Global.ASTType> parameters; //for functions
+        private List<Global.ASTType> returnTypes; //for functions
         private bool isReferenced; //if a symbol is never referenced it will be omitted in the compilation
 
         public Symbol(string name, Global.DataType type)
@@ -29,22 +29,32 @@ namespace Swift
             this.type = type;
         }
 
-        public void SetParameters(List<Type> parameters)
+        public void SetName(string name)
+        {
+            this.name = name;
+        }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public void SetParameters(List<Global.ASTType> parameters)
         {
             this.parameters = parameters;
         }
 
-        public List<Type> GetParameters()
+        public List<Global.ASTType> GetParameters()
         {
             return parameters;
         }
 
-        public void SetReturnTypes(List<Type> returnTypes)
+        public void SetReturnTypes(List<Global.ASTType> returnTypes)
         {
             this.returnTypes = returnTypes;
         }
 
-        public List<Type> GetReturnTypes()
+        public List<Global.ASTType> GetReturnTypes()
         {
             return returnTypes;
         }

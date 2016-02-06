@@ -62,9 +62,6 @@
     <Compile Include="Phrases\LexicalRepresentation.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="Types\VoidType.cs" />
-    <Compile Include="Types\StringType.cs" />
-    <Compile Include="Types\Type.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
     <Compile Include="Table.cs" />
