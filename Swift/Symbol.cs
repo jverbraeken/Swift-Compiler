@@ -20,7 +20,7 @@ namespace Swift
         private object value; //for constants
         private int length; //for arrays
         private List<Type> parameters; //for functions
-        private Type returnType; //for functions
+        private List<Type> returnTypes; //for functions
         private bool isReferenced; //if a symbol is never referenced it will be omitted in the compilation
 
         public Symbol(string name, Global.DataType type)
@@ -39,9 +39,14 @@ namespace Swift
             return parameters;
         }
 
-        public Type GetReturnType()
+        public void SetReturnTypes(List<Type> returnTypes)
         {
-            return returnType;
+            this.returnTypes = returnTypes;
+        }
+
+        public List<Type> GetReturnTypes()
+        {
+            return returnTypes;
         }
     }
 }

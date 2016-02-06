@@ -15,7 +15,12 @@ namespace Swift
             tables = new List<Table>();
             Table swiftTable = new Table(null);
             Symbol printSymbol = new Symbol("print", Global.DataType.BUILTIN_FUNC);
-            printSymbol.
+            List<Type> lst = new List<Type>();
+            lst.Add(new StringType());
+            printSymbol.SetParameters(lst);
+            lst = new List<Type>();
+            lst.Add(new VoidType());
+            printSymbol.SetReturnTypes(lst);
             swiftTable.insert(printSymbol);
             tables.Add(swiftTable);
             tables.Add(new Table(tables[0]));
