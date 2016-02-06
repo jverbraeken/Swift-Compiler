@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class Lexeme
+    class IntermediateCodeGenerator
     {
-        public string line;
-        public Lexeme(string test)
+        public static List<string> GenerateCode(List<Token> tokens, List<Table> tables)
         {
-            line = test;
+            return new List<string>();
         }
     }
 }

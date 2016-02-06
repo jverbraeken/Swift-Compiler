@@ -43,10 +43,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lexeme.cs" />
-    <Compile Include="LexicalAnalyzer.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="AST Nodes\ASTNode.cs" />
+    <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
+    <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
+    <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />
+    <Compile Include="AST Nodes\Expressions\PowerExp.cs" />
+    <Compile Include="AST Nodes\Expressions\ModuloExp.cs" />
+    <Compile Include="AST Nodes\Expressions\ExclamationExp.cs" />
+    <Compile Include="AST Nodes\Expressions\AndExp.cs" />
+    <Compile Include="AST Nodes\Expressions\OrExp.cs" />
+    <Compile Include="AST Nodes\Expressions\BitwiseComplementExp.cs" />
+    <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
+    <Compile Include="Phrases\CodeGenerator.cs" />
+    <Compile Include="Phrases\CodeOptimizer.cs" />
+    <Compile Include="AST Nodes\Expressions\Exp.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
+    <Compile Include="Phrases\LexicalRepresentation.cs" />
+    <Compile Include="Phrases\SemanticAnalyzer.cs" />
+    <Compile Include="Scope.cs" />
+    <Compile Include="Symbol.cs" />
+    <Compile Include="Phrases\SyntaxAnalyzer.cs" />
+    <Compile Include="Table.cs" />
+    <Compile Include="Tokens\LineContext.cs" />
+    <Compile Include="Tokens\Token.cs" />
+    <Compile Include="Phrases\LexicalAnalyzer.cs" />
+    <Compile Include="Swift.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
