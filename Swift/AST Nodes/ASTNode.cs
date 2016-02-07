@@ -9,12 +9,13 @@ namespace Swift
 {
     public class ASTNode
     {
-        private Global.ASTType type;
+        private Global.ASTType type; //The type of the node, eg a function, a string, a class
         private List<ASTNode> children; //The arguments for a function call
-        private LineContext context;
-        private string name;
-        private ASTNode returnType;
-        private Table scope;
+        private LineContext context; //For debugging, gives the programmer an idea where the node is located in the original source code
+        private string name; //The name of the function, the string, ...
+        private ASTNode returnType; //The return type of a function
+        private Table scope; //The scope every variable, function, etc. is made in
+        private int assemblyLocation; //The location the node is located when compiled to assembly (mostly used for constant variables)
 
         /// <summary>
         /// Should not be called directly, but only by its children
@@ -81,6 +82,16 @@ namespace Swift
         public Table GetScope()
         {
             return scope;
+        }
+
+        public void SetAssemblyLocation(int assemblyLocation)
+        {
+            this.assemblyLocation = assemblyLocation;
+        }
+
+        public int GetAssemblyLocation()
+        {
+            return assemblyLocation;
         }
 
         public LineContext GetContext()

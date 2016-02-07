@@ -73,6 +73,8 @@ namespace Swift
                 }
                 scope = scope.GetReference();
             }
+            if (scope == null)
+                Swift.error("The function you called could not be found, line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString(), 1);
         }
     }
 }
