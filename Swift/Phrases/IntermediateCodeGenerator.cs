@@ -9,26 +9,22 @@ namespace Swift
     public class IntermediateCodeGenerator
     {
         List<string> result;
+        int teller;
+
         public List<string> GenerateCode(string source, string dest, ASTNode ast, List<Table> tables)
         {
             result = new List<string>();
-            w("file:" + source);
+            w("file:\"" + source + "\"");
             w("section:constants");
 
-            int teller = 0;
-            foreach (ASTNode node in ast.GetChildren())
-            {
-                if (node.GetType() == Global.ASTType.STRING)
-                {
-                    w("define_constant_string:" + teller.ToString() + ":" + node.GetName());
-                    node.SetAssemblyLocation(teller);
-                    teller++;
-                }
-            }
+            teller = 0;
+            SearchConstants(ast);
 
             w("section:code");
             w("define_main_method");
             w("set_base_pointer");
+            w("reserve_stack");
+            w("call:%SETUP_C%");
 
             foreach (ASTNode node in ast.GetChildren())
             {
@@ -39,8 +35,23 @@ namespace Swift
             }
 
             w("get_base_pointer");
-            w(".ident    \"Yontu: (Joost Verbraeken) BETA\"");
+            w("return");
+            w("comment:\"Yontu: (Joost Verbraeken) BETA\"");
             return result;
+        }
+
+        private void SearchConstants(ASTNode ast)
+        {
+            foreach (ASTNode node in ast.GetChildren())
+            {
+                if (node.GetType() == Global.ASTType.STRING)
+                {
+                    w("define_constant_string:" + teller.ToString() + ":" + node.GetName());
+                    node.SetAssemblyLocation(teller);
+                    teller++;
+                }
+                SearchConstants(node);
+            }
         }
 
         private void ExecuteFunctionCall(ASTNode node)

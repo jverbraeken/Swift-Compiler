@@ -55,11 +55,16 @@ namespace Swift
             List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);
             semanticAnalyzer.CheckSemantic(ast);
 
-            interCode = (new IntermediateCodeGenerator()).GenerateCode(source, output, tokens, symbolTables);
+            interCode = (new IntermediateCodeGenerator()).GenerateCode(source, output, ast, symbolTables);
 
             interCode = CodeOptimizer.OptimizeCode(interCode);
 
-            CodeGenerator.MakeAssembly(interCode);
+            string result = CodeGenerator.MakeAssembly(output, interCode);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(result);
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             Console.ReadLine();
         }
