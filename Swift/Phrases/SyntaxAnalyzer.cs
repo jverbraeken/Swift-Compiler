@@ -49,6 +49,15 @@ namespace Swift
             }
             switch (tmpTokens[0].type)
             {
+                case Global.DataType.VAR:
+                    if (tmpTokens[1].type == Global.DataType.IDENTIFIER)
+                    {
+                        return EatExpression(tmpTokens, tmpContext);
+                    }
+                    else
+                    {
+                        Swift.error("Identifier expected at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[1].GetPos().ToString() + ".", 1);
+                    }
                 case Global.DataType.IDENTIFIER:
                     if (tmpTokens[1].type == Global.DataType.OPEN_ROUND_BRACKET)
                     {
