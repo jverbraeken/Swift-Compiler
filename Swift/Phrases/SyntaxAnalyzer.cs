@@ -57,10 +57,14 @@ namespace Swift
                     else {
                         return EatExpression(tmpTokens, tmpContext);
                     }
+                case Global.DataType.LET:
+                    return EatDeclaration(new List<Token>() { tmpTokens[0], tmpTokens[1] }, new List<LineContext>() { tmpContext[0], tmpContext[1] });
                 case Global.DataType.STRING:
                     node = new ASTNode(Global.ASTType.STRING, tmpContext[0]);
                     node.SetName(tmpTokens[0].value);
                     return node;
+                case Global.DataType.VAR:
+                    return EatDeclaration(new List<Token>() { tmpTokens[0], tmpTokens[1] }, new List<LineContext>() { tmpContext[0], tmpContext[1] });
                 default:
                     Swift.error("Syntax error: \"" + tmpTokens[0].value + "\" at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[0].GetPos().ToString() + " could not be identified", 1);
                     return null;
@@ -98,7 +102,7 @@ namespace Swift
                 cutTokens = i + 1;
                 args.Add(EatStatement(arg, argContext));
             }
-            node = new ASTNode(Global.ASTType.FUNCTION_CALL, context[0]);
+            node = new ASTNode(Global.ASTType.FUNCTION_CALL, tmpContext[0]);
             node.SetName(tmpTokens[0].value);
             node.SetChildren(args);
             return node;
@@ -107,14 +111,55 @@ namespace Swift
         /// <summary>
         /// Parses an expression
         /// </summary>
-        /// <param name="tokens"></param>
-        /// <param name="context"></param>
+        /// <param name="tokens">A list of tokens containing only the whole expression</param>
+        /// <param name="context">A list of LineContext corresponding to the tokens supplied</param>
         /// <returns></returns>
         private ASTNode EatExpression(List<Token> tokensIn = null, List<LineContext> contextIn = null)
         {
             List<Token> tmpTokens;
             List<LineContext> tmpContext;
+            if (tokensIn == null)
+            {
+                tmpTokens = tokens;
+                tmpContext = context;
+            }
+            else
+            {
+                tmpTokens = tokensIn;
+                tmpContext = contextIn;
+            }
             return null;
+        }
+
+        /// <summary>
+        /// Parses a declaration (eg, var a, let b)
+        /// </summary>
+        /// <param name="tokens">A list of tokens containing only the whole declaration</param>
+        /// <param name="context">A list of LineContext corresponding to the tokens supplied</param>
+        /// <returns></returns>
+        private ASTNode EatDeclaration(List<Token> tokensIn = null, List<LineContext> contextIn = null)
+        {
+            List<Token> tmpTokens;
+            List<LineContext> tmpContext;
+            if (tokensIn == null)
+            {
+                tmpTokens = tokens;
+                tmpContext = context;
+            }
+            else
+            {
+                tmpTokens = tokensIn;
+                tmpContext = contextIn;
+            }
+            if (tmpTokens[0].type == Global.DataType.VAR)
+                node = new ASTNode(Global.ASTType.VAR_DECLARATION, tmpContext[0]);
+            else if (tmpTokens[0].type == Global.DataType.LET)
+                node = new ASTNode(Global.ASTType.CONST_DECLARATION, tmpContext[0]);
+            else
+                Swift.error("Internal error parsing the variable declaration: " + tmpTokens, 1);
+            node.SetName(tmpTokens[1].value);
+            cutTokens += 2;
+            return node;
         }
 
         private void CutTokens()

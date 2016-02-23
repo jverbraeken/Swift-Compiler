@@ -45,5 +45,31 @@ namespace SwiftTests
             Assert.AreEqual("print", result.GetChildren()[0].GetName());
             Assert.AreEqual("\"hoi\"", result.GetChildren()[0].GetChildren()[0].GetName());
         }
+
+        [TestMethod]
+        public void TestEatDeclaration()
+        {
+            Token tmpToken;
+            LineContext tmpContext;
+            List<Token> tokens = new List<Token>();
+            tmpToken = new Token(Global.DataType.VAR);
+            tmpToken.value = "var";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.IDENTIFIER);
+            tmpToken.value = "a";
+            tokens.Add(tmpToken);
+
+            List<LineContext> context = new List<LineContext>();
+            tmpContext = new LineContext(1, 1);
+            context.Add(tmpContext);
+            tmpContext = new LineContext(1, 1);
+            context.Add(tmpContext);
+
+            SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
+            ASTNode result = syntaxAnalyer.CheckSyntax(tokens, context);
+            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
+            Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
+            Assert.AreEqual("a", result.GetChildren()[0].GetName());
+        }
     }
 }

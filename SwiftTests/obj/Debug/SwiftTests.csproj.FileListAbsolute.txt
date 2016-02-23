@@ -7,3 +7,11 @@ D:\Documents\Compiler\Swift\SwiftTests\bin\Debug\Swift.pdb
 D:\Documents\Compiler\Swift\SwiftTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
 D:\Documents\Compiler\Swift\SwiftTests\obj\Debug\SwiftTests.dll
 D:\Documents\Compiler\Swift\SwiftTests\obj\Debug\SwiftTests.pdb
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\SwiftTests.dll
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\SwiftTests.pdb
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\Swift.exe
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\Swift.pdb
+D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.csprojResolveAssemblyReference.cache
+D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.dll
+D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.pdb
