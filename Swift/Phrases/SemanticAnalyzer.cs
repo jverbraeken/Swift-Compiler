@@ -27,9 +27,9 @@ namespace Swift
             foreach (ASTNode node in ast.GetChildren())
             {
                 node.SetScope(tables[1]);
-                switch (node.GetType().ToString())
+                switch (node.GetType())
                 {
-                    //case "Swift.A
+                    case Global.ASTType.VAR_DECLARATION: AddVariable(node); break;
                 }
             }
 
@@ -45,6 +45,12 @@ namespace Swift
                     case Global.ASTType.FUNCTION_CALL: CheckFunction(node); break;
                 }
             }
+        }
+
+        private void AddVariable(ASTNode node)
+        {
+            Table scope = node.GetScope();
+            scope.insert(new Symbol(node.GetName(), Global.DataType.VAR));
         }
 
         private void CheckFunction(ASTNode node)

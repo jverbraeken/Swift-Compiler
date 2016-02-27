@@ -24,7 +24,18 @@ namespace SwiftTests
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> tables = semanticAnalyzer.GenerateSymbolTables(ast);
             Assert.AreEqual("print", tables[0].lookup("print").GetName());
-            semanticAnalyzer.CheckSemantic(ast);
+        }
+
+        [TestMethod]
+        public void TestCheckVarDeclaration()
+        {
+            ASTNode ast = new ASTNode(Global.ASTType.BASE, new LineContext(1, 1));
+            ASTNode astVariable = new ASTNode(Global.ASTType.VAR_DECLARATION, new LineContext(1, 2));
+            astVariable.SetName("a");
+            ast.SetChildren(new List<ASTNode> { astVariable });
+            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+            List<Table> tables = semanticAnalyzer.GenerateSymbolTables(ast);
+            Assert.AreEqual("a", tables[1].lookup("a").GetName());
         }
     }
 }
