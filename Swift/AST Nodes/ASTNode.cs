@@ -15,6 +15,8 @@ namespace Swift
         private string name;
         private ASTNode returnType;
         private Table scope;
+        private Exp exp1; //For comparisons and assignments (lhs)
+        private Exp exp2; //rhs
 
         /// <summary>
         /// Should not be called directly, but only by its children
@@ -81,6 +83,26 @@ namespace Swift
         public Table GetScope()
         {
             return scope;
+        }
+
+        public void SetExpression1(Exp exp1)
+        {
+            this.exp1 = exp1;
+        }
+
+        public Exp GetExpression1()
+        {
+            return exp1;
+        }
+
+        public void SetExpression2(Exp exp2)
+        {
+            this.exp2 = exp2;
+        }
+
+        public Exp GetExpression2()
+        {
+            return exp2;
         }
 
         public LineContext GetContext()

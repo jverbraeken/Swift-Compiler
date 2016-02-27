@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    interface Visitor
+    public interface Visitor
     {
-        int visit(AndExp n);
-        int visit(BitwiseComplementExp n);
-        int visit(DivisionExp n);
-        int visit(ExclamationExp n);
-        int visit(MinusExp n);
-        int visit(ModuloExp n);
-        int visit(MultiplicationExp n);
-        int visit(OrExp powerExp);
-        int visit(PlusExp n);
-        int visit(PowerExp n);
+        Exp visit(AndExp n);
+        Exp visit(BitwiseComplementExp n);
+        Exp visit(DivisionExp n);
+        Exp visit(ExclamationExp n);
+        Exp visit(MinusExp n);
+        Exp visit(ModuloExp n);
+        Exp visit(MultiplicationExp n);
+        Exp visit(OrExp powerExp);
+        Exp visit(Identifier identifier);
+        Exp visit(PlusExp n);
+        Exp visit(PowerExp n);
+        Exp visit(IntegerLiteral n);
     }
 }

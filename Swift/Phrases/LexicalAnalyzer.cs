@@ -191,6 +191,8 @@ namespace Swift
 
                     Swift.error("Syntax error: \"" + Regex.Match(line, "/^[^\\s]+").Value + "\" could not be identified", 1);
                 }
+                tokens.Add(new Token(Global.DataType.ENDSTATEMENT, ""));
+                context.Add(new LineContext(lineX, lineY));
                 lineY++;
             }
             return Tuple.Create(tokens, context);
