@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="IntermediateCodeGeneratorTest.cs" />
     <Compile Include="SemanticAnalyzerTest.cs" />
     <Compile Include="SyntaxAnalyzerTest.cs" />
     <Compile Include="LexicalAnalyzerTest.cs" />

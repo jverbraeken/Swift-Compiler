@@ -58,5 +58,10 @@ namespace Swift
         {
             return returnTypes;
         }
+
+        public new Global.DataType GetType()
+        {
+            return type;
+        }
     }
 }

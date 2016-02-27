@@ -6,11 +6,87 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class IntermediateCodeGenerator
+    public class IntermediateCodeGenerator
     {
-        public static List<string> GenerateCode(List<Token> tokens, List<Table> tables)
+        List<string> result;
+        int teller;
+
+        public List<string> GenerateCode(string source, string dest, ASTNode ast, List<Table> tables)
         {
-            return new List<string>();
+            result = new List<string>();
+            w("file:\"" + source + "\"");
+            w("section:constants");
+
+            teller = 0;
+            SearchConstants(ast);
+
+            w("section:code");
+            w("define_main_method");
+            w("set_base_pointer");
+            w("reserve_stack");
+            w("call:%SETUP_C%");
+
+            foreach (ASTNode node in ast.GetChildren())
+            {
+                switch (node.GetType())
+                {
+                    case Global.ASTType.FUNCTION_CALL: ExecuteFunctionCall(node);  break;
+                }
+            }
+
+            w("get_base_pointer");
+            w("return");
+            w("comment:\"Yontu: (Joost Verbraeken) BETA\"");
+            return result;
+        }
+
+        private void SearchConstants(ASTNode ast)
+        {
+            foreach (ASTNode node in ast.GetChildren())
+            {
+                if (node.GetType() == Global.ASTType.STRING)
+                {
+                    w("define_constant_string:" + teller.ToString() + ":" + node.GetName());
+                    node.SetAssemblyLocation(teller);
+                    teller++;
+                }
+                SearchConstants(node);
+            }
+        }
+
+        private void ExecuteFunctionCall(ASTNode node)
+        {
+            string name = node.GetName();
+            List<ASTNode> args = node.GetChildren();
+            Table scope = node.GetScope();
+            while (scope != null)
+            {
+                Symbol reference = scope.lookup(name);
+                if (reference != null) //The identifier exists in the current scope
+                {
+                    if (reference.GetType() == Global.DataType.BUILTIN_FUNC) //The function is builtin
+                    {
+                        switch (reference.GetName())
+                        {
+                            case "print": ExecutePrint(node); break;
+                        }
+                    }
+                }
+                scope = scope.GetReference();
+            }
+        }
+
+        private void ExecutePrint(ASTNode node)
+        {
+            if (node.GetChildren()[0].GetType() == Global.ASTType.STRING)
+                w("call:print,constant," + node.GetChildren()[0].GetAssemblyLocation());
+        }
+
+
+
+        private void w(string str)
+        {
+            result.Add(str);
         }
     }
 }
