@@ -71,5 +71,49 @@ namespace SwiftTests
             Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
             Assert.AreEqual("a", result.GetChildren()[0].GetName());
         }
+
+        [TestMethod]
+        public void TestEatDeclarationWithAssignment()
+        {
+            Token tmpToken;
+            LineContext tmpContext;
+            List<Token> tokens = new List<Token>();
+            tmpToken = new Token(Global.DataType.VAR);
+            tmpToken.value = "var";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.IDENTIFIER);
+            tmpToken.value = "a";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.OPERATOR);
+            tmpToken.value = "=";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.INT);
+            tmpToken.value = "3";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.OPERATOR);
+            tmpToken.value = "+";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.INT);
+            tmpToken.value = "2";
+            tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.ENDSTATEMENT);
+            tokens.Add(tmpToken);
+
+            List<LineContext> context = new List<LineContext>();
+            for (int i = 0; i < 7; i++)
+            {
+                tmpContext = new LineContext(1, 1);
+                context.Add(tmpContext);
+            }
+
+            SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
+            TestVisitor testVisitor = new TestVisitor();
+            ASTNode result = syntaxAnalyer.CheckSyntax(tokens, context);
+            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
+            Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
+            Assert.AreEqual("a", result.GetChildren()[0].GetName());
+            Assert.AreEqual(Global.ASTType.ASSIGNMENT, result.GetChildren()[1].GetType());
+
+        }
     }
 }

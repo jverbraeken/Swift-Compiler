@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    interface Exp
+    public interface Exp
     {
-        int accept(Visitor v);
+        Exp accept(Visitor v);
     }
 }

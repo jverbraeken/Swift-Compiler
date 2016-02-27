@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AST Nodes\ASTNode.cs" />
+    <Compile Include="AST Nodes\Expressions\Identifier.cs" />
+    <Compile Include="AST Nodes\Expressions\IntegerLiteral.cs" />
     <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
     <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
     <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />
