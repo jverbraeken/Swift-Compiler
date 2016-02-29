@@ -14,6 +14,7 @@ namespace Swift
     {
         private Dictionary<string, Symbol> dictionary;
         private Table reference; //For scoping a table references its parent.
+        public int StackSize { get; set; }
 
         /// <summary>
         /// Creates a new Symbol Table
@@ -37,8 +38,12 @@ namespace Swift
             Symbol value;
             if (dictionary.TryGetValue(name, out value))
                 return value;
-            else
-                return null;
+            else {
+                if (reference == null)
+                    return null;
+                else
+                    return reference.lookup(name);
+            }
         }
 
         /// <summary>

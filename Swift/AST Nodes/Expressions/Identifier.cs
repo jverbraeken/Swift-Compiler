@@ -9,10 +9,10 @@ namespace Swift
 {
     public class Identifier : ASTNode, Exp
     {
-        private string f0;
-        public Identifier(LineContext context, string f0) : base(context)
+        public string Name { get; set; }
+        public Identifier(LineContext context, string name) : base(context)
         {
-            this.f0 = f0;
+            Name = name;
         }
         public Exp accept(Visitor v)
         {

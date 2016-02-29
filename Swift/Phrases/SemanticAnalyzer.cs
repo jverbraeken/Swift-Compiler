@@ -51,7 +51,9 @@ namespace Swift
         private void AddVariable(ASTNode node)
         {
             Table scope = node.GetScope();
-            scope.insert(new Symbol(node.GetName(), Global.DataType.VAR));
+            Symbol sym = new Symbol(node.GetName(), Global.DataType.VAR);
+            sym.SetStackLocation(scope.StackSize++);
+            scope.insert(sym);
         }
 
         private void AssignVariable(ASTNode node)
@@ -61,7 +63,7 @@ namespace Swift
             while (scope != null)
             {
                 Symbol reference = scope.lookup(name);
-                if (reference != null)
+                if (reference != null && reference.IsReferenced())
                 {
                     //Evaluate the expression
                 }
@@ -73,28 +75,23 @@ namespace Swift
             string name = node.GetName();
             List<ASTNode> args = node.GetChildren();
             Table scope = node.GetScope();
-            while (scope != null)
+            Symbol reference = scope.lookup(name);
+            if (reference != null) //The identifier exists in the current scope
             {
-                Symbol reference = scope.lookup(name);
-                if (reference != null) //The identifier exists in the current scope
+                if (args.Count == reference.GetParameters().Count)
                 {
-                    if (args.Count == reference.GetParameters().Count)
+                    for (int i = 0; i < args.Count; i++)
                     {
-                        for (int i = 0; i < args.Count; i++)
-                        {
-                            if (!(args[i].GetType() == reference.GetParameters()[i]))
-                                Swift.error("The type of the parameter you supplied when calling \"" + name + "\" at the line " + args[i].GetContext().GetLine().ToString() + ", column " + args[i].GetContext().GetPos().ToString() + " is not the same type as required by the function", 1);
-                        }
-                        break;
-                    }
-                    else
-                    {
-                        Swift.error("The number of parameters you supplied when calling \"" + name + "\" at the line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString() + " does not match the required number of parameters as defined in the function", 1);
+                        if (!(args[i].GetType() == reference.GetParameters()[i]))
+                            Swift.error("The type of the parameter you supplied when calling \"" + name + "\" at the line " + args[i].GetContext().GetLine().ToString() + ", column " + args[i].GetContext().GetPos().ToString() + " is not the same type as required by the function", 1);
                     }
                 }
-                scope = scope.GetReference();
+                else
+                {
+                    Swift.error("The number of parameters you supplied when calling \"" + name + "\" at the line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString() + " does not match the required number of parameters as defined in the function", 1);
+                }
             }
-            if (scope == null)
+            else if (scope == null)
                 Swift.error("The function you called could not be found, line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString(), 1);
         }
 
