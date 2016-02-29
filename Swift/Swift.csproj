@@ -56,6 +56,7 @@
     <Compile Include="AST Nodes\Expressions\OrExp.cs" />
     <Compile Include="AST Nodes\Expressions\BitwiseComplementExp.cs" />
     <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
+    <Compile Include="AST Nodes\Type.cs" />
     <Compile Include="Phrases\CodeGenerator.cs" />
     <Compile Include="Phrases\CodeOptimizer.cs" />
     <Compile Include="AST Nodes\Expressions\Exp.cs" />

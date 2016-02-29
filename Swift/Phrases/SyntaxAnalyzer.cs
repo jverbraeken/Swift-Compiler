@@ -49,15 +49,6 @@ namespace Swift
         {
             switch (tokensIn[0].type)
             {
-                case Global.DataType.VAR:
-                    if (tmpTokens[1].type == Global.DataType.IDENTIFIER)
-                    {
-                        return EatExpression(tmpTokens, tmpContext);
-                    }
-                    else
-                    {
-                        Swift.error("Identifier expected at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[1].GetPos().ToString() + ".", 1);
-                    }
                 case Global.DataType.IDENTIFIER:
                     if (tokensIn[1].type == Global.DataType.OPEN_ROUND_BRACKET)
                     {
@@ -146,8 +137,8 @@ namespace Swift
         {
             List<Token> tmpTokens;
             List<LineContext> tmpContext;
-                tmpTokens = tokensIn;
-                tmpContext = contextIn;
+            tmpTokens = tokensIn;
+            tmpContext = contextIn;
             if (tmpTokens[0].type == Global.DataType.OPEN_ROUND_BRACKET)
             {
                 int level = 1;
@@ -278,8 +269,12 @@ namespace Swift
         {
             List<Token> tmpTokens;
             List<LineContext> tmpContext;
-                tmpTokens = tokensIn;
-                tmpContext = contextIn;
+            tmpTokens = tokensIn;
+            tmpContext = contextIn;
+            if (tmpTokens[1].type != Global.DataType.IDENTIFIER)
+            {
+                Swift.error("Identifier expected at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[1].GetPos().ToString() + ".", 1);
+            }
             if (tmpTokens[0].type == Global.DataType.VAR)
                 node = new ASTNode(Global.ASTType.VAR_DECLARATION, tmpContext[0]);
             else if (tmpTokens[0].type == Global.DataType.LET)

@@ -79,8 +79,10 @@ namespace Swift
                         case "section":
                             switch (code)
                             {
-                                case "constants": w(".section\t.rdata,\"dr\""); break;
                                 case "code": w(".text"); break;
+                                case "constants": w(".section\t.rdata,\"dr\""); break;
+                                case "var_initialised": w(".section\t.data"); break;
+                                case "var_unitialised": w(".section\t.comm"); break;
                             }
                             break;
                         case "set_base_pointer":

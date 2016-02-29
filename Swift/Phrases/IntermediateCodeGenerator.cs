@@ -20,6 +20,16 @@ namespace Swift
             teller = 0;
             SearchConstants(ast);
 
+            w("section:var_unitialised");
+
+            teller = 0;
+            SearchUnitialised(ast);
+
+            w("section:var_initialised");
+
+            teller = 0;
+            SearchUnitialised(ast);
+
             w("section:code");
             w("define_main_method");
             w("set_base_pointer");
@@ -31,6 +41,8 @@ namespace Swift
                 switch (node.GetType())
                 {
                     case Global.ASTType.FUNCTION_CALL: ExecuteFunctionCall(node);  break;
+                    case Global.ASTType.VAR_DECLARATION: DeclareVariable(node); break;
+                    case Global.ASTType.ASSIGNMENT: AssignVariable(node); break;
                 }
             }
 
@@ -44,13 +56,53 @@ namespace Swift
         {
             foreach (ASTNode node in ast.GetChildren())
             {
-                if (node.GetType() == Global.ASTType.STRING)
+                switch (node.GetType())
                 {
-                    w("define_constant_string:" + teller.ToString() + ":" + node.GetName());
-                    node.SetAssemblyLocation(teller);
-                    teller++;
+                    case Global.ASTType.STRING:
+                        w("define_constant_string:" + teller.ToString() + ":" + node.GetName());
+                        node.SetAssemblyLocation(teller);
+                        teller++; break;
                 }
                 SearchConstants(node);
+            }
+        }
+
+        private void SearchInitialised(ASTNode ast)
+        {
+            bool waitForAssignment = false;
+            foreach (ASTNode node in ast.GetChildren())
+            {
+                if (waitForAssignment)
+                {
+                    if (node.GetType() == Global.ASTType.ASSIGNMENT)
+                    {
+                        Symbol symbol = node.GetScope().lookup(node.GetExpression1().accept(this));
+                        switch (symbol.GetType())
+                    }
+                    waitForAssignment = false;
+                }
+                switch (node.GetType())
+                {
+                    case Global.ASTType.VAR_DECLARATION:
+                        if (node.GetScope().GetReference() == null)
+                        {
+                            waitForAssignment = true;
+                        }
+                            break;
+                }
+                if (!waitForAssignment)
+                    SearchInitialised(node);
+            }
+        }
+
+        private void DeclareVariable(ASTNode node)
+        {
+            string name = node.GetName();
+            List<ASTNode> args = node.GetChildren();
+            Table scope = node.GetScope();
+            if (scope.GetReference() != null)
+            {
+
             }
         }
 
