@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift.AST_Nodes
+namespace Swift.Instructions
 {
-    public abstract class Type
+    public abstract class Instruction
     {
-        public abstract void accept(Visitor n);
+        public abstract void accept(Visitor v);
     }
 }

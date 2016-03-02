@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.AST_Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class SemanticAnalyzer : Visitor
+    public class SemanticAnalyzer
     {
         private List<Table> tables;
 
@@ -93,74 +94,6 @@ namespace Swift
             }
             else if (scope == null)
                 Swift.error("The function you called could not be found, line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString(), 1);
-        }
-
-
-
-        Exp Visitor.visit(AndExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(BitwiseComplementExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(DivisionExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(ExclamationExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(MinusExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(ModuloExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(MultiplicationExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(OrExp powerExp)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(Identifier identifier)
-        {
-            return identifier;
-        }
-
-        Exp Visitor.visit(PlusExp n)
-        {
-            Exp e1 = n.e1.accept(this);
-            Exp e2 = n.e2.accept(this);
-            if (e1.GetType() != e2.GetType())
-            {
-                //Werkt dit???
-                Swift.error("Incompatible types at line " + n.GetContext().GetLine(), 1);
-            }
-        }
-
-        Exp Visitor.visit(PowerExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        Exp Visitor.visit(IntegerLiteral n)
-        {
-            return n;
         }
     }
 }

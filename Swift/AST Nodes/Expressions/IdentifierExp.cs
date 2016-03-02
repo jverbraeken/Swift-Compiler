@@ -1,5 +1,4 @@
-﻿using Swift.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class Identifier
+    public class IdentifierExp : Exp
     {
-        public string Name { get; set; }
-        public Identifier(string name)
+        private Identifier id;
+        public IdentifierExp(Identifier id)
         {
-            Name = name;
+            this.id = id;
         }
+
         public Type accept(Visitor v)
         {
             return v.visit(this);

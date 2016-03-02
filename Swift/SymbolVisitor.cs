@@ -9,6 +9,7 @@ namespace Swift
     class SymbolVisitor : Visitor
     {
         Table table;
+        public Symbol symbol {get; set;}
         public SymbolVisitor(Table table)
         {
             this.table = table;
@@ -30,7 +31,8 @@ namespace Swift
 
         Exp Visitor.visit(Identifier identifier)
         {
-            return identifier.
+            symbol = table.lookup(identifier.Name);
+            return identifier;
         }
 
         Exp Visitor.visit(PowerExp n)
@@ -40,7 +42,7 @@ namespace Swift
 
         Exp Visitor.visit(IntegerLiteral n)
         {
-            throw new NotImplementedException();
+            return n.f0;
         }
 
         Exp Visitor.visit(PlusExp n)

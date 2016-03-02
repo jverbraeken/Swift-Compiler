@@ -1,20 +1,20 @@
-﻿using Swift.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift
+namespace Swift.Instructions.Directives
 {
-    public class Identifier
+    public class File : Instruction
     {
         public string Name { get; set; }
-        public Identifier(string name)
+        public File(string name)
         {
             Name = name;
         }
-        public Type accept(Visitor v)
+
+        public override string accept(Visitor v)
         {
             return v.visit(this);
         }

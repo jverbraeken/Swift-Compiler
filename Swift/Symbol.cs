@@ -23,6 +23,22 @@ namespace Swift
         private List<Global.ASTType> returnTypes; //for functions
         private bool isReferenced; //if a symbol is never referenced it will be omitted in the compilation
         private int stackLocation;
+        /// <summary>
+        /// Gets or sets stackLocation starting at 1 and increasing by 1, so when generating the code the stack location should be multiplied by, for example, 4 on 32 bit systems.
+        /// </summary>
+        public int StackLocation
+        {
+            get
+            {
+                return stackLocation;
+            }
+            set
+            {
+                if (value <= 0)
+                    throw new ProtectedDataException("You're trying to overwrite data that's not allocated to variables in the current scope.");
+                stackLocation = value;
+            }
+        }
 
         public Symbol(string name, Global.DataType type)
         {
@@ -76,26 +92,6 @@ namespace Swift
         public bool IsReferenced()
         {
             return isReferenced;
-        }
-
-        /// <summary>
-        /// Assigns a new stack location to the symbol.
-        /// Location starts at 1 and is incremented by one, so when generating the code the stack location should be multiplied by, for example, 4 on 32 bit systems.
-        /// </summary>
-        public void SetStackLocation(int location)
-        {
-            if (location <= 0)
-                throw new ProtectedDataException("You're trying to overwrite data that's not allocated to variables in the current scope.");
-            stackLocation = location;
-        }
-
-        /// <summary>
-        /// Retrives the stack location of the symbol.
-        /// Location starts at 1 and is incremented by one, so when generating the code the stack location should be multiplied by, for example, 4 on 32 bit systems.
-        /// </summary>
-        public int GetStackLocation()
-        {
-            return stackLocation;
         }
 
         [Serializable()]

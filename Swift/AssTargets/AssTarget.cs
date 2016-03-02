@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift.AST_Nodes
+namespace Swift
 {
-    public abstract class Type
+    public abstract class AssTarget
     {
-        public abstract void accept(Visitor n);
     }
 }

@@ -21,7 +21,12 @@ namespace Swift
 
         public enum ASTType
         {
-            BASE, FUNCTION_CALL, VAR_DECLARATION, CONST_DECLARATION, STRING, BINARY_EXPRESSION, ASSIGNMENT
+            BASE, FUNCTION_CALL, VAR_DECLARATION, CONST_DECLARATION, STRING, ASSIGNMENT
+        }
+
+        public enum Registers
+        {
+            BASEPOINTER, STACKPOINTER, RAX, RDX
         }
     }
 }

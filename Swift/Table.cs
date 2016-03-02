@@ -14,7 +14,6 @@ namespace Swift
     {
         private Dictionary<string, Symbol> dictionary;
         private Table reference; //For scoping a table references its parent.
-        public int StackSize { get; set; }
 
         /// <summary>
         /// Creates a new Symbol Table
@@ -53,6 +52,11 @@ namespace Swift
         public Table GetReference()
         {
             return reference;
+        }
+
+        public int GetStackSize()
+        {
+            return dictionary.Count;
         }
     }
 }

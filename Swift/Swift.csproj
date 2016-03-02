@@ -43,8 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssTargets\AssTarget.cs" />
+    <Compile Include="AssTargets\RegisterOffsety.cs" />
+    <Compile Include="AssTargets\Register.cs" />
+    <Compile Include="AssTargets\Constant.cs" />
     <Compile Include="AST Nodes\ASTNode.cs" />
     <Compile Include="AST Nodes\Expressions\Identifier.cs" />
+    <Compile Include="AST Nodes\Expressions\IdentifierType.cs" />
+    <Compile Include="AST Nodes\Expressions\IdentifierExp.cs" />
+    <Compile Include="AST Nodes\Expressions\IntegerType.cs" />
     <Compile Include="AST Nodes\Expressions\IntegerLiteral.cs" />
     <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
     <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
@@ -57,6 +64,22 @@
     <Compile Include="AST Nodes\Expressions\BitwiseComplementExp.cs" />
     <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
     <Compile Include="AST Nodes\Type.cs" />
+    <Compile Include="Instructions\Comment.cs" />
+    <Compile Include="Instructions\Pop.cs" />
+    <Compile Include="Instructions\Ret.cs" />
+    <Compile Include="Instructions\Leave.cs" />
+    <Compile Include="Instructions\Nope.cs" />
+    <Compile Include="Instructions\Directives\Debug.cs" />
+    <Compile Include="Instructions\Call.cs" />
+    <Compile Include="Instructions\Add.cs" />
+    <Compile Include="Instructions\Sub.cs" />
+    <Compile Include="Instructions\Move.cs" />
+    <Compile Include="Instructions\Push.cs" />
+    <Compile Include="Instructions\Label.cs" />
+    <Compile Include="Instructions\Directives\MakeGlobal.cs" />
+    <Compile Include="Instructions\Directives\SectionCode.cs" />
+    <Compile Include="Instructions\Directives\File.cs" />
+    <Compile Include="Instructions\Instruction.cs" />
     <Compile Include="Phrases\CodeGenerator.cs" />
     <Compile Include="Phrases\CodeOptimizer.cs" />
     <Compile Include="AST Nodes\Expressions\Exp.cs" />
@@ -67,6 +90,7 @@
     <Compile Include="Scope.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
+    <Compile Include="SymbolVisitor.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="Tokens\LineContext.cs" />
     <Compile Include="Tokens\Token.cs" />
@@ -74,10 +98,12 @@
     <Compile Include="Swift.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Visitor.cs" />
+    <Compile Include="VisitorAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

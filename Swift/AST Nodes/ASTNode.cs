@@ -5,110 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift
+namespace Swift.AST_Nodes
 {
-    public class ASTNode
+    public abstract class ASTNode
     {
-        private Global.ASTType type; //The type of the node, eg a function, a string, a class
-        private LineContext context; //For debugging, gives the programmer an idea where the node is located in the original source code
-        private string name; //The name of the function, the string, ...
-        private ASTNode returnType; //The return type of a function OR the type of a variable
-        private Table scope; //The scope every variable, function, etc. is made in
-
-        private int assemblyLocation; //The location the node is located when compiled to assembly (mostly used for constant variables)
-        private Exp exp1; //For comparisons and assignments (lhs)
-        private Exp exp2; //rhs
-
-        /// <summary>
-        /// Should not be called directly, but only by its children
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="context"></param>
+        public LineContext Context { get; set; } //For debugging, gives the programmer an idea where the node is located in the original source code
         public ASTNode(LineContext context)
         {
-            this.context = context;
+            Context = context;
         }
 
-        public ASTNode(Global.ASTType type, LineContext context)
-        {
-            children = new List<ASTNode>();
-            this.type = type;
-            this.context = context;
-        }
-
-        public void AddNode(ASTNode node)
-        {
-            children.Add(node);
-        }
-
-        public void SetChildren(List<ASTNode> children)
-        {
-            this.children = children;
-        }
-
-        public List<ASTNode> GetChildren()
-        {
-            return children;
-        }
-
-        public void SetName(string name)
-        {
-            this.name = name;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-
-        public new Global.ASTType GetType()
-        {
-            return type;
-        }
-
-        public void SetReturnType(ASTNode returnType)
-        {
-            this.returnType = returnType;
-        }
-
-        public ASTNode GetReturnType()
-        {
-            return returnType;
-        }
-
-        public void SetScope(Table scope)
-        {
-            this.scope = scope;
-        }
-
-        public Table GetScope()
-        {
-            return scope;
-        }
-        
-        public void SetExpression1(Exp exp1)
-        {
-            this.exp1 = exp1;
-        }
-
-        public Exp GetExpression1()
-        {
-            return exp1;
-        }
-
-        public void SetExpression2(Exp exp2)
-        {
-            this.exp2 = exp2;
-        }
-
-        public Exp GetExpression2()
-        {
-            return exp2;
-        }
-
-        public LineContext GetContext()
-        {
-            return context;
-        }
+        public abstract void accept(Visitor v);
     }
 }
