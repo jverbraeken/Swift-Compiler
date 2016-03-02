@@ -194,7 +194,7 @@ namespace Swift
         public override void visit(IntegerLiteral n)
         {
             Add(new Push(new Constant(n.f0)));
-        }
+        }//
 
         public override void visit(PlusExp n)
         {
