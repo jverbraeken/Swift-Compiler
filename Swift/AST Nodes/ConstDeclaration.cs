@@ -9,8 +9,8 @@ namespace Swift.AST_Nodes
 {
     public class ConstDeclaration : ASTNode
     {
-        public Type ConstType { get; set; }
-        public Identifier ConstName { get; set; }
+        public Type Type { get; set; }
+        public Identifier Name { get; set; }
         public ConstDeclaration(LineContext context) : base(context)
         {
         }

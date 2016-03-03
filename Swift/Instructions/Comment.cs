@@ -11,10 +11,10 @@ namespace Swift.Instructions
     /// </summary>
     public class Comment : Instruction
     {
-        private string name;
+        public string Name { get; set; }
         public Comment(string name)
         {
-            this.name = name;
+            Name = name;
         }
 
         public override void accept(Visitor v)

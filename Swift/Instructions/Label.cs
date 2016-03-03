@@ -11,10 +11,10 @@ namespace Swift.Instructions
     /// </summary>
     public class Label : Instruction
     {
-        private string name;
-        public Label(string name)
+        public string Method { get; set; }
+        public Label(string method)
         {
-            this.name = name;
+            Method = method;
         }
 
         public override void accept(Visitor v)

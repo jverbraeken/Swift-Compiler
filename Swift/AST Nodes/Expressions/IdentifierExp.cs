@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.AST_Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,9 @@ namespace Swift
             this.id = id;
         }
 
-        public Type accept(Visitor v)
+        public override void accept(Visitor v)
         {
-            return v.visit(this);
+            v.visit(this);
         }
     }
 }

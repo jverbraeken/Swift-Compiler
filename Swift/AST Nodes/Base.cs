@@ -10,6 +10,7 @@ namespace Swift.AST_Nodes
     public class Base : ASTNode
     {
         public List<ASTNode> Children { get; set; }
+
         public Base(LineContext context) : base(context)
         {
         }

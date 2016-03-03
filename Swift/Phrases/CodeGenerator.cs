@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Swift.Instructions;
+using Swift.Instructions.Directives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,19 +8,20 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class CodeGenerator
+    class CodeGenerator : VisitorAdapter
     {
         public static System.IO.StreamWriter file;
-        public static string MakeAssembly(string dest, List<string> intercode)
+        private string file_origin = "";
+        public static string MakeAssembly(string dest, List<Instruction> intercode, InstructionSetGenerator targetInstructionSet)
         {
-            string file_origin = "";
             using (file = new System.IO.StreamWriter(dest))
             {
                 int pos;
                 string opcode;
                 string code = "";
-                foreach(string str in intercode)
+                foreach(Instruction instruction in intercode)
                 {
+                    instruction.accept(targetInstructionSet);
                     pos = str.IndexOf(':');
                     if (pos == -1)
                         opcode = str;
@@ -113,6 +116,28 @@ namespace Swift
         public static void wn(string l)
         {
             file.WriteLine(l);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public override void visit(File n)
+        {
+            w(".file\t" + n.Name);
+            file_origin = n.Name;
+        }
+
+        public override void visit(SectionCode n)
+        {
+            w(".text");
         }
     }
 }

@@ -15,5 +15,10 @@ namespace Swift.AssTargets
             Value = value;
             Offset = offset;
         }
+
+        public override string accept(Visitor v)
+        {
+            return v.visit(this);
+        }
     }
 }

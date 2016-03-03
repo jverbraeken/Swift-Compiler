@@ -14,9 +14,9 @@ namespace Swift
         {
             Name = name;
         }
-        public Type accept(Visitor v)
+        public void accept(Visitor v)
         {
-            return v.visit(this);
+            v.visit(this);
         }
     }
 }

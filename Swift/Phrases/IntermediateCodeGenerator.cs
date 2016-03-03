@@ -16,12 +16,12 @@ namespace Swift
         int teller;
         SymbolVisitor symbolVisitor;
         List<Table> tables;
-        Stack<Instruction> postfixStack;
+        List<Instruction> postfixStack;
         private Register regRAX = new Register(Global.Registers.RAX);
         private Register regRDX = new Register(Global.Registers.RDX);
         int scope = 1;
 
-        public List<string> GenerateCode(string source, string dest, ASTNode ast, List<Table> tables)
+        public List<Instruction> GenerateCode(string source, string dest, Base ast, List<Table> tables)
         {
             this.tables = tables;
             //result = new List<string>();
@@ -49,7 +49,7 @@ namespace Swift
             Add(new Label("main"));
             Add(new Push(new Register(Global.Registers.BASEPOINTER)));
             Add(new Move(new Register(Global.Registers.STACKPOINTER), new Register(Global.Registers.BASEPOINTER)));
-            Add(new Sub(new Constant(tables[1].StackSize), new Register(Global.Registers.STACKPOINTER)));
+            Add(new Sub(new Constant(tables[1].GetStackSize()), new Register(Global.Registers.STACKPOINTER)));
             Add(new Call("__main"));
             /*w("section:code");
             w("define_main_method");
@@ -67,10 +67,10 @@ namespace Swift
             /*w("get_base_pointer");
             w("return");
             w("comment:\"Yontu: (Joost Verbraeken) BETA\"");*/
-            return result;
+            return postfixStack;
         }
 
-        private void SearchConstants(ASTNode ast)
+        /*private void SearchConstants(ASTNode ast)
         {
             foreach (ASTNode node in ast.GetChildren())
             {
@@ -147,11 +147,11 @@ namespace Swift
         {
             if (node.GetChildren()[0].GetType() == Global.ASTType.STRING)
                 w("call:print,constant," + node.GetChildren()[0].AssemblyLocation);
-        }
+        }*/
 
         private void Add(Instruction item)
         {
-            postfixStack.Push(item);
+            postfixStack.Add(item);
         }
 
 
@@ -194,7 +194,7 @@ namespace Swift
         public override void visit(IntegerLiteral n)
         {
             Add(new Push(new Constant(n.f0)));
-        }//
+        }
 
         public override void visit(PlusExp n)
         {

@@ -32,6 +32,12 @@ namespace Swift
             dictionary.Add(symbol.GetName(), symbol);
         }
 
+        public void Add(Symbol symbol)
+        {
+            symbol.StackLocation = GetStackSize() + 1;
+            dictionary.Add(symbol.GetName(), symbol);
+        }
+
         public Symbol lookup(string name)
         {
             Symbol value;
@@ -54,6 +60,10 @@ namespace Swift
             return reference;
         }
 
+        /// <summary>
+        /// Returns the size of the symbol table, or in other words, the amount of variables in this scope
+        /// </summary>
+        /// <returns></returns>
         public int GetStackSize()
         {
             return dictionary.Count;

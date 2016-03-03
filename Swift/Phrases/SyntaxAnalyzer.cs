@@ -1,4 +1,5 @@
-﻿using Swift.Tokens;
+﻿using Swift.AST_Nodes;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,13 @@ namespace Swift
         List<Token> tokens;
         List<LineContext> context;
         private ASTNode node;
-        private ASTNode astBase;
+        private Base astBase;
 
-        public ASTNode CheckSyntax(List<Token> tokens, List<LineContext> context)
+        public Base CheckSyntax(List<Token> tokens, List<LineContext> context)
         {
             this.tokens = tokens;
             this.context = context;
-            astBase = new ASTNode(Global.ASTType.BASE, context[0]);
+            astBase = new Base(context[0]);
             EatStatements();
             return astBase;
         }
@@ -32,7 +33,7 @@ namespace Swift
                 i = 0;
                 while (tokens[i].type != Global.DataType.ENDSTATEMENT)
                     i++;
-                astBase.AddNode(EatStatement(tokens.GetRange(0, i), context.GetRange(0, i)));
+                astBase.Children.Add(EatStatement(tokens.GetRange(0, i), context.GetRange(0, i)));
                 tokens.RemoveRange(0, i + 1);
                 if (tokens.Count == 0)
                     break;
@@ -52,7 +53,8 @@ namespace Swift
                 case Global.DataType.IDENTIFIER:
                     if (tokensIn[1].type == Global.DataType.OPEN_ROUND_BRACKET)
                     {
-                        return EatFunctionCall(tokensIn, contextIn);
+                        return null; //this is bullshit
+                        //return EatFunctionCall(tokensIn, contextIn);
                     }
                     else {
                         return EatAssignment(tokensIn, contextIn);
@@ -60,8 +62,8 @@ namespace Swift
                 case Global.DataType.LET:
                     return EatDeclaration(tokensIn, contextIn);
                 case Global.DataType.STRING:
-                    node = new ASTNode(Global.ASTType.STRING, contextIn[0]);
-                    node.SetName(tokensIn[0].value);
+                    StringLiteral node = new StringLiteral(contextIn[0]);
+                    node.Name = tokensIn[0].value;
                     return node;
                 case Global.DataType.VAR:
                     return EatDeclaration(tokensIn, contextIn);
@@ -71,7 +73,7 @@ namespace Swift
             }
         }
 
-        private ASTNode EatFunctionCall(List<Token> tokensIn = null, List<LineContext> contextIn = null)
+        /*private ASTNode EatFunctionCall(List<Token> tokensIn = null, List<LineContext> contextIn = null)
         {
             List<Token> tmpTokens;
             List<LineContext> tmpContext;
@@ -105,7 +107,7 @@ namespace Swift
             node.SetName(tmpTokens[0].value);
             node.SetChildren(args);
             return node;
-        }
+        }*/
 
         /// <summary>
         /// Parses an expression
@@ -182,11 +184,11 @@ namespace Swift
         {
             if (!(tokensIn[1].type == Global.DataType.OPERATOR && tokensIn[1].value == "="))
                 Swift.error("Assignment operator expected at line " + contextIn[0].GetLine() + ".", 1);
-            ASTNode node = new ASTNode(Global.ASTType.ASSIGNMENT, contextIn[0]);
-            Exp lhs = new Identifier(contextIn[0], tokensIn[0].value);
+            Assignment node = new Assignment(contextIn[0]);
+            Identifier lhs = new Identifier(tokensIn[0].value);
             Exp rhs = EatExpression(tokensIn.GetRange(2, tokensIn.Count - 2), contextIn.GetRange(2, tokensIn.Count - 2));
-            node.SetExpression1(lhs);
-            node.SetExpression2(rhs);
+            node.LHS = lhs;
+            node.RHS = rhs;
             return node;
         }
 
@@ -276,17 +278,20 @@ namespace Swift
                 Swift.error("Identifier expected at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[1].GetPos().ToString() + ".", 1);
             }
             if (tmpTokens[0].type == Global.DataType.VAR)
-                node = new ASTNode(Global.ASTType.VAR_DECLARATION, tmpContext[0]);
+            {
+                VarDeclaration node = new VarDeclaration(tmpContext[0]);
+                node.Name = tmpTokens[1].value;
+            }
             else if (tmpTokens[0].type == Global.DataType.LET)
             {
                 if (tokensIn.Count <= 2)
                     Swift.error("Constants must be initialized; error occurerred on line " + tmpContext[0].GetLine() + ", column " + tmpContext[0].GetPos() + ".", 1);
-                node = new ASTNode(Global.ASTType.CONST_DECLARATION, tmpContext[0]);
+                ConstDeclaration node = new ConstDeclaration(tmpContext[0]);
+                node.Name = tmpTokens[1].value;
             }
             else
                 Swift.error("Internal error parsing the variable declaration: " + tmpTokens, 1);
-            node.SetName(tmpTokens[1].value);
-            astBase.AddNode(node);
+            astBase.Children.Add(node);
             //if (tokensIn.Count > 2)
             //    node.SetChildren();
             return EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1));

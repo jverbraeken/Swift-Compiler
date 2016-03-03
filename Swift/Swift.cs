@@ -1,4 +1,6 @@
-﻿using Swift.Tokens;
+﻿using Swift.AST_Nodes;
+using Swift.Instructions;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace Swift
 {
     class Swift
     {
-        private static List<string> interCode;
+        private static List<Instruction> interCode;
 
         static void Main(string[] args)
         {
@@ -49,7 +51,7 @@ namespace Swift
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
 
-            ASTNode ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
+            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);

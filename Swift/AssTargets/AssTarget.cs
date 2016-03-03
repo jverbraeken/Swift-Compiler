@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public abstract class AssTarget
+    public interface AssTarget
     {
+        string accept(Visitor v);
     }
 }

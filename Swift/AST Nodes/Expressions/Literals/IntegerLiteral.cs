@@ -1,15 +1,16 @@
-﻿using Swift.Tokens;
+﻿using Swift.AST_Nodes;
+using Swift.Tokens;
 
 namespace Swift
 {
-    public class IntegerLiteral : ASTNode, Exp
+    public class IntegerLiteral : ASTNode, Exp, AssTarget
     {
-        public int f0;
-        public IntegerLiteral(LineContext context, string f0) : base(context)
+        public string Value { get; set; }
+        public IntegerLiteral(LineContext context, string value) : base(context)
         {
-            this.f0 = int.Parse(f0);
+            Value = value;
         }
-        public Type accept(Visitor v)
+        public override string accept(Visitor v)
         {
             return v.visit(this);
         }

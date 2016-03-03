@@ -7,11 +7,26 @@ using Swift.AST_Nodes;
 using Swift.AST_Nodes.Types;
 using Swift.Instructions;
 using Swift.Instructions.Directives;
+using Swift.AssTargets;
 
 namespace Swift
 {
     public class VisitorAdapter : Visitor
     {
+        public virtual string visit(Constant n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual string visit(Register n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual string visit(RegisterOffset n)
+        {
+            throw new NotImplementedException();
+        }
         public virtual void visit(ConstDeclaration n)
         {
             throw new NotImplementedException();

@@ -1,4 +1,5 @@
-﻿using Swift.AST_Nodes;
+﻿using Swift.AssTargets;
+using Swift.AST_Nodes;
 using Swift.AST_Nodes.Types;
 using Swift.Instructions;
 using Swift.Instructions.Directives;
@@ -12,6 +13,10 @@ namespace Swift
 {
     public interface Visitor
     {
+        // AssTargets
+        string visit(Constant n);
+        string visit(Register n);
+        string visit(RegisterOffset n);
         // AST Nodes
         void visit(Assignment n);
         void visit(Base n);

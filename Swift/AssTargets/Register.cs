@@ -13,5 +13,10 @@ namespace Swift.AssTargets
         {
             Value = value;
         }
+
+        public override string accept(Visitor v)
+        {
+            return v.visit(this);
+        }
     }
 }

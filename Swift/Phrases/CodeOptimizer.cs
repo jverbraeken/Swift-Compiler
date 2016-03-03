@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.Instructions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Swift
 {
     class CodeOptimizer
     {
-        public static List<string> OptimizeCode(List<string> code)
+        public static List<Instruction> OptimizeCode(List<Instruction> code)
         {
             return code;
         }

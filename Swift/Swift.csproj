@@ -48,11 +48,18 @@
     <Compile Include="AssTargets\Register.cs" />
     <Compile Include="AssTargets\Constant.cs" />
     <Compile Include="AST Nodes\ASTNode.cs" />
+    <Compile Include="AST Nodes\ConstDeclaration.cs" />
+    <Compile Include="AST Nodes\Assignment.cs" />
+    <Compile Include="AST Nodes\Expressions\Literals\StringLiteral.cs" />
+    <Compile Include="AST Nodes\Type.cs" />
+    <Compile Include="AST Nodes\VarDeclaration.cs" />
+    <Compile Include="AST Nodes\FunctionCall.cs" />
+    <Compile Include="AST Nodes\Base.cs" />
     <Compile Include="AST Nodes\Expressions\Identifier.cs" />
-    <Compile Include="AST Nodes\Expressions\IdentifierType.cs" />
+    <Compile Include="AST Nodes\Types\IdentifierType.cs" />
     <Compile Include="AST Nodes\Expressions\IdentifierExp.cs" />
-    <Compile Include="AST Nodes\Expressions\IntegerType.cs" />
-    <Compile Include="AST Nodes\Expressions\IntegerLiteral.cs" />
+    <Compile Include="AST Nodes\Types\IntegerType.cs" />
+    <Compile Include="AST Nodes\Expressions\Literals\IntegerLiteral.cs" />
     <Compile Include="AST Nodes\Expressions\MinusExp.cs" />
     <Compile Include="AST Nodes\Expressions\MultiplicationExp.cs" />
     <Compile Include="AST Nodes\Expressions\DivisionExp.cs" />
@@ -63,7 +70,6 @@
     <Compile Include="AST Nodes\Expressions\OrExp.cs" />
     <Compile Include="AST Nodes\Expressions\BitwiseComplementExp.cs" />
     <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
-    <Compile Include="AST Nodes\Type.cs" />
     <Compile Include="Instructions\Comment.cs" />
     <Compile Include="Instructions\Pop.cs" />
     <Compile Include="Instructions\Ret.cs" />
@@ -87,7 +93,6 @@
     <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
     <Compile Include="Phrases\LexicalRepresentation.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
-    <Compile Include="Scope.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
     <Compile Include="SymbolVisitor.cs" />

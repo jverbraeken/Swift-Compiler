@@ -1,4 +1,6 @@
-﻿using Swift.Tokens;
+﻿using Swift.AST_Nodes;
+using Swift.AST_Nodes;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +17,9 @@ namespace Swift
             this.e1 = e1;
             this.e2 = e2;
         }
-        public Exp accept(Visitor v)
+        public override void accept(Visitor v)
         {
-            return v.visit(this);
+            v.visit(this);
         }
     }
 }

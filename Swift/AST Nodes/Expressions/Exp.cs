@@ -8,6 +8,6 @@ namespace Swift
 {
     public interface Exp
     {
-        Type accept(Visitor v);
+        void accept(Visitor v);
     }
 }

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class SemanticAnalyzer
+    public class SemanticAnalyzer : VisitorAdapter
     {
         private List<Table> tables;
 
-        public List<Table> GenerateSymbolTables(ASTNode ast)
+        public List<Table> GenerateSymbolTables(Base ast)
         {
             tables = new List<Table>();
             Table swiftTable = new Table(null);
@@ -25,53 +25,32 @@ namespace Swift
             tables.Add(swiftTable);
             tables.Add(new Table(tables[0]));
 
-            foreach (ASTNode node in ast.GetChildren())
+            foreach (ASTNode node in ast.Children)
             {
-                node.SetScope(tables[1]);
-                switch (node.GetType())
-                {
-                    case Global.ASTType.VAR_DECLARATION: AddVariable(node); break;
-                    case Global.ASTType.ASSIGNMENT: AssignVariable(node); break;
-                }
+                node.Scope = tables[1];
+                node.accept(this);
             }
 
             return tables;
         }
 
-        public void CheckSemantic(ASTNode ast)
+        public void CheckSemantic(Base ast)
         {
-            foreach (ASTNode node in ast.GetChildren())
+            foreach (ASTNode node in ast.Children)
             {
-                switch (node.GetType())
+                /*
+                ***********
+                I'M GOING TO NEED MORE THAN ONE VISITOR PROBABLY
+                **************
+            
+            switch (node.GetType())
                 {
                     case Global.ASTType.FUNCTION_CALL: CheckFunction(node); break;
-                }
+                }*/
             }
         }
 
-        private void AddVariable(ASTNode node)
-        {
-            Table scope = node.GetScope();
-            Symbol sym = new Symbol(node.GetName(), Global.DataType.VAR);
-            sym.SetStackLocation(scope.StackSize++);
-            scope.insert(sym);
-        }
-
-        private void AssignVariable(ASTNode node)
-        {
-            string name = node.GetName();
-            Table scope = node.GetScope();
-            while (scope != null)
-            {
-                Symbol reference = scope.lookup(name);
-                if (reference != null && reference.IsReferenced())
-                {
-                    //Evaluate the expression
-                }
-            }
-        }
-
-        private void CheckFunction(ASTNode node)
+        /*private void CheckFunction(ASTNode node)
         {
             string name = node.GetName();
             List<ASTNode> args = node.GetChildren();
@@ -94,6 +73,39 @@ namespace Swift
             }
             else if (scope == null)
                 Swift.error("The function you called could not be found, line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString(), 1);
+        }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public override void visit(VarDeclaration n)
+        {
+            Table scope = n.Scope;
+            Symbol sym = new Symbol(n.Name.Name, Global.DataType.VAR);
+            scope.Add(sym);
+        }
+
+        public override void visit(Assignment n)
+        {
+            string name = n.LHS.Name;
+            Table scope = n.Scope;
+            while (scope != null)
+            {
+                Symbol reference = scope.lookup(name);
+                if (reference != null && reference.IsReferenced())
+                {
+                    //Evaluate the expression
+                }
+            }
         }
     }
 }
