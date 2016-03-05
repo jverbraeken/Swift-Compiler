@@ -13,12 +13,12 @@ namespace Swift
     public class IntermediateCodeGenerator : VisitorAdapter
     {
         //List<string> result;
-        int teller;
-        SymbolVisitor symbolVisitor;
         List<Table> tables;
-        List<Instruction> postfixStack;
+        List<Instruction> postfixList = new List<Instruction>();
         private Register regRAX = new Register(Global.Registers.RAX);
         private Register regRDX = new Register(Global.Registers.RDX);
+        private Register regBase = new Register(Global.Registers.BASEPOINTER);
+        private Register regStack = new Register(Global.Registers.STACKPOINTER);
         int scope = 1;
 
         public List<Instruction> GenerateCode(string source, string dest, Base ast, List<Table> tables)
@@ -45,11 +45,12 @@ namespace Swift
             //SearchInitialised(ast);
 
             Add(new SectionCode());
-            Add(new MakeGlobal("__main"));
+            Add(new MakeGlobal("main"));
             Add(new Label("main"));
             Add(new Push(new Register(Global.Registers.BASEPOINTER)));
-            Add(new Move(new Register(Global.Registers.STACKPOINTER), new Register(Global.Registers.BASEPOINTER)));
-            Add(new Sub(new Constant(tables[1].GetStackSize()), new Register(Global.Registers.STACKPOINTER)));
+            Add(new Move(new Register(Global.Registers.STACKPOINTER), regBase));
+            Add(new Sub(new ByteConstant(4), regStack));
+            Add(new Sub(new ByteConstant(tables[1].GetStackSize()), regStack));
             Add(new Call("__main"));
             /*w("section:code");
             w("define_main_method");
@@ -67,7 +68,7 @@ namespace Swift
             /*w("get_base_pointer");
             w("return");
             w("comment:\"Yontu: (Joost Verbraeken) BETA\"");*/
-            return postfixStack;
+            return postfixList;
         }
 
         /*private void SearchConstants(ASTNode ast)
@@ -151,7 +152,7 @@ namespace Swift
 
         private void Add(Instruction item)
         {
-            postfixStack.Add(item);
+            postfixList.Add(item);
         }
 
 
@@ -175,25 +176,35 @@ namespace Swift
             int stackLocation = tables[scope].lookup(n.LHS.Name).StackLocation;
             n.RHS.accept(this);
             Add(new Pop(regRAX));
-            Add(new Move(regRAX, new RegisterOffset(Global.Registers.STACKPOINTER, stackLocation)));
+            Add(new Move(regRAX, new RegisterOffset(Global.Registers.BASEPOINTER, stackLocation)));
         }
 
         public override void visit(Base n)
         {
             foreach (ASTNode node in n.Children)
-                n.accept(this);
+                node.accept(this);
+        }
+
+        public override void visit(ConstDeclaration n)
+        {
+            return;
         }
 
         public override void visit(Identifier n)
         {
             int stackLocation = tables[scope].lookup(n.Name).StackLocation;
-            Add(new Move(new RegisterOffset(Global.Registers.STACKPOINTER, stackLocation), regRAX));
+            Add(new Move(new RegisterOffset(Global.Registers.BASEPOINTER, stackLocation), regRAX));
             Add(new Push(regRAX));
+        }
+
+        public override void visit(IdentifierExp n)
+        {
+            n.ID.accept(this);
         }
 
         public override void visit(IntegerLiteral n)
         {
-            Add(new Push(new Constant(n.f0)));
+            Add(new Push(new IntegerConstant(int.Parse(n.Value))));
         }
 
         public override void visit(PlusExp n)
@@ -202,8 +213,13 @@ namespace Swift
             n.e2.accept(this);
             Add(new Pop(regRDX));
             Add(new Pop(regRAX));
-            Add(new Add());
+            Add(new Add(regRDX, regRAX));
             Add(new Push(regRAX));
+        }
+
+        public override void visit(VarDeclaration n)
+        {
+            return;
         }
     }
 }

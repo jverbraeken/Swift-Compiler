@@ -19,14 +19,14 @@ namespace Swift
             , ENDSTATEMENT
         }
 
-        public enum ASTType
-        {
-            BASE, FUNCTION_CALL, VAR_DECLARATION, CONST_DECLARATION, STRING, ASSIGNMENT
-        }
-
         public enum Registers
         {
             BASEPOINTER, STACKPOINTER, RAX, RDX
+        }
+
+        public enum InstructionSets
+        {
+            X86, X86_64
         }
     }
 }

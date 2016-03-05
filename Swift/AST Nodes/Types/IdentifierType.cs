@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Swift.AST_Nodes.Types
 {
-    public class IdentifierType : Type
+    public class IdentifierType : ASTType
     {
         private Identifier id;
         public IdentifierType(Identifier id)

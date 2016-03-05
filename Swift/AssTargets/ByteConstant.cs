@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace Swift.AssTargets
 {
-    public class RegisterOffset : AssTarget
+    public class ByteConstant : AssTarget
     {
-        public Global.Registers Value { get; set; }
-        public int Offset { get; set; }
-        public RegisterOffset(Global.Registers value, int offset)
+        public int Value { get; set; }
+        /// <summary>
+        /// Stores an integer that will be multiplied by a certain factor, eg 8 for 64-bit systems
+        /// </summary>
+        /// <param name="value"></param>
+        public ByteConstant(int value)
         {
             Value = value;
-            Offset = offset;
         }
 
         public string accept(Visitor v)

@@ -13,6 +13,7 @@ namespace Swift.AST_Nodes
 
         public Base(LineContext context) : base(context)
         {
+            Children = new List<ASTNode>();
         }
 
         public override void accept(Visitor v)

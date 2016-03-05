@@ -1,4 +1,5 @@
 ﻿using Swift.AST_Nodes;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,15 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class IdentifierExp : Exp
+    public class IdentifierExp : ASTNode, Exp
     {
-        private Identifier id;
-        public IdentifierExp(Identifier id)
+        public Identifier ID
         {
-            this.id = id;
+            get; set;
+        }
+        public IdentifierExp(LineContext context, Identifier id) : base(context)
+        {
+            ID = id;
         }
 
         public override void accept(Visitor v)

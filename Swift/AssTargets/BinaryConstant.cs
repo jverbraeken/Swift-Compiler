@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace Swift.AssTargets
 {
-    public class RegisterOffset : AssTarget
+    public class BinaryConstant : AssTarget
     {
-        public Global.Registers Value { get; set; }
-        public int Offset { get; set; }
-        public RegisterOffset(Global.Registers value, int offset)
+        public int Value { get; set; }
+        public BinaryConstant(int value)
         {
             Value = value;
-            Offset = offset;
         }
 
         public string accept(Visitor v)

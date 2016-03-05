@@ -11,10 +11,10 @@ namespace Swift.Instructions
     /// </summary>
     public class Push : Instruction
     {
-        private AssTarget target;
+        public AssTarget Target { get; set; }
         public Push(AssTarget target)
         {
-            this.target = target;
+            Target = target;
         }
 
         public override void accept(Visitor v)

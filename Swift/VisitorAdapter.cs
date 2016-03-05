@@ -13,203 +13,290 @@ namespace Swift
 {
     public class VisitorAdapter : Visitor
     {
-        public virtual string visit(Constant n)
+        public virtual string visit(IntegerConstant n)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("IntegerConstant is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual string visit(ByteConstant n)
+        {
+            throw new NotImplementedException("ByteConstant is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual string visit(OctalConstant n)
+        {
+            throw new NotImplementedException("OctalConstant is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual string visit(BinaryConstant n)
+        {
+            throw new NotImplementedException("BinaryConstant is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual string visit(HexadecimalConstant n)
+        {
+            throw new NotImplementedException("HexadecimalConstant is not implemented yet");
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual string visit(Register n)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Register is not implemented yet");
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual string visit(RegisterOffset n)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("RegisterOffset is not implemented yet");
+            // Do nothing; leave the implementation to the main class
         }
         public virtual void visit(ConstDeclaration n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(VarDeclaration n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(BitwiseComplementExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(ExclamationExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(ModuloExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(OrExp powerExp)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Identifier identifier)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(PowerExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(StringLiteral n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(IntegerType t)
+        public virtual void visit(Int8Type t)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Call n)
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual void visit(Instruction n)
-        {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Leave n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Nope n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Push n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Sub n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(File n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(SectionCode n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(MakeGlobal n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Debug n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Ret n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Pop n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Move n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Label n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Comment n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Add n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(IdentifierType id)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(CharType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(FloatType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int32Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(StringType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt16Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt64Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(VoidType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt32Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt8Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int64Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int16Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(DoubleType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(BooleanType t)
+        {
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(IntegerLiteral n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(PlusExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(IdentifierExp identifier)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(MultiplicationExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(MinusExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(DivisionExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(AndExp n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(FunctionCall n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Base n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(Assignment n)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
     }
 }

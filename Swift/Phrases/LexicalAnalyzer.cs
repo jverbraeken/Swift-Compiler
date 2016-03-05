@@ -30,7 +30,7 @@ namespace Swift
         regexOpenBraces = "^\\{",
         regexCloseBraces = "^\\}",
         //Operators
-        regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\%\\|\\^\\~\\?][^\\/]",
+        regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\%\\|\\^\\~\\?]",
         //Comments
         regexComment = "^\\/\\/";
 
@@ -189,7 +189,7 @@ namespace Swift
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
 
-                    Swift.error("Syntax error: \"" + Regex.Match(line, "/^[^\\s]+").Value + "\" could not be identified", 1);
+                    Swift.error("Syntax error: \"" + line + "\" could not be identified", 1);
                 }
                 tokens.Add(new Token(Global.DataType.ENDSTATEMENT, ""));
                 context.Add(new LineContext(lineX, lineY));

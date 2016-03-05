@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SwiftTests
 {
-    class TestVisitor : Visitor
+    class TestVisitor// : Visitor
     {
-        Exp Visitor.visit(DivisionExp n)
+        /*Exp Visitor.visit(DivisionExp n)
         {
             throw new NotImplementedException();
         }
@@ -69,6 +69,6 @@ namespace SwiftTests
         Exp Visitor.visit(AndExp n)
         {
             throw new NotImplementedException();
-        }
+        }*/
     }
 }

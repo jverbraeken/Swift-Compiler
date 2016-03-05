@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swift.AST_Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,9 @@ namespace Swift
     /// <param name="attribute"></param>
     public class Symbol
     {
-        private string name;
-        private Global.DataType type;
+        public string Name { get; set; }
         private bool isStatic;
-        private object value; //for constants
-        private int length; //for arrays
-        private List<Global.ASTType> parameters; //for functions
-        private List<Global.ASTType> returnTypes; //for functions
-        private bool isReferenced; //if a symbol is never referenced it will be omitted in the compilation
+        private bool isReferenced; // if a symbol is never referenced it will be omitted in the compilation
         private int stackLocation;
         /// <summary>
         /// Gets or sets stackLocation starting at 1 and increasing by 1, so when generating the code the stack location should be multiplied by, for example, 4 on 32 bit systems.
@@ -40,45 +36,9 @@ namespace Swift
             }
         }
 
-        public Symbol(string name, Global.DataType type)
+        public Symbol(string name)
         {
-            this.name = name;
-            this.type = type;
-        }
-
-        public void SetName(string name)
-        {
-            this.name = name;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-
-        public void SetParameters(List<Global.ASTType> parameters)
-        {
-            this.parameters = parameters;
-        }
-
-        public List<Global.ASTType> GetParameters()
-        {
-            return parameters;
-        }
-
-        public void SetReturnTypes(List<Global.ASTType> returnTypes)
-        {
-            this.returnTypes = returnTypes;
-        }
-
-        public List<Global.ASTType> GetReturnTypes()
-        {
-            return returnTypes;
-        }
-
-        public new Global.DataType GetType()
-        {
-            return type;
+            Name = name;
         }
 
         /// <summary>
@@ -89,6 +49,10 @@ namespace Swift
             isReferenced = true;
         }
 
+        /// <summary>
+        /// If a symbol is never referenced it will be omitted in the compilation
+        /// </summary>
+        /// <returns></returns>
         public bool IsReferenced()
         {
             return isReferenced;

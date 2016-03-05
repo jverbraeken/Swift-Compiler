@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace Swift.AST_Nodes
 {
-    public class StringLiteral : ASTNode
+    public class StringLiteral : ASTNode, Exp
     {
         public string Name { get; set; }
         public string AssemblyLocation { get; set; } // For large constant data types like strings
-        public LineContext Context { get; set; }
-        public StringLiteral(LineContext context) : base(context)
+        public StringLiteral(LineContext context, string name) : base(context)
         {
-            Context = context;
+            Name = name;
+        }
+
+        public override void accept(Visitor v)
+        {
+            v.visit(this);
         }
     }
 }

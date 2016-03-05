@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift.Instructions.Directives
+namespace Swift.AST_Nodes.Types
 {
-    public class SectionCode : Instruction
+    public class VoidType : ASTType
     {
+        public VoidType()
+        {
+        }
+
         public override void accept(Visitor v)
         {
             v.visit(this);

@@ -14,9 +14,9 @@ namespace Swift.Instructions.Directives
             this.info = info;
         }
 
-        public override string accept(Visitor v)
+        public override void accept(Visitor v)
         {
-            return v.visit(this);
+            v.visit(this);
         }
 
         public override string ToString()

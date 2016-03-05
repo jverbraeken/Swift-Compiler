@@ -14,7 +14,11 @@ namespace Swift
     public interface Visitor
     {
         // AssTargets
-        string visit(Constant n);
+        string visit(IntegerConstant n);
+        string visit(ByteConstant n);
+        string visit(BinaryConstant n);
+        string visit(OctalConstant n);
+        string visit(HexadecimalConstant n);
         string visit(Register n);
         string visit(RegisterOffset n);
         // AST Nodes
@@ -40,13 +44,25 @@ namespace Swift
         void visit(IntegerLiteral n);
         void visit(StringLiteral n);
         // AST Nodes - Types
+        void visit(BooleanType t);
+        void visit(CharType t);
+        void visit(DoubleType t);
+        void visit(FloatType t);
         void visit(IdentifierType id);
-        void visit(IntegerType t);
+        void visit(Int8Type t);
+        void visit(Int16Type t);
+        void visit(Int32Type t);
+        void visit(Int64Type t);
+        void visit(StringType t);
+        void visit(UInt8Type t);
+        void visit(UInt16Type t);
+        void visit(UInt32Type t);
+        void visit(UInt64Type t);
+        void visit(VoidType t);
         // Instructions
         void visit(Add n);
         void visit(Call n);
         void visit(Comment n);
-        void visit(Instruction n);
         void visit(Label n);
         void visit(Leave n);
         void visit(Move n);

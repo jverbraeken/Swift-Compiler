@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Swift.AssTargets
 {
-    public class Constant : AssTarget
+    public class HexadecimalConstant : AssTarget
     {
         public int Value { get; set; }
-        public Constant(int value)
+        public HexadecimalConstant(int value)
         {
             Value = value;
         }
 
-        public override string accept(Visitor v)
+        public string accept(Visitor v)
         {
             return v.visit(this);
         }

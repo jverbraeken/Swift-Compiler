@@ -40,7 +40,11 @@ namespace Swift.InstructionSetGenerators
             Stream.WriteLine(l);
         }
 
-        public abstract string visit(Constant n);
+        public abstract string visit(IntegerConstant n);
+        public abstract string visit(ByteConstant n);
+        public abstract string visit(BinaryConstant n);
+        public abstract string visit(OctalConstant n);
+        public abstract string visit(HexadecimalConstant n);
         public abstract string visit(Register n);
         public abstract string visit(RegisterOffset n);
 
@@ -48,7 +52,6 @@ namespace Swift.InstructionSetGenerators
         public abstract void visit(Add n);
         public abstract void visit(Call n);
         public abstract void visit(Comment n);
-        public abstract void visit(Instruction n);
         public abstract void visit(Label n);
         public abstract void visit(Leave n);
         public abstract void visit(Move n);
@@ -103,14 +106,79 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
-        public void visit(IntegerType t)
+        public virtual void visit(IdentifierType id)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
         }
 
-        public void visit(IdentifierType id)
+        public virtual void visit(CharType t)
         {
-            throw new NotImplementedException();
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(FloatType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int32Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(StringType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int8Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt16Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt64Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(VoidType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt32Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(UInt8Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int64Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(Int16Type t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(DoubleType t)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(BooleanType t)
+        {
+            // Do nothing; leave the implementation to the main class
         }
 
         public void visit(IntegerLiteral n)

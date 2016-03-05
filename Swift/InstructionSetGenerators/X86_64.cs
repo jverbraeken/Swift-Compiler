@@ -11,40 +11,39 @@ namespace Swift.InstructionSetGenerators
 {
     class X86_64 : InstructionSetGenerator
     {
+        private const int WORD_SIZE = 8;
         public X86_64(System.IO.StreamWriter stream) : base(stream)
         {
         }
 
         public override void visit(Comment n)
         {
-            w(".ident\t" + n.Name);
+            w(".ident\t\"" + n.Name + "\"");
         }
 
         public override void visit(Label n)
         {
-            wn(n.Method + ";");
+            wn(n.Method + ":");
         }
 
         public override void visit(Move n)
         {
-            throw new NotImplementedException();
+            w("movq\t" + n.From.accept(this) + ", " + n.To.accept(this));
         }
 
         public override void visit(Pop n)
         {
-            switch (n.Target.GetType()) {
-                case w("popq\t" + )
-            }
+            w("popq\t" + n.Target.accept(this));
         }
 
         public override void visit(Ret n)
         {
-            throw new NotImplementedException();
+            w("ret");
         }
 
         public override void visit(Debug n)
         {
-            throw new NotImplementedException();
+            w(".def\t" + n.ToString());
         }
 
         public override void visit(MakeGlobal n)
@@ -59,42 +58,37 @@ namespace Swift.InstructionSetGenerators
 
         public override void visit(File n)
         {
-            w(".file\t" + n.Name);
+            w(".file\t\"" + n.Name + "\"");
         }
 
         public override void visit(Sub n)
         {
-            throw new NotImplementedException();
+            w("subq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
         }
 
         public override void visit(Push n)
         {
-            throw new NotImplementedException();
+            w("pushq\t" + n.Target.accept(this));
         }
 
         public override void visit(Nope n)
         {
-            throw new NotImplementedException();
+            w("nop");
         }
 
         public override void visit(Leave n)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void visit(Instruction n)
-        {
-            throw new NotImplementedException();
+            w("leave");
         }
 
         public override void visit(Call n)
         {
-            throw new NotImplementedException();
+            w("call\t" + n.Name);
         }
 
         public override void visit(Add n)
         {
-            throw new NotImplementedException();
+            w("addq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
         }
 
 
@@ -115,7 +109,7 @@ namespace Swift.InstructionSetGenerators
         {
             switch (n.Value)
             {
-                case Global.Registers.BASEPOINTER: return "-" + n.Offset*8 + "(%rbp)";
+                case Global.Registers.BASEPOINTER: return "-" + n.Offset * 8 + "(%rbp)";
                 case Global.Registers.RAX: return "-" + n.Offset * 8 + "(%rax)";
                 case Global.Registers.RDX: return "-" + n.Offset * 8 + "(%rdx)";
                 case Global.Registers.STACKPOINTER: return "-" + n.Offset * 8 + "(%rsp)";
@@ -123,10 +117,32 @@ namespace Swift.InstructionSetGenerators
             return null;
         }
 
-        public override string visit(Constant n)
+        public override string visit(IntegerConstant n)
         {
-            return n.V  
-                    
+            return "$" + n.Value.ToString();
+        }
+
+        public override string visit(ByteConstant n)
+        {
+            return "$" + (n.Value * WORD_SIZE).ToString();
+        }
+
+        public override string visit(BinaryConstant n)
+        {
+            //return "$" + n.Value.ToString();
+            return null;
+        }
+
+        public override string visit(OctalConstant n)
+        {
+            return "0" + n.Value.ToString();
+
+        }
+
+        public override string visit(HexadecimalConstant n)
+        {
+            return "0x" + n.Value.ToString();
+
         }
     }
 }

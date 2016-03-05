@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class SymbolVisitor : Visitor
+    class SymbolVisitor// : Visitor
     {
-        Table table;
+        /*Table table;
         public Symbol symbol {get; set;}
         public SymbolVisitor(Table table)
         {
@@ -73,6 +73,6 @@ namespace Swift
         Exp Visitor.visit(AndExp n)
         {
             throw new NotImplementedException();
-        }
+        }*/
     }
 }

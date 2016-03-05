@@ -1,4 +1,7 @@
 ﻿using Swift.AST_Nodes;
+using Swift.AST_Nodes.Types;
+using Swift.Phrases;
+using Swift.Symbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +10,22 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class SemanticAnalyzer : VisitorAdapter
+    public class SemanticAnalyzer
     {
-        private List<Table> tables;
+        List<Table> tables;
+        SymbolTableGeneratorVisitor symbolTableGeneratorVisitor;
 
         public List<Table> GenerateSymbolTables(Base ast)
         {
+            symbolTableGeneratorVisitor = new SymbolTableGeneratorVisitor();
             tables = new List<Table>();
             Table swiftTable = new Table(null);
-            Symbol printSymbol = new Symbol("print", Global.DataType.BUILTIN_FUNC);
-            List<Global.ASTType> lst = new List<Global.ASTType>();
-            lst.Add(Global.ASTType.STRING);
-            printSymbol.SetParameters(lst);
-            lst = new List<Global.ASTType>();
-            printSymbol.SetReturnTypes(lst);
+            BuiltinFunctionSymbol printSymbol = new BuiltinFunctionSymbol("print");
+            List<ASTType> lst = new List<ASTType>();
+            lst.Add(new StringType());
+            printSymbol.Parameters = lst;
+            lst = new List<ASTType>();
+            printSymbol.ReturnTypes = lst;
             swiftTable.insert(printSymbol);
             tables.Add(swiftTable);
             tables.Add(new Table(tables[0]));
@@ -28,7 +33,7 @@ namespace Swift
             foreach (ASTNode node in ast.Children)
             {
                 node.Scope = tables[1];
-                node.accept(this);
+                node.accept(symbolTableGeneratorVisitor);
             }
 
             return tables;
@@ -38,23 +43,16 @@ namespace Swift
         {
             foreach (ASTNode node in ast.Children)
             {
-                /*
-                ***********
-                I'M GOING TO NEED MORE THAN ONE VISITOR PROBABLY
-                **************
-            
-            switch (node.GetType())
-                {
-                    case Global.ASTType.FUNCTION_CALL: CheckFunction(node); break;
-                }*/
+                node.Scope = tables[1];
+                node.accept(symbolTableGeneratorVisitor);
             }
         }
 
-        /*private void CheckFunction(ASTNode node)
+        private void CheckFunction(FunctionCall node)
         {
-            string name = node.GetName();
-            List<ASTNode> args = node.GetChildren();
-            Table scope = node.GetScope();
+            string name = node.Name.Name;
+            List<Exp> args = node.Args;
+            Table scope = node.Scope;
             Symbol reference = scope.lookup(name);
             if (reference != null) //The identifier exists in the current scope
             {
@@ -73,39 +71,20 @@ namespace Swift
             }
             else if (scope == null)
                 Swift.error("The function you called could not be found, line " + node.GetContext().GetLine().ToString() + ", column " + node.GetContext().GetPos().ToString(), 1);
-        }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public override void visit(VarDeclaration n)
-        {
-            Table scope = n.Scope;
-            Symbol sym = new Symbol(n.Name.Name, Global.DataType.VAR);
-            scope.Add(sym);
         }
 
-        public override void visit(Assignment n)
-        {
-            string name = n.LHS.Name;
-            Table scope = n.Scope;
-            while (scope != null)
-            {
-                Symbol reference = scope.lookup(name);
-                if (reference != null && reference.IsReferenced())
-                {
-                    //Evaluate the expression
-                }
-            }
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

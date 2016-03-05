@@ -9,9 +9,11 @@ namespace Swift.AST_Nodes
 {
     public class FunctionCall : ASTNode
     {
-        public string AssemblyLocation { get; set; }
+        public Identifier Name { get; set; }
+        public List<Exp> Args { get; set; }
         public FunctionCall(LineContext context) : base(context)
         {
+            Args = new List<Exp>();
         }
 
         public override void accept(Visitor v)

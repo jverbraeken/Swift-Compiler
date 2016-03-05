@@ -9,7 +9,7 @@ namespace Swift.AST_Nodes
 {
     public class ConstDeclaration : ASTNode
     {
-        public Type Type { get; set; }
+        public ASTType Type { get; set; }
         public Identifier Name { get; set; }
         public ConstDeclaration(LineContext context) : base(context)
         {

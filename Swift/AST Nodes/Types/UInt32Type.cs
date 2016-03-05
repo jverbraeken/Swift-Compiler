@@ -2,12 +2,12 @@
 
 namespace Swift.AST_Nodes.Types
 {
-    public class IntegerType : Type
+    public class UInt32Type : ASTType
     {
-        public int f0;
-        public IntegerType(int f0)
+        public uint Value { get; set; }
+        public UInt32Type(uint value)
         {
-            this.f0 = f0;
+            Value = value;
         }
         public override void accept(Visitor v)
         {

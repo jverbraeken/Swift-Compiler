@@ -11,6 +11,14 @@ namespace Swift.Instructions
     /// </summary>
     public class Add : Instruction
     {
+        public AssTarget Value { get; set; }
+        public AssTarget Target { get; set; }
+        public Add(AssTarget value, AssTarget target)
+        {
+            Value = value;
+            Target = target;
+        }
+
         public override void accept(Visitor v)
         {
             v.visit(this);

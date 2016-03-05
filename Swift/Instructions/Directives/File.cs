@@ -14,9 +14,9 @@ namespace Swift.Instructions.Directives
             Name = name;
         }
 
-        public override string accept(Visitor v)
+        public override void accept(Visitor v)
         {
-            return v.visit(this);
+            v.visit(this);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Swift.Instructions;
 using Swift.Instructions.Directives;
+using Swift.InstructionSetGenerators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +9,23 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    class CodeGenerator : VisitorAdapter
+    class CodeGenerator
     {
         public static System.IO.StreamWriter file;
-        private string file_origin = "";
-        public static string MakeAssembly(string dest, List<Instruction> intercode, InstructionSetGenerator targetInstructionSet)
+        public static string MakeAssembly(string origin, string dest, List<Instruction> intercode, Global.InstructionSets targetInstructionSet)
         {
             using (file = new System.IO.StreamWriter(dest))
             {
-                int pos;
-                string opcode;
-                string code = "";
-                foreach(Instruction instruction in intercode)
+                InstructionSetGenerator ISVisitor;
+                switch (targetInstructionSet)
                 {
-                    instruction.accept(targetInstructionSet);
-                    pos = str.IndexOf(':');
+                    case Global.InstructionSets.X86_64: ISVisitor = new X86_64(file); break;
+                    default: ISVisitor = new X86_64(file); break;
+                }
+                foreach (Instruction instruction in intercode)
+                {
+                    instruction.accept(ISVisitor);
+                    /*pos = str.IndexOf(':');
                     if (pos == -1)
                         opcode = str;
                     else
@@ -92,10 +95,10 @@ namespace Swift
                             w("pushl\t%ebp");
                             w("movl\t%esp, %ebp");
                             break;
-                    }
+                    }*/
                 }
             }
-            return "Compilation successful. The compilation of the source \"" + file_origin + "\" is contained in \"" + dest + "\"";
+            return "Compilation successful. The compilation of the source \"" + origin + "\" is contained in \"" + dest + "\"";
         }
 
         /// <summary>
@@ -116,28 +119,6 @@ namespace Swift
         public static void wn(string l)
         {
             file.WriteLine(l);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-        public override void visit(File n)
-        {
-            w(".file\t" + n.Name);
-            file_origin = n.Name;
-        }
-
-        public override void visit(SectionCode n)
-        {
-            w(".text");
         }
     }
 }
