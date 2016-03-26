@@ -41,8 +41,6 @@ namespace SwiftTests
 
             SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
             Base result = syntaxAnalyer.CheckSyntax(tokens, context);
-            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
-            Assert.AreEqual(Global.ASTType.FUNCTION_CALL, result.Children[0].GetType());
             //Assert.AreEqual("print", result.Children[0].GetName());
             //Assert.AreEqual("\"hoi\"", result.Children[0].GetName());
         }
@@ -67,8 +65,7 @@ namespace SwiftTests
             context.Add(tmpContext);
 
             SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
-            ASTNode result = syntaxAnalyer.CheckSyntax(tokens, context);
-            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
+            Base result = syntaxAnalyer.CheckSyntax(tokens, context);
             //Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
             //Assert.AreEqual("a", result.GetChildren()[0].GetName());
         }
@@ -109,8 +106,7 @@ namespace SwiftTests
 
             SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
             TestVisitor testVisitor = new TestVisitor();
-            ASTNode result = syntaxAnalyer.CheckSyntax(tokens, context);
-            Assert.AreEqual(Global.ASTType.BASE, result.GetType());
+            Base result = syntaxAnalyer.CheckSyntax(tokens, context);
             /*Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
             Assert.AreEqual("a", result.GetChildren()[0].GetName());
             Assert.AreEqual(Global.ASTType.ASSIGNMENT, result.GetChildren()[1].GetType());*/

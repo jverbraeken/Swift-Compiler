@@ -12,14 +12,13 @@ namespace Swift
 {
     class Swift
     {
-        private static List<Instruction> interCode;
+        public static Global.InstructionSets architecture = Global.InstructionSets.X86_64;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             string lookingFor = "";
             string source = "";
             string output = "";
-            Global.InstructionSets architecture = Global.InstructionSets.X86_64;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -67,14 +66,13 @@ namespace Swift
             Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
-            List<Table> symbolTables = semanticAnalyzer.GenerateSymbolTables(ast);
-            semanticAnalyzer.CheckSemantic(ast);
+            List<Table> symbolTables = semanticAnalyzer.CheckSemantics(ast);
 
-            interCode = (new IntermediateCodeGenerator()).GenerateCode(source, output, ast, symbolTables);
+            List<Module> modules = (new IntermediateCodeGenerator()).GenerateCode(source, output, ast, symbolTables);
 
-            interCode = CodeOptimizer.OptimizeCode(interCode);
+            modules = CodeOptimizer.OptimizeCode(modules);
             
-            string result = CodeGenerator.MakeAssembly(source, output, interCode, architecture);
+           string result = CodeGenerator.MakeAssembly(source, output, modules, architecture);
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(result);

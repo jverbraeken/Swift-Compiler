@@ -12,7 +12,7 @@ namespace Swift
     class CodeGenerator
     {
         public static System.IO.StreamWriter file;
-        public static string MakeAssembly(string origin, string dest, List<Instruction> intercode, Global.InstructionSets targetInstructionSet)
+        public static string MakeAssembly(string origin, string dest, List<Module> modules, Global.InstructionSets targetInstructionSet)
         {
             using (file = new System.IO.StreamWriter(dest))
             {
@@ -22,9 +22,10 @@ namespace Swift
                     case Global.InstructionSets.X86_64: ISVisitor = new X86_64(file); break;
                     default: ISVisitor = new X86_64(file); break;
                 }
-                foreach (Instruction instruction in intercode)
-                {
-                    instruction.accept(ISVisitor);
+                ISVisitor.processModules(origin, modules);
+                //foreach (Instruction instruction in intercode)
+                //{
+                //    instruction.accept(ISVisitor);
                     /*pos = str.IndexOf(':');
                     if (pos == -1)
                         opcode = str;
@@ -96,7 +97,7 @@ namespace Swift
                             w("movl\t%esp, %ebp");
                             break;
                     }*/
-                }
+                //}
             }
             return "Compilation successful. The compilation of the source \"" + origin + "\" is contained in \"" + dest + "\"";
         }

@@ -8,6 +8,7 @@ using Swift.AST_Nodes.Types;
 using Swift.Instructions;
 using Swift.Instructions.Directives;
 using Swift.AssTargets;
+using Swift.Symbols;
 
 namespace Swift
 {
@@ -44,6 +45,12 @@ namespace Swift
         }
 
         public virtual string visit(Register n)
+        {
+            throw new NotImplementedException("Register is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual string visit(ParamRegister n)
         {
             throw new NotImplementedException("Register is not implemented yet");
             // Do nothing; leave the implementation to the main class
@@ -109,6 +116,11 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
+        public virtual void visit(Lea n)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
         public virtual void visit(Leave n)
         {
             // Do nothing; leave the implementation to the main class
@@ -129,11 +141,6 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(File n)
-        {
-            // Do nothing; leave the implementation to the main class
-        }
-
         public virtual void visit(SectionCode n)
         {
             // Do nothing; leave the implementation to the main class
@@ -150,6 +157,96 @@ namespace Swift
         }
 
         public virtual void visit(Ret n)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(BuiltinFunctionSymbol n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(FunctionSymbol n)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(And n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Or n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Jump n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpG n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpL n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpNE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Shr n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Xor n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Xchg n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Shl n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpLE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpGE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(JumpE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Compare n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(VariableSymbol n)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(ConstantSymbol n)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -214,7 +311,7 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(VoidType t)
+        public virtual void visit(TupleType t)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -284,7 +381,7 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(FunctionCall n)
+        public virtual void visit(FunctionCallExp n)
         {
             // Do nothing; leave the implementation to the main class
         }

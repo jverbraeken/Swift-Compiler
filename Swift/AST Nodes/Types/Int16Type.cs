@@ -4,10 +4,8 @@ namespace Swift.AST_Nodes.Types
 {
     public class Int16Type : ASTType
     {
-        public int Value { get; set; }
-        public Int16Type(int value)
+        public Int16Type()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

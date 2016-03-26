@@ -48,6 +48,7 @@
     <Compile Include="AssTargets\ByteConstant.cs" />
     <Compile Include="AssTargets\OctalConstant.cs" />
     <Compile Include="AssTargets\HexadecimalConstant.cs" />
+    <Compile Include="AssTargets\ParamRegister.cs" />
     <Compile Include="AssTargets\RegisterOffset.cs" />
     <Compile Include="AssTargets\Register.cs" />
     <Compile Include="AssTargets\IntegerConstant.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="AST Nodes\ASTType.cs" />
     <Compile Include="AST Nodes\Types\FloatType.cs" />
     <Compile Include="AST Nodes\Types\Int16Type.cs" />
-    <Compile Include="AST Nodes\Types\VoidType.cs" />
+    <Compile Include="AST Nodes\Types\TupleType.cs" />
     <Compile Include="AST Nodes\Types\UInt8Type.cs" />
     <Compile Include="AST Nodes\Types\UInt16Type.cs" />
     <Compile Include="AST Nodes\Types\Int32Type.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="AST Nodes\Types\BooleanType.cs" />
     <Compile Include="AST Nodes\Types\StringType.cs" />
     <Compile Include="AST Nodes\VarDeclaration.cs" />
-    <Compile Include="AST Nodes\FunctionCall.cs" />
+    <Compile Include="AST Nodes\Expressions\FunctionCallExp.cs" />
     <Compile Include="AST Nodes\Base.cs" />
     <Compile Include="AST Nodes\Expressions\Identifier.cs" />
     <Compile Include="AST Nodes\Types\IdentifierType.cs" />
@@ -89,6 +90,21 @@
     <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
     <Compile Include="InstructionSetGenerators\InstructionSetGenerator.cs" />
     <Compile Include="InstructionSetGenerators\X86_64.cs" />
+    <Compile Include="Instructions\Lea.cs" />
+    <Compile Include="Instructions\Xchg.cs" />
+    <Compile Include="Instructions\Shr.cs" />
+    <Compile Include="Instructions\Shl.cs" />
+    <Compile Include="Instructions\And.cs" />
+    <Compile Include="Instructions\Or.cs" />
+    <Compile Include="Instructions\Xor.cs" />
+    <Compile Include="Instructions\Compare.cs" />
+    <Compile Include="Instructions\JumpLE.cs" />
+    <Compile Include="Instructions\JumpL.cs" />
+    <Compile Include="Instructions\JumpGE.cs" />
+    <Compile Include="Instructions\JumpG.cs" />
+    <Compile Include="Instructions\JumpNE.cs" />
+    <Compile Include="Instructions\JumpE.cs" />
+    <Compile Include="Instructions\Jump.cs" />
     <Compile Include="Instructions\Comment.cs" />
     <Compile Include="Instructions\Pop.cs" />
     <Compile Include="Instructions\Ret.cs" />
@@ -103,20 +119,31 @@
     <Compile Include="Instructions\Label.cs" />
     <Compile Include="Instructions\Directives\MakeGlobal.cs" />
     <Compile Include="Instructions\Directives\SectionCode.cs" />
-    <Compile Include="Instructions\Directives\File.cs" />
     <Compile Include="Instructions\Instruction.cs" />
+    <Compile Include="AST Nodes\ParameterCall.cs" />
+    <Compile Include="AST Nodes\TupleElement.cs" />
+    <Compile Include="AST Nodes\ParameterDeclaration.cs" />
+    <Compile Include="Module.cs" />
     <Compile Include="Phrases\CodeGenerator.cs" />
     <Compile Include="Phrases\CodeOptimizer.cs" />
     <Compile Include="AST Nodes\Expressions\Exp.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
     <Compile Include="Phrases\LexicalRepresentation.cs" />
+    <Compile Include="Phrases\ScopeAssignVisitor.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
-    <Compile Include="Phrases\SymbolTableGeneratorVisitor.cs" />
-    <Compile Include="Symbol.cs" />
+    <Compile Include="Phrases\TypeFromExpVisitor.cs" />
+    <Compile Include="Phrases\TypeVisitor.cs" />
+    <Compile Include="Symbols\ConstantSymbol.cs" />
+    <Compile Include="Symbols\VariableSymbol.cs" />
+    <Compile Include="Symbols\Symbol.cs" />
     <Compile Include="Phrases\SyntaxAnalyzer.cs" />
+    <Compile Include="Symbols\BuiltinFunctionSymbol.cs" />
+    <Compile Include="Symbols\FunctionSymbol.cs" />
+    <Compile Include="SymbolToTableVisitor.cs" />
     <Compile Include="SymbolVisitor.cs" />
     <Compile Include="Table.cs" />
+    <Compile Include="TableFunctionComparator.cs" />
     <Compile Include="Tokens\LineContext.cs" />
     <Compile Include="Tokens\Token.cs" />
     <Compile Include="Phrases\LexicalAnalyzer.cs" />
@@ -127,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

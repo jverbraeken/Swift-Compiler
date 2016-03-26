@@ -9,11 +9,50 @@ using Swift.Instructions.Directives;
 
 namespace Swift.InstructionSetGenerators
 {
-    class X86_64 : InstructionSetGenerator
+    public class X86_64 : InstructionSetGenerator
     {
         private const int WORD_SIZE = 8;
         public X86_64(System.IO.StreamWriter stream) : base(stream)
         {
+        }
+
+        public override void processModules(string original_file, List<Module> modules)
+        {
+            w(".file\t\"" + original_file + "\"");
+            foreach (Module module in modules)
+                processModule(module);
+            w(".ident\t\"Yontu: (x86_64-posix-seh-rev0, Built by Joost Verbraeken) BETA\"");
+        }
+
+        public void processModule(Module module)
+        {
+            if (module.StringTable.Count > 0)
+                w(".section\t.rdata,\"dr\"");
+            foreach (KeyValuePair<string, string> entry in module.StringTable)
+            {
+                wn(entry.Value + ":");
+                w(".asciz\t\"" + entry.Key + "\"");
+            }
+
+            foreach (Instruction instruction in module.InterCode)
+                instruction.accept(this);
+        }
+
+        private string getRegisterName(Global.Registers n)
+        {
+            switch (n)
+            {
+                case Global.Registers.STACKBASEPOINTER: return "%rbp";
+                case Global.Registers.STACKPOINTER: return "%rsp";
+                case Global.Registers.ACCUMULATOR: return "%rax";
+                case Global.Registers.BASE: return "%rbx";
+                case Global.Registers.COUNTER: return "%rcx";
+                case Global.Registers.DATA: return "%rdx";
+                case Global.Registers.INSTRUCTIONPOINTER: return "%rip";
+                case Global.Registers.DEST_INDEX: return "%rdi";
+                case Global.Registers.SRC_INDEX: return "%rsi";
+                default: return null;
+            }
         }
 
         public override void visit(Comment n)
@@ -56,11 +95,6 @@ namespace Swift.InstructionSetGenerators
             w(".text");
         }
 
-        public override void visit(File n)
-        {
-            w(".file\t\"" + n.Name + "\"");
-        }
-
         public override void visit(Sub n)
         {
             w("subq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
@@ -74,6 +108,11 @@ namespace Swift.InstructionSetGenerators
         public override void visit(Nope n)
         {
             w("nop");
+        }
+
+        public override void visit(Lea n)
+        {
+            w("leaq\t" + n.From.accept(this) + ", " + n.To.accept(this));
         }
 
         public override void visit(Leave n)
@@ -93,28 +132,44 @@ namespace Swift.InstructionSetGenerators
 
 
 
+        public override string visit(ParamRegister n)
+        {
+            switch (n.Position)
+            {
+                case 0: return "%rcx";
+                case 1: return "%rdx";
+                case 2: return "%r8d";
+                case 3: return "%r9d";
+                default: return (n.Position + 1) * 8 + "(%rsp)";
+            }
+        }
+
         public override string visit(Register n)
         {
             switch (n.Value)
             {
-                case Global.Registers.BASEPOINTER: return "%rbp";
-                case Global.Registers.RAX: return "%rax";
-                case Global.Registers.RDX: return "%rdx";
+                case Global.Registers.STACKBASEPOINTER: return "%rbp";
+                case Global.Registers.ACCUMULATOR: return "%rax";
+                case Global.Registers.BASE: return "%rbx";
+                case Global.Registers.COUNTER: return "%rcx";
+                case Global.Registers.DATA: return "%rdx";
                 case Global.Registers.STACKPOINTER: return "%rsp";
+                case Global.Registers.DEST_INDEX: return "%rdi";
+                case Global.Registers.SRC_INDEX: return "%rsi";
+                default: Swift.error("Internal error in swift: trying to access unexisting register", 1); break;
             }
             return null;
         }
 
         public override string visit(RegisterOffset n)
         {
-            switch (n.Value)
+            if (n.IntOffset == null)
             {
-                case Global.Registers.BASEPOINTER: return "-" + n.Offset * 8 + "(%rbp)";
-                case Global.Registers.RAX: return "-" + n.Offset * 8 + "(%rax)";
-                case Global.Registers.RDX: return "-" + n.Offset * 8 + "(%rdx)";
-                case Global.Registers.STACKPOINTER: return "-" + n.Offset * 8 + "(%rsp)";
+                return n.LabelOffset + "(" + getRegisterName(n.Register) + ")";
             }
-            return null;
+            else {
+                return n.IntOffset * 8 + "(" + getRegisterName(n.Register) + ")";
+            }
         }
 
         public override string visit(IntegerConstant n)
@@ -129,7 +184,7 @@ namespace Swift.InstructionSetGenerators
 
         public override string visit(BinaryConstant n)
         {
-            //return "$" + n.Value.ToString();
+            //return "$" + n.Register.ToString();
             return null;
         }
 

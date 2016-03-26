@@ -1,4 +1,5 @@
-﻿using Swift.Tokens;
+﻿using Swift.Phrases;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,21 @@ namespace Swift.AST_Nodes
     {
         public ASTType Type { get; set; }
         public Identifier Name { get; set; }
-        public ConstDeclaration(LineContext context) : base(context)
+        public Exp RHS { get; set; }
+
+        public ConstDeclaration(LineContext context, Exp RHS) : base(context)
         {
+            this.RHS = RHS;
         }
 
         public override void accept(Visitor v)
         {
             v.visit(this);
+        }
+
+        public ASTType accept(TypeVisitor v)
+        {
+            return v.visit(this);
         }
     }
 }

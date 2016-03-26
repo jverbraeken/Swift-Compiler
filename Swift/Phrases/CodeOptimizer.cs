@@ -9,7 +9,7 @@ namespace Swift
 {
     class CodeOptimizer
     {
-        public static List<Instruction> OptimizeCode(List<Instruction> code)
+        public static List<Module> OptimizeCode(List<Module> code)
         {
             return code;
         }

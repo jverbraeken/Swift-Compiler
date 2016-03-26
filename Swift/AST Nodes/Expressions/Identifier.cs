@@ -14,6 +14,7 @@ namespace Swift
         {
             Name = name;
         }
+
         public void accept(Visitor v)
         {
             v.visit(this);

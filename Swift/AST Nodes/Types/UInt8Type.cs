@@ -4,10 +4,8 @@ namespace Swift.AST_Nodes.Types
 {
     public class UInt8Type : ASTType
     {
-        public uint Value { get; set; }
-        public UInt8Type(uint value)
+        public UInt8Type()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

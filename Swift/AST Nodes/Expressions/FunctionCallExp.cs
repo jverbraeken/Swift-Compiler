@@ -4,21 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Swift.Phrases;
 
 namespace Swift.AST_Nodes
 {
-    public class FunctionCall : ASTNode
+    public class FunctionCallExp : ASTNode, Exp
     {
         public Identifier Name { get; set; }
-        public List<Exp> Args { get; set; }
-        public FunctionCall(LineContext context) : base(context)
+        public List<ParameterCall> Args { get; set; }
+        public FunctionCallExp(LineContext context) : base(context)
         {
-            Args = new List<Exp>();
+            Args = new List<ParameterCall>();
         }
 
         public override void accept(Visitor v)
         {
             v.visit(this);
+        }
+
+        public ASTType accept(TypeVisitor v)
+        {
+            return v.visit(this);
         }
     }
 }

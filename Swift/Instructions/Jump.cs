@@ -4,12 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swift.AST_Nodes.Types
+namespace Swift.Instructions
 {
-    public class VoidType : ASTType
+    /// <summary>
+    /// Jumps to the given label
+    /// </summary>
+    public class Jump : Instruction
     {
-        public VoidType()
+        public string Name { get; set; }
+        public Jump(string name)
         {
+            Name = name;
         }
 
         public override void accept(Visitor v)

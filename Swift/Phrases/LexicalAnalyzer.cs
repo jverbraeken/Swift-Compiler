@@ -31,6 +31,8 @@ namespace Swift
         regexCloseBraces = "^\\}",
         //Operators
         regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\%\\|\\^\\~\\?]",
+        regexColon = "^:",
+        regexUnderscore = "^_\\s+",
         //Comments
         regexComment = "^\\/\\/";
 
@@ -179,6 +181,23 @@ namespace Swift
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
 
+                    //Annotation
+                    match = Regex.Match(line, regexColon);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.COLON, ":"));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Annotation
+                    match = Regex.Match(line, regexUnderscore);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.UNDERSCORE, "_"));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
 
                     //Identifiers
                     match = Regex.Match(line, regexIdentity);
@@ -188,6 +207,7 @@ namespace Swift
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };
+                    
 
                     Swift.error("Syntax error: \"" + line + "\" could not be identified", 1);
                 }
@@ -224,9 +244,9 @@ namespace Swift
                 line = line.Substring(i);
             else
                 line = line.Substring(i, cap);
-            return new string[] { line, i.ToString()} ;
+            return new string[] { line, i.ToString() };
         }
-        
+
         public static bool isSpace(char c)
         {
             return (c == '\u0020' || c == '\u000A' || c == '\u000D' || c == '\u0009' || c == '\u000B' || c == '\u000C' || c == '\u0000');

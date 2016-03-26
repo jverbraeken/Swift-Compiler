@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using Swift.AST_Nodes;
 using Swift.AST_Nodes.Types;
 using Swift.AssTargets;
+using Swift.Symbols;
 
 namespace Swift.InstructionSetGenerators
 {
-    abstract class InstructionSetGenerator : Visitor
+    public abstract class InstructionSetGenerator : Visitor
     {
         public System.IO.StreamWriter Stream { get; set;}
 
@@ -30,6 +31,8 @@ namespace Swift.InstructionSetGenerators
             Stream.WriteLine("    " + l);
         }
 
+        public abstract void processModules(string original_file, List<Module> modules);
+
         /// <summary>
         /// Write to File No Identation
         /// Writes a line of text to the file with indentation level 0.
@@ -47,12 +50,13 @@ namespace Swift.InstructionSetGenerators
         public abstract string visit(HexadecimalConstant n);
         public abstract string visit(Register n);
         public abstract string visit(RegisterOffset n);
-
+        public abstract string visit(ParamRegister n);
         // Instructions
         public abstract void visit(Add n);
         public abstract void visit(Call n);
         public abstract void visit(Comment n);
         public abstract void visit(Label n);
+        public abstract void visit(Lea n);
         public abstract void visit(Leave n);
         public abstract void visit(Move n);
 
@@ -146,7 +150,7 @@ namespace Swift.InstructionSetGenerators
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(VoidType t)
+        public virtual void visit(TupleType t)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -216,7 +220,7 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
-        public void visit(FunctionCall n)
+        public void visit(FunctionCallExp n)
         {
             throw new NotImplementedException();
         }
@@ -233,8 +237,97 @@ namespace Swift.InstructionSetGenerators
         public abstract void visit(Sub n);
         // Instructions - Directives
         public abstract void visit(Debug n);
-        public abstract void visit(File n);
         public abstract void visit(MakeGlobal n);
         public abstract void visit(SectionCode n);
+
+        public void visit(BuiltinFunctionSymbol n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(ConstantSymbol n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(FunctionSymbol n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(VariableSymbol n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(And n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Compare n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Jump n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpG n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpGE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpL n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpLE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(JumpNE n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Shl n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Shr n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Xchg n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Xor n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Or n)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

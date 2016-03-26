@@ -83,7 +83,7 @@ namespace Swift
 
             int i = 2;
             Token token = tmpTokens[i];
-            List<Exp> args = new List<Exp>();
+            List<ParameterCall> args = new List<ParameterCall>();
             while (token.type != Global.DataType.CLOSE_ROUND_BRACKET)
             {
                 List<Token> arg = new List<Token>();
@@ -94,11 +94,26 @@ namespace Swift
                     argContext.Add(tmpContext[i]);
                     token = tmpTokens[++i];
                 }
-                args.Add(EatExpression(arg, argContext));
+                args.Add(EatFunctionArgument(arg, argContext));
             }
-            FunctionCall node = new FunctionCall(tmpContext[0]);
+            FunctionCallExp node = new FunctionCallExp(tmpContext[0]);
             node.Name = new Identifier(tmpTokens[0].value);
             node.Args.AddRange(args);
+            return node;
+        }
+
+        private ParameterCall EatFunctionArgument(List<Token> tokensIn, List<LineContext> contextIn)
+        {
+            List<Token> tmpTokens;
+            List<LineContext> tmpContext;
+            tmpTokens = tokensIn;
+            tmpContext = contextIn;
+
+            ParameterCall node;
+            if (tmpTokens.Count > 1 && tmpTokens[1].type == Global.DataType.COLON)
+                node = new ParameterCall(EatExpression(tmpTokens.GetRange(2, tmpTokens.Count - 2), tmpContext.GetRange(2, tmpContext.Count - 2)), tmpTokens[0].value);
+            else
+                node = new ParameterCall(EatExpression(tmpTokens, tmpContext));
             return node;
         }
 
@@ -180,7 +195,7 @@ namespace Swift
             return null;
         }
 
-        private ASTNode EatAssignment(List<Token> tokensIn, List<LineContext> contextIn)
+        private Assignment EatAssignment(List<Token> tokensIn, List<LineContext> contextIn)
         {
             if (!(tokensIn[1].type == Global.DataType.OPERATOR && tokensIn[1].value == "="))
                 Swift.error("Assignment operator expected at line " + contextIn[0].GetLine() + ".", 1);
@@ -282,20 +297,50 @@ namespace Swift
                 VarDeclaration node = new VarDeclaration(tmpContext[0]);
                 node.Name = new Identifier(tmpTokens[1].value);
                 astBase.Children.Add(node);
+                if (tmpTokens.Count >= 4)
+                {
+                    if (tmpTokens[2].type == Global.DataType.OPERATOR && tmpTokens[2].value == "=")
+                    {
+                        astBase.Children.Add(EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1)));
+                    }
+                    else
+                    {
+                        Swift.error("Assignment expected after a declaration without a type specification on line " + tmpContext[2].GetLine() + ", column " + tmpContext[2].GetPos(), -1);
+                    }
+                }
+                else
+                {
+                    Swift.error("Assignment expected after a declaration without a type specification on line " + tmpContext[2].GetLine() + ", column " + tmpContext[2].GetPos(), -1);
+
+                }
+                return node;
             }
             else if (tmpTokens[0].type == Global.DataType.LET)
             {
                 if (tokensIn.Count <= 2)
                     Swift.error("Constants must be initialized; error occurerred on line " + tmpContext[0].GetLine() + ", column " + tmpContext[0].GetPos() + ".", 1);
-                ConstDeclaration node = new ConstDeclaration(tmpContext[0]);
-                node.Name = new Identifier(tmpTokens[1].value);
-                astBase.Children.Add(node);
+                if (tmpTokens.Count >= 4)
+                {
+                    if (tmpTokens[2].type == Global.DataType.OPERATOR && tmpTokens[2].value == "=")
+                    {
+                        ConstDeclaration node = new ConstDeclaration(tmpContext[0], EatExpression(tmpTokens.GetRange(3, tmpTokens.Count - 3), tmpContext.GetRange(3, tmpContext.Count - 3)));
+                        node.Name = new Identifier(tmpTokens[1].value);
+                        astBase.Children.Add(node);
+                    }
+                    else
+                    {
+                        Swift.error("Constants must be initialized; error occurerred on line " + tmpContext[0].GetLine() + ", column " + tmpContext[0].GetPos() + ".", 1);
+                    }
+                }
+                return node;
             }
-            else
+            else {
                 Swift.error("Internal error parsing the variable declaration: " + tmpTokens, 1);
+                return null;
+            }
             //if (tokensIn.Count > 2)
             //    node.SetChildren();
-            return EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1));
+            //return EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1));
         }
 
 

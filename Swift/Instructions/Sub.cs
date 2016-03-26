@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Swift.Instructions
 {
     /// <summary>
-    /// Subtract Value from Target
+    /// Subtract Register from Target
     /// </summary>
     public class Sub : Instruction
     {

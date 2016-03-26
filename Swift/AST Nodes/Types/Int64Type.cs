@@ -4,10 +4,8 @@ namespace Swift.AST_Nodes.Types
 {
     public class Int64Type : ASTType
     {
-        public int Value { get; set; }
-        public Int64Type(int value)
+        public Int64Type()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

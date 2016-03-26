@@ -9,16 +9,20 @@
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$64, %rsp
 	call	__main
-	movq	$50, -8(%rbp)
-	movq	$100, -16(%rbp)
-	movq	-8(%rbp), %rdx
-	movq	-16(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdx
+	movl	$5, -4(%rbp)
+	movl	$10, -8(%rbp)
+	movl	$15, -12(%rbp)
+	movl	-4(%rbp), %edx
+	movl	-8(%rbp), %eax
+	addl	%eax, %edx
+	movl	-12(%rbp), %eax
+	addl	%edx, %eax
+	movl	%eax, -16(%rbp)
+	movl	$6, -20(%rbp)
+	movl	-12(%rbp), %eax
+	movl	%eax, %edx
 	leaq	.LC0(%rip), %rcx
 	call	printf
 	nop

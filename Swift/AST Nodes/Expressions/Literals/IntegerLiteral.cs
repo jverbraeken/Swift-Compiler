@@ -1,4 +1,6 @@
-﻿using Swift.AST_Nodes;
+﻿using System;
+using Swift.AST_Nodes;
+using Swift.Phrases;
 using Swift.Tokens;
 
 namespace Swift
@@ -13,6 +15,11 @@ namespace Swift
         public override void accept(Visitor v)
         {
             v.visit(this);
+        }
+
+        public ASTType accept(TypeVisitor v)
+        {
+            return v.visit(this);
         }
     }
 }
