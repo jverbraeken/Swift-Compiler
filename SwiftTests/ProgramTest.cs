@@ -53,15 +53,7 @@ namespace SwiftTests
             test[0].InterCode.Add(new Push(rbp));
             test[0].InterCode.Add(new Move(rsp, rbp));
             test[0].InterCode.Add(new Sub(new ByteConstant(4), rsp));
-            test[0].InterCode.Add(new Sub(new ByteConstant(3), rsp));
             test[0].InterCode.Add(new Call("__main"));
-            test[0].InterCode.Add(new Move(new IntegerConstant(5), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -1)));
-            test[0].InterCode.Add(new Move(new IntegerConstant(10), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -2)));
-            test[0].InterCode.Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, -2), rdx));
-            test[0].InterCode.Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, -1), rax));
-            test[0].InterCode.Add(new Add(rdx, rax));
-            test[0].InterCode.Add(new Move(rax, new RegisterOffset(Global.Registers.STACKBASEPOINTER, -3)));
-            test[0].InterCode.Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, -3), new ParamRegister(1)));
             test[0].InterCode.Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, ".LC0"), new ParamRegister(0)));
             test[0].InterCode.Add(new Call("printf"));
             test[0].InterCode.Add(new Nope());

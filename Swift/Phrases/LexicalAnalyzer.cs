@@ -83,7 +83,7 @@ namespace Swift
                     match = Regex.Match(line, regexString);
                     if (match.Success)
                     {
-                        tokens.Add(new Token(Global.DataType.STRING, match.Groups[0].Value));
+                        tokens.Add(new Token(Global.DataType.STRING, match.Groups[0].Value.Substring(1, match.Groups[0].Value.Length-2)));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };

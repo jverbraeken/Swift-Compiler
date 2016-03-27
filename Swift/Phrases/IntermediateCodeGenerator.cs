@@ -58,7 +58,8 @@ namespace Swift
             Add(new Push(new Register(Global.Registers.STACKBASEPOINTER)));
             Add(new Move(new Register(Global.Registers.STACKPOINTER), regBase));
             Add(new Sub(new ByteConstant(4), regStack));
-            Add(new Sub(new ByteConstant(tables[1].GetStackSize()), regStack));
+            if (tables[1].GetStackSize() > 0)
+                Add(new Sub(new ByteConstant(tables[1].GetStackSize()), regStack));
             Add(new Call("__main"));
             /*w("section:code");
             w("define_main_method");
@@ -210,8 +211,9 @@ namespace Swift
             int occupiedParamRegisters = 0;
             if (builtin)
                 occupiedParamRegisters = ((BuiltinFunctionSymbol)tables[scope].Lookup(n.Name.Name, n.Args)).OccupiedParamRegisters;
-            for (int i = 0; i < count; i++)
-                Add(new Move(stack.Pop(), new ParamRegister(count - 1 + occupiedParamRegisters - i)));
+            if (n.Args[0].Value.GetType() != (new StringLiteral(new Tokens.LineContext(0, 0), "")).GetType())
+                for (int i = 0; i < count; i++)
+                    Add(new Move(stack.Pop(), new ParamRegister(count - 1 + occupiedParamRegisters - i)));
             if (tables[0].Lookup(n.Name.Name, n.Args).GetType() == (new BuiltinFunctionSymbol("")).GetType())
                 executeBuiltinFunction(n);
         }
@@ -271,14 +273,15 @@ namespace Swift
                     {
                         if (!stringTable.ContainsKey("%d"))
                             stringTable.Add("%d", ".LC" + stringTable.Count);
+                        Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%d"]), new ParamRegister(0)));
                     }
-                    else if (n.Args[0].Value.accept(typeVisitor).Equals(new StringType()))
+                    else if (n.Args[0].Value.accept(typeVisitor).GetType() == (new StringType().GetType()))
                     {
                         n.Args[0].Value.accept(this);
                         if (!stringTable.ContainsKey(tmpStr))
                             stringTable.Add(tmpStr, ".LC" + stringTable.Count);
+                        Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable[tmpStr]), new ParamRegister(0)));
                     }
-                    Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%d"]), new ParamRegister(0)));
                     Add(new Call("printf")); break;
             }
         }
