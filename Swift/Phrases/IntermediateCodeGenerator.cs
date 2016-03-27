@@ -278,7 +278,7 @@ namespace Swift
                         if (!stringTable.ContainsKey(tmpStr))
                             stringTable.Add(tmpStr, ".LC" + stringTable.Count);
                     }
-                    Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%d"]), new Register(Global.Registers.COUNTER)));
+                    Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%d"]), new ParamRegister(0)));
                     Add(new Call("printf")); break;
             }
         }

@@ -8,20 +8,18 @@ namespace Swift.Instructions.Directives
 {
     public class Debug : Instruction
     {
-        private string info;
+        public string Info
+        {
+            get; set;
+        }
         public Debug(string info)
         {
-            this.info = info;
+            Info = info;
         }
 
         public override void accept(Visitor v)
         {
             v.visit(this);
-        }
-
-        public override string ToString()
-        {
-            return info;
         }
     }
 }

@@ -130,6 +130,7 @@
     <Compile Include="Global.cs" />
     <Compile Include="Phrases\IntermediateCodeGenerator.cs" />
     <Compile Include="Phrases\LexicalRepresentation.cs" />
+    <Compile Include="Phrases\ModuleListComparer.cs" />
     <Compile Include="Phrases\ScopeAssignVisitor.cs" />
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
     <Compile Include="Phrases\TypeFromExpVisitor.cs" />

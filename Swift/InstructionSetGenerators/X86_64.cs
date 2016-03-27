@@ -82,7 +82,7 @@ namespace Swift.InstructionSetGenerators
 
         public override void visit(Debug n)
         {
-            w(".def\t" + n.ToString());
+            w(".def\t" + n.Info);
         }
 
         public override void visit(MakeGlobal n)
