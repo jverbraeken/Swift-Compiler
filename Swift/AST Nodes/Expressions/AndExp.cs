@@ -9,13 +9,10 @@ using System.Threading.Tasks;
 
 namespace Swift
 {
-    public class AndExp : ASTNode, Exp
+    public class AndExp : BinaryExp, Exp
     {
-        public Exp e1, e2;
-        public AndExp(LineContext context, Exp e1, Exp e2) : base(context)
+        public AndExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
-            this.e1 = e1;
-            this.e2 = e2;
         }
 
         public override void accept(Visitor v)
@@ -23,7 +20,7 @@ namespace Swift
             v.visit(this);
         }
 
-        public ASTType accept(TypeVisitor v)
+        public override ASTType accept(TypeVisitor v)
         {
             return v.visit(this);
         }

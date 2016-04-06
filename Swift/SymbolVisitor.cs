@@ -65,7 +65,7 @@ namespace Swift
             throw new NotImplementedException();
         }
 
-        Exp Visitor.visit(BitwiseComplementExp n)
+        Exp Visitor.visit(BitwiseNotExp n)
         {
             throw new NotImplementedException();
         }

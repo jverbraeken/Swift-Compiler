@@ -31,6 +31,7 @@ namespace Swift
         regexCloseBraces = "^\\}",
         //Operators
         regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\%\\|\\^\\~\\?]",
+        regexComma = "^\\,",
         regexColon = "^:",
         regexUnderscore = "^_\\s+",
         //Comments
@@ -69,6 +70,42 @@ namespace Swift
 
                     //Literals
 
+
+                    //Binary
+                    match = Regex.Match(line, regexBinary);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.BINARY, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Octal
+                    match = Regex.Match(line, regexOctal);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.OCTAL, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Hexadecimal
+                    match = Regex.Match(line, regexHexadecimal);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.HEXADECIMAL, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Double
+                    match = Regex.Match(line, regexDouble);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.DOUBLE, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
 
                     //Integer
                     match = Regex.Match(line, regexInt);
@@ -177,6 +214,15 @@ namespace Swift
                     if (match.Success)
                     {
                         tokens.Add(new Token(Global.DataType.OPERATOR, match.Groups[0].Value));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match.Length); lineX += match.Length; continue;
+                    };
+
+                    //Comma
+                    match = Regex.Match(line, regexComma);
+                    if (match.Success)
+                    {
+                        tokens.Add(new Token(Global.DataType.COMMA));
                         context.Add(new LineContext(lineX, lineY));
                         line = line.Substring(match.Length); lineX += match.Length; continue;
                     };

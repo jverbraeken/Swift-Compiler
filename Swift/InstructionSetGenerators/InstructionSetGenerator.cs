@@ -55,10 +55,12 @@ namespace Swift.InstructionSetGenerators
         public abstract void visit(Add n);
         public abstract void visit(Call n);
         public abstract void visit(Comment n);
+        public abstract void visit(Divide n);
         public abstract void visit(Label n);
         public abstract void visit(Lea n);
         public abstract void visit(Leave n);
         public abstract void visit(Move n);
+        public abstract void visit(Mult n);
 
         public void visit(Assignment n)
         {
@@ -75,7 +77,32 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseComplementExp n)
+        public void visit(BitwiseAndExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseLeftShiftExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseNotExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseOrExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseRightShiftExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseXorExp n)
         {
             throw new NotImplementedException();
         }
@@ -100,7 +127,17 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
-        public void visit(PowerExp n)
+        public void visit(OverflowAddExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OverflowMultExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OverflowSubExp n)
         {
             throw new NotImplementedException();
         }
@@ -111,6 +148,21 @@ namespace Swift.InstructionSetGenerators
         }
 
         public virtual void visit(IdentifierType id)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(BinaryType id)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(OctalType id)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
+        public virtual void visit(HexaType id)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -180,12 +232,92 @@ namespace Swift.InstructionSetGenerators
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(BooleanType t)
+        public virtual void visit(BoolType t)
         {
             // Do nothing; leave the implementation to the main class
         }
 
-        public void visit(IntegerLiteral n)
+        public void visit(BinaryLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BoolLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(DoubleLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(FloatLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(HexaLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Int16Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Int32Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Int64Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Int8Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OctalLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UBinaryLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UHexaLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UInt16Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UInt32Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UInt64Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UInt8Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(UOctalLiteral n)
         {
             throw new NotImplementedException();
         }

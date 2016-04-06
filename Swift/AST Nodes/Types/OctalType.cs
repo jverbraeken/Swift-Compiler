@@ -2,12 +2,10 @@
 
 namespace Swift.AST_Nodes.Types
 {
-    public class BooleanType : ASTType
+    public class OctalType : ASTType
     {
-        public bool Value { get; set; }
-        public BooleanType(bool value)
+        public OctalType()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

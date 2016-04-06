@@ -4,10 +4,8 @@ namespace Swift.AST_Nodes.Types
 {
     public class DoubleType : ASTType
     {
-        public double Value { get; set; }
-        public DoubleType(double value)
+        public DoubleType()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

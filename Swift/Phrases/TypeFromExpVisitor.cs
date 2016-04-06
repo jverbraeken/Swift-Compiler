@@ -86,7 +86,7 @@ namespace Swift.Phrases
             throw new NotImplementedException();
         }
 
-        public ASTType visit(BitwiseComplementExp e)
+        public ASTType visit(BitwiseNotExp e)
         {
             throw new NotImplementedException();
         }

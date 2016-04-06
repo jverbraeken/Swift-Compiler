@@ -63,7 +63,7 @@ namespace Swift
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
 
-            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
+            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, architecture);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.CheckSemantics(ast);

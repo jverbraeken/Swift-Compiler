@@ -14,6 +14,16 @@ namespace Swift.Phrases
 {
     public class TypeVisitor
     {
+        private ASTType CheckTypes(BinaryExp n)
+        {
+            ASTType t1 = n.e1.accept(this);
+            ASTType t2 = n.e2.accept(this);
+            if (t1.GetType() == t2.GetType())
+                return t1;
+            Swift.error("The types of the terms of the expression on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
+            return null;
+        }
+
         public ASTType visit(BinaryConstant n)
         {
             throw new NotImplementedException();
@@ -44,19 +54,49 @@ namespace Swift.Phrases
             throw new NotImplementedException();
         }
 
+        public ASTType visit(BitwiseAndExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(BitwiseLeftShiftExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(BitwiseNotExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(BitwiseOrExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(BitwiseRightShiftExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(BitwiseXorExp n)
+        {
+            return CheckTypes(n);
+        }
+
         public ASTType visit(DivisionExp n)
         {
-            throw new NotImplementedException();
+            return CheckTypes(n);
         }
 
         public ASTType visit(MinusExp n)
         {
-            throw new NotImplementedException();
+            return CheckTypes(n);
         }
 
         public ASTType visit(MultiplicationExp n)
         {
-            throw new NotImplementedException();
+            return CheckTypes(n);
         }
 
         public ASTType visit(IdentifierExp n)
@@ -64,27 +104,112 @@ namespace Swift.Phrases
             return n.Scope.Lookup(n.ID.Name).accept(this);
         }
 
+        public ASTType visit(OverflowAddExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(OverflowMultExp n)
+        {
+            return CheckTypes(n);
+        }
+
+        public ASTType visit(OverflowSubExp n)
+        {
+            return CheckTypes(n);
+        }
+
         public ASTType visit(PlusExp n)
         {
-            ASTType t1 = n.e1.accept(this);
-            ASTType t2 = n.e2.accept(this);
-            if (t1.GetType() == t2.GetType())
-                return t1;
-            Swift.error("The types of the terms of the expression on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
-            return null;
+            return CheckTypes(n);
         }
 
-        public ASTType visit(IntegerLiteral n)
+        public ASTType visit(UBinaryLiteral n)
         {
-            switch (Swift.architecture)
-            {
-                case Global.InstructionSets.X86: return new Int32Type();
-                case Global.InstructionSets.X86_64: return new Int64Type();
-                default: return null;
-            }
+            throw new NotImplementedException();
         }
 
-        public ASTType visit(BooleanType t)
+        public ASTType visit(UHexaLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ASTType visit(UOctalLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ASTType visit(BoolLiteral n)
+        {
+            return new BoolType();
+        }
+
+        public ASTType visit(DoubleLiteral n)
+        {
+            return new DoubleType();
+        }
+
+        public ASTType visit(FloatLiteral n)
+        {
+            return new FloatType();
+        }
+
+        public ASTType visit(BinaryLiteral n)
+        {
+            return new BinaryType();
+        }
+
+        public ASTType visit(OctalLiteral n)
+        {
+            return new OctalType();
+        }
+
+        public ASTType visit(HexaLiteral n)
+        {
+            return new HexaType();
+        }
+
+        public ASTType visit(Int8Literal n)
+        {
+            return new Int8Type();
+        }
+
+        public ASTType visit(Int16Literal n)
+        {
+            return new Int16Type();
+        }
+
+        public ASTType visit(Int32Literal n)
+        {
+            return new Int32Type();
+        }
+
+        public ASTType visit(Int64Literal n)
+        {
+            return new Int64Type();
+        }
+
+        public ASTType visit(UInt8Literal n)
+        {
+            return new UInt8Type();
+        }
+
+        public ASTType visit(UInt16Literal n)
+        {
+            return new UInt16Type();
+        }
+
+        public ASTType visit(UInt32Literal n)
+        {
+            return new UInt32Type();
+        }
+
+        public ASTType visit(UInt64Literal n)
+        {
+            return new UInt64Type();
+        }
+
+        public ASTType visit(BoolType t)
         {
             throw new NotImplementedException();
         }
@@ -254,11 +379,6 @@ namespace Swift.Phrases
             return new StringType();
         }
 
-        public ASTType visit(PowerExp n)
-        {
-            throw new NotImplementedException();
-        }
-
         public ASTType visit(Identifier identifier)
         {
             throw new NotImplementedException();
@@ -275,11 +395,6 @@ namespace Swift.Phrases
         }
 
         public ASTType visit(ExclamationExp n)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ASTType visit(BitwiseComplementExp n)
         {
             throw new NotImplementedException();
         }

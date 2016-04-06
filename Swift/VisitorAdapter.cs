@@ -71,7 +71,7 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(BitwiseComplementExp n)
+        public virtual void visit(BitwiseNotExp n)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -92,11 +92,6 @@ namespace Swift
         }
 
         public virtual void visit(Identifier identifier)
-        {
-            // Do nothing; leave the implementation to the main class
-        }
-
-        public virtual void visit(PowerExp n)
         {
             // Do nothing; leave the implementation to the main class
         }
@@ -202,6 +197,156 @@ namespace Swift
         }
 
         public virtual void visit(Shr n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(DoubleLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(BinaryLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(HexaLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Int16Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Int64Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UOctalLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UInt8Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UInt32Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(BinaryType t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseAndExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseOrExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseXorExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OverflowMultExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Divide n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Mult n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OverflowSubExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(OverflowAddExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseRightShiftExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(BitwiseLeftShiftExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(HexaType t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(OctalType t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UInt64Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UInt16Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UHexaLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(UBinaryLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Int32Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(Int8Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(OctalLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(FloatLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(BoolLiteral n)
         {
             throw new NotImplementedException();
         }
@@ -341,12 +486,7 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
-        public virtual void visit(BooleanType t)
-        {
-            // Do nothing; leave the implementation to the main class
-        }
-
-        public virtual void visit(IntegerLiteral n)
+        public virtual void visit(BoolType t)
         {
             // Do nothing; leave the implementation to the main class
         }

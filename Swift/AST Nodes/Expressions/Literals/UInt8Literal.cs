@@ -5,10 +5,10 @@ using Swift.Tokens;
 
 namespace Swift
 {
-    public class IntegerLiteral : ASTNode, Exp
+    public class UInt8Literal : ASTNode, Exp
     {
         public string Value { get; set; }
-        public IntegerLiteral(LineContext context, string value) : base(context)
+        public UInt8Literal(LineContext context, string value) : base(context)
         {
             Value = value;
         }

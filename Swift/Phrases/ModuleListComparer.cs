@@ -28,7 +28,9 @@ namespace Swift.Phrases
             for (int i = 0; i < x.InterCode.Count; i++)
                 if (!AreEqual(x.InterCode[i], y.InterCode[i]))
                     return false;
-            // TODO Add comparison for the stringtables
+            foreach (KeyValuePair<string, string> entry in x.StringTable)
+                if (entry.Value != y.StringTable[entry.Key])
+                    return false;
             return true;
         }
 

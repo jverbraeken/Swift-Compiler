@@ -130,6 +130,17 @@ namespace Swift.InstructionSetGenerators
             w("addq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
         }
 
+        public override void visit(Mult n)
+        {
+            w("addq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
+        }
+
+        public override void visit(Divide n)
+        {
+            w("cltd");
+            w("idivq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));
+        }
+
 
 
         public override string visit(ParamRegister n)
@@ -184,8 +195,7 @@ namespace Swift.InstructionSetGenerators
 
         public override string visit(BinaryConstant n)
         {
-            //return "$" + n.Register.ToString();
-            return null;
+            return "$" + Convert.ToInt64(n.Value.ToString(), 2).ToString();
         }
 
         public override string visit(OctalConstant n)

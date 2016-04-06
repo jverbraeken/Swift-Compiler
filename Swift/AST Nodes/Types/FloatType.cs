@@ -4,10 +4,8 @@ namespace Swift.AST_Nodes.Types
 {
     public class FloatType : ASTType
     {
-        public float Value { get; set; }
-        public FloatType(float value)
+        public FloatType()
         {
-            Value = value;
         }
         public override void accept(Visitor v)
         {

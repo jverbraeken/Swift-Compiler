@@ -10,15 +10,72 @@ namespace Swift
 {
     public class SyntaxAnalyzer
     {
-        List<Token> tokens;
-        List<LineContext> context;
+        /// <summary>
+        /// Dictionary(operator, <associativity, precedence>)
+        /// </summary>
+        private Dictionary<string, Tuple<Global.Associativity, int>> operatorPrecedence = new Dictionary<string, Tuple<Global.Associativity, int>>()
+        {
+            { "<<", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 160) },
+            { ">>", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 160) },
+            { "*", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "/", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "%", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "&*", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "&/", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "&%", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "&", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 150) },
+            { "+", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "-", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "&+", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "&-", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "|", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "^", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 140) },
+            { "..", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 135) },
+            { "...", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 135) },
+            { "is", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 132) },
+            { "as", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 132) },
+            { "as?", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 132) },
+            { "as!", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 132) },
+            { "??", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 131) },
+            { "<", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "<=", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { ">", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { ">=", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "==", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "!=", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "===", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "!==", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "~=", new Tuple<Global.Associativity, int>(Global.Associativity.NONE, 130) },
+            { "&&", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 120) },
+            { "||", new Tuple<Global.Associativity, int>(Global.Associativity.LEFT, 110) },
+            { "?", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 100) },
+            { "=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "*=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "/=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "%=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "+=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "-=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "<<=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { ">>=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "&=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "|=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "^=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "&&=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+            { "||=", new Tuple<Global.Associativity, int>(Global.Associativity.RIGHT, 90) },
+        };
+        private List<Token> tokens;
+        private List<LineContext> context;
+        private List<Token> allTokens;
+        private List<LineContext> allContext;
         private ASTNode node;
         private Base astBase;
+        private Global.InstructionSets architecture;
 
-        public Base CheckSyntax(List<Token> tokens, List<LineContext> context)
+        public Base CheckSyntax(List<Token> tokens, List<LineContext> context, Global.InstructionSets architecture)
         {
-            this.tokens = tokens;
-            this.context = context;
+            allTokens = tokens;
+            allContext = context;
+            this.architecture = architecture;
             astBase = new Base(context[0]);
             EatStatements();
             return astBase;
@@ -29,15 +86,14 @@ namespace Swift
             int i;
             while (true)
             {
-                i = 0;
-                while (tokens[i].type != Global.DataType.ENDSTATEMENT)
-                    i++;
-                ASTNode tmp = EatStatement(tokens.GetRange(0, i), context.GetRange(0, i));
-                if (tmp != null)
-                    astBase.Children.Add(tmp);
-                tokens.RemoveRange(0, i + 1);
-                if (tokens.Count == 0)
+                if (allTokens.Count == 0)
                     break;
+                i = 0;
+                while (allTokens[i].type != Global.DataType.ENDSTATEMENT)
+                    i++;
+                EatStatement(allTokens.GetRange(0, i), allContext.GetRange(0, i));
+                allTokens.RemoveRange(0, i + 1);
+                allContext.RemoveRange(0, i + 1);
             }
         }
 
@@ -47,234 +103,174 @@ namespace Swift
         /// <param name="token"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private ASTNode EatStatement(List<Token> tokensIn, List<LineContext> contextIn)
+        private void EatStatement(List<Token> tokensIn, List<LineContext> contextIn)
         {
             if (tokensIn.Count == 0)
-                return null;
-            switch (tokensIn[0].type)
+                return;
+            tokens = tokensIn;
+            context = contextIn;
+            switch (tokens[0].type)
             {
                 case Global.DataType.IDENTIFIER:
-                    if (tokensIn[1].type == Global.DataType.OPEN_ROUND_BRACKET)
-                    {
-                        return EatFunctionCall(tokensIn, contextIn);
-                    }
-                    else {
-                        return EatAssignment(tokensIn, contextIn);
-                    }
+                    if (tokens[1].type == Global.DataType.OPEN_ROUND_BRACKET)
+                        EatFunctionCall();
+                    else
+                        EatAssignment();
+                    break;
                 case Global.DataType.LET:
-                    return EatDeclaration(tokensIn, contextIn);
-                case Global.DataType.STRING:
-                    EatExpression(tokensIn, contextIn);
-                    return node;
+                    EatDeclaration();
+                    break;
                 case Global.DataType.VAR:
-                    return EatDeclaration(tokensIn, contextIn);
+                    EatDeclaration();
+                    break;
                 default:
-                    Swift.error("Syntax error: \"" + tokensIn[0].value + "\" at line " + contextIn[0].GetLine().ToString() + ", colomn " + contextIn[0].GetPos().ToString() + " could not be identified", 1);
-                    return null;
+                    Swift.error("Syntax error: \"" + tokens[0].value + "\" at line " + context[0].GetLine().ToString() + ", colomn " + context[0].GetPos().ToString() + " could not be identified", 1);
+                    break;
             }
         }
 
-        private ASTNode EatFunctionCall(List<Token> tokensIn, List<LineContext> contextIn)
+        private void EatFunctionCall()
         {
-            List<Token> tmpTokens;
-            List<LineContext> tmpContext;
-            tmpTokens = tokensIn;
-            tmpContext = contextIn;
 
             int i = 2;
-            Token token = tmpTokens[i];
+            Token token = tokens[i];
             List<ParameterCall> args = new List<ParameterCall>();
             while (token.type != Global.DataType.CLOSE_ROUND_BRACKET)
             {
                 List<Token> arg = new List<Token>();
                 List<LineContext> argContext = new List<LineContext>();
-                while (token.type != Global.DataType.COMMA && token.type != Global.DataType.CLOSE_ROUND_BRACKET)
+                /*while (token.type != Global.DataType.COMMA && token.type != Global.DataType.CLOSE_ROUND_BRACKET)
                 {
                     arg.Add(token);
-                    argContext.Add(tmpContext[i]);
-                    token = tmpTokens[++i];
-                }
-                args.Add(EatFunctionArgument(arg, argContext));
+                    argContext.Add(context[i]);
+                    token = tokens[++i];
+                }*/
+                args.Add(EatFunctionArgument());
             }
-            FunctionCallExp node = new FunctionCallExp(tmpContext[0]);
-            node.Name = new Identifier(tmpTokens[0].value);
+            FunctionCallExp node = new FunctionCallExp(context[0]);
+            node.Name = new Identifier(tokens[0].value);
             node.Args.AddRange(args);
-            return node;
+            astBase.Children.Add(node);
         }
 
-        private ParameterCall EatFunctionArgument(List<Token> tokensIn, List<LineContext> contextIn)
+        private ParameterCall EatFunctionArgument()
         {
-            List<Token> tmpTokens;
-            List<LineContext> tmpContext;
-            tmpTokens = tokensIn;
-            tmpContext = contextIn;
-
             ParameterCall node;
-            if (tmpTokens.Count > 1 && tmpTokens[1].type == Global.DataType.COLON)
-                node = new ParameterCall(EatExpression(tmpTokens.GetRange(2, tmpTokens.Count - 2), tmpContext.GetRange(2, tmpContext.Count - 2)), tmpTokens[0].value);
+            if (tokens.Count > 1 && tokens[1].type == Global.DataType.COLON)
+            {
+                CutData(2);
+                node = new ParameterCall(EatExpression(), tokens[0].value);
+            }
             else
-                node = new ParameterCall(EatExpression(tmpTokens, tmpContext));
+            {
+                node = new ParameterCall(EatExpression());
+            }
             return node;
         }
 
-        /// <summary>
-        /// Parses an expression
-        /// </summary>
-        /// <param name="tokens">A list of tokens containing only the whole expression</param>
-        /// <param name="context">A list of LineContext corresponding to the tokens supplied</param>
-        /// <returns></returns>
-        /*private ASTNode EatExpression(List<Token> tokensIn, List<LineContext> contextIn)
+        private Exp EatExpression()
         {
-            int pos = 0;
-            Global.DataType op;
-            while (true)
-            {
-                if (i >= tokensIn.Count)
-                    Swift.error("Operator expected at line " + contextIn[0].GetLine() + ".", 1);
-                if (tokensIn[i].type == Global.DataType.OPERATOR)
-                {
-                    op = tokensIn[0].type;
-                    break;
-                }
-            }
-            Exp lhs = EatLHS(tokensIn.GetRange(0, pos), contextIn);
-            Exp rhs = EatRHS(tokensIn.GetRange(pos + 1, tokensIn.Count - ))
-            ASTNode  node = new ASTNode(Global.ASTType.BINARY_EXPRESSION, contextIn[0]);
-            node.se
-        }*/
+            Exp primary = EatPrimary();
+            return EatExpPart(0, primary);
+        }
 
-        private Exp EatExpression(List<Token> tokensIn, List<LineContext> contextIn)
+        private Exp EatExpPart(int precedence, Exp lhs)
         {
-            List<Token> tmpTokens;
-            List<LineContext> tmpContext;
-            tmpTokens = tokensIn;
-            tmpContext = contextIn;
-            if (tmpTokens[0].type == Global.DataType.OPEN_ROUND_BRACKET)
+            if (tokens.Count == 0 || tokens[0].type == Global.DataType.CLOSE_ROUND_BRACKET || tokens[0].type == Global.DataType.COMMA/* || (tokens[0].type != Global.DataType.OPERATOR && tokens[0].type != Global.DataType.INT && tokens[0].type != Global.DataType.IDENTIFIER && tokens[0].type != Global.DataType.STRING && tokens[0].type != Global.DataType.DOUBLE)*/)
+                return lhs;
+            if (tokens[0].type != Global.DataType.OPERATOR)
+                Swift.error("Operator expected between the terms in the expression on line " + context[0].GetLine() + ", column" + context[0].GetPos(), 1);
+            string firstOperator = tokens[0].value;
+            int tokenPrecedence1 = operatorPrecedence[firstOperator].Item2;
+            if (tokenPrecedence1 < precedence)
+                return lhs;
+
+            Token op = tokens[0];
+            CutData(1);
+            Exp rhs = EatPrimary();
+            
+
+            if (tokens.Count == 0)
+                return BinaryExpression(op, lhs, rhs);
+            int tokenPrecedence2 = operatorPrecedence[tokens[0].value].Item2;
+            if (tokenPrecedence1 < tokenPrecedence2 || (tokenPrecedence1 == tokenPrecedence2 && operatorPrecedence[firstOperator].Item1 == Global.Associativity.RIGHT))
             {
-                int level = 1;
-                int i = 1;
-                while (true)
-                {
-                    if (i >= tmpTokens.Count)
-                        Swift.error("\")\" expected in the expression starting at line " + tmpContext[0].GetLine() + ".", 1);
-                    if (tmpTokens[i].type == Global.DataType.OPEN_ROUND_BRACKET)
-                        level++;
-                    if (tmpTokens[i].type == Global.DataType.CLOSE_ROUND_BRACKET)
-                        level--;
-                    if (level == 0)
-                        break;
-                    i++;
-                }
-                if (i >= tmpTokens.Count - 1) //Remove the brackets that do nothing appararently
-                    return EatExpression(tmpTokens.GetRange(1, tmpTokens.Count - 2), tmpContext.GetRange(1, tmpContext.Count - 2));
+                Exp newRhs = EatExpPart(tokenPrecedence1, rhs);
+                return EatExpPart(tokenPrecedence1 + 1, BinaryExpression(op, lhs, newRhs));
             }
-            else
+            return EatExpPart(precedence + 1, BinaryExpression(op, lhs, rhs));
+        }
+
+        private Exp BinaryExpression(Token op, Exp lhs, Exp rhs)
+        {
+            switch (op.value)
             {
-                if (tmpTokens.Count > 1)
-                {
-                    if (tmpTokens[1].type == Global.DataType.OPERATOR)
+                case "&&": return new AndExp(null, lhs, rhs);
+                case "&": return new BitwiseAndExp(null, lhs, rhs);
+                case "<<": return new BitwiseLeftShiftExp(null, lhs, rhs);
+                case "~": return new BitwiseNotExp(null, lhs, rhs);
+                case "|": return new BitwiseOrExp(null, lhs, rhs);
+                case ">>": return new BitwiseRightShiftExp(null, lhs, rhs);
+                case "^": return new BitwiseXorExp(null, lhs, rhs);
+                case "/": return new DivisionExp(null, lhs, rhs);
+                case "!": return new ExclamationExp(null, lhs, rhs);
+                case "-": return new MinusExp(null, lhs, rhs);
+                case "%": return new ModuloExp(null, lhs, rhs);
+                case "*": return new MultiplicationExp(null, lhs, rhs);
+                case "||": return new OrExp(null, lhs, rhs);
+                case "&+": return new OverflowAddExp(null, lhs, rhs);
+                case "&*": return new OverflowMultExp(null, lhs, rhs);
+                case "&-": return new OverflowSubExp(null, lhs, rhs);
+                case "+": return new PlusExp(null, lhs, rhs);
+            }
+            throw new UnknownOperatorException("The operator \"" + op.value + "\" is unknown");
+        }
+
+        private Exp EatPrimary()
+        {
+            switch (tokens[0].type)
+            {
+                case Global.DataType.IDENTIFIER:
+                    return EatIdentifier();
+                case Global.DataType.INT:
+                    switch (architecture)
                     {
-                        switch (tmpTokens[1].value)
-                        {
-                            case "+": return new PlusExp(tmpContext[1], EatExpression(new List<Token>() { tmpTokens[0] }, new List<LineContext>() { tmpContext[0] }), EatExpression(tmpTokens.GetRange(2, tmpTokens.Count - 2), tmpContext.GetRange(2, tmpContext.Count - 2)));
-                        }
+                        case Global.InstructionSets.X86: Exp result = new Int32Literal(context[0], tokens[0].value); CutData(1); return result;
+                        case Global.InstructionSets.X86_64: result = new Int64Literal(context[0], tokens[0].value); CutData(1); return result;
                     }
-                    else
-                        Swift.error("Operator expected at line " + tmpContext[1].GetLine() + ", position " + tmpContext[1].GetPos() + ".", 1);
-                }
-                else {
-                    switch (tmpTokens[0].type)
+                    break;
+                case Global.DataType.DOUBLE:
+                    switch (architecture)
                     {
-                        case Global.DataType.INT: return new IntegerLiteral(tmpContext[0], tmpTokens[0].value);
-                        case Global.DataType.STRING: return new StringLiteral(tmpContext[0], tmpTokens[0].value);
-                        case Global.DataType.IDENTIFIER: return new IdentifierExp(tmpContext[0], new Identifier(tmpTokens[0].value));
-                        default: throw new UnknownTermException("The type of the term in the expression is not recognized: " + tmpTokens[0].value);
+                        case Global.InstructionSets.X86: Exp result = new FloatLiteral(context[0], tokens[0].value); CutData(1); return result;
+                        case Global.InstructionSets.X86_64: result = new DoubleLiteral(context[0], tokens[0].value); CutData(1); return result;
                     }
-                }
+                    break;
+                case Global.DataType.STRING:
+                    return new StringLiteral(context[0], tokens[0].value);
+                case Global.DataType.TRUE:
+                    return new BoolLiteral(context[0], true);
+                case Global.DataType.FALSE:
+                    return new BoolLiteral(context[0], false);
             }
             return null;
         }
 
-        private Assignment EatAssignment(List<Token> tokensIn, List<LineContext> contextIn)
+        private Exp EatIdentifier()
         {
-            if (!(tokensIn[1].type == Global.DataType.OPERATOR && tokensIn[1].value == "="))
-                Swift.error("Assignment operator expected at line " + contextIn[0].GetLine() + ".", 1);
-            Assignment node = new Assignment(contextIn[0]);
-            Identifier lhs = new Identifier(tokensIn[0].value);
-            Exp rhs = EatExpression(tokensIn.GetRange(2, tokensIn.Count - 2), contextIn.GetRange(2, tokensIn.Count - 2));
+            return new IdentifierExp(context[0], new Identifier(tokens[0].value));
+        }
+
+        private void EatAssignment()
+        {
+            Assignment node = new Assignment(context[0]);
+            Identifier lhs = new Identifier(tokens[0].value);
+            CutData(2);
+            Exp rhs = EatExpression();
             node.LHS = lhs;
             node.RHS = rhs;
-            return node;
+            astBase.Children.Add(node);
         }
-
-        /*private Exp EatLHS(List<Token> tokensIn = null, List<LineContext> contextIn = null)
-        {
-            int i = 0;
-            while (true)
-            {
-                if (i >= tokensIn.Count)
-                    Swift.error("")
-                if (tokensIn[i].type == Global.DataType.OPERATOR)
-                {
-
-                }
-            }
-            switch (tokensIn[0].type) {
-                case Global.DataType.
-            }
-
-        private Exp EatRHS(List<Token> tokensIn = null, List<LineContext> contextIn = null)
-        {
-            List<Token> tmpTokens;
-            List<LineContext> tmpContext;
-            if (tokensIn == null)
-            {
-                tmpTokens = tokens;
-                tmpContext = context;
-            }
-            else
-            {
-                tmpTokens = tokensIn;
-                tmpContext = contextIn;
-            }
-            if (tmpTokens[0].type == Global.DataType.OPEN_ROUND_BRACKET)
-            {
-                int level = 1;
-                int i = 1;
-                while (true)
-                {
-                    if (i >= tmpTokens.Count)
-                        Swift.error("\")\" expected in the expression starting at line " + tmpContext[0].GetLine() + ".", 1);
-                    if (tmpTokens[i].type == Global.DataType.OPEN_ROUND_BRACKET)
-                        level++;
-                    if (tmpTokens[i].type == Global.DataType.CLOSE_ROUND_BRACKET)
-                        level--;
-                    if (level == 0)
-                        break;
-                    i++;
-                }
-                if (i >= tmpTokens.Count - 1) //Remove the brackets that do nothing appararently
-                    return EatRHS(tmpTokens.GetRange(1, tmpTokens.Count - 2), tmpContext.GetRange(1, tmpContext.Count - 2));
-            }
-            else
-            {
-                if (tmpTokens.Count > 1)
-                {
-                    if (tmpTokens[1].type == Global.DataType.OPERATOR)
-                    {
-                        switch (tmpTokens[1].value)
-                        {
-                            case "+": return new PlusExp(tmpContext[1], new IntegerLiteral(tmpContext[0], tmpTokens[0].value), EatRHS(tmpTokens.GetRange(2, tmpTokens.Count - 2), tmpContext.GetRange(2, tmpContext.Count - 2)));
-                        }
-                    }
-                    else
-                        Swift.error("Operator expected at line " + tmpContext[1].GetLine() + ", position " + tmpContext[i].GetPos() + ".");
-                }
-                else
-                    return new IntegerLiteral(tmpContext[0], tmpTokens[0].value);
-            }
-            return null;
-        }*/
 
         /// <summary>
         /// Parses a declaration (eg, var a, let b)
@@ -282,65 +278,102 @@ namespace Swift
         /// <param name="tokens">A list of tokens containing only the whole declaration</param>
         /// <param name="context">A list of LineContext corresponding to the tokens supplied</param>
         /// <returns></returns>
-        private ASTNode EatDeclaration(List<Token> tokensIn, List<LineContext> contextIn)
+        private void EatDeclaration()
         {
-            List<Token> tmpTokens;
-            List<LineContext> tmpContext;
-            tmpTokens = tokensIn;
-            tmpContext = contextIn;
-            if (tmpTokens[1].type != Global.DataType.IDENTIFIER)
+            if (tokens[1].type != Global.DataType.IDENTIFIER)
             {
-                Swift.error("Identifier expected at line " + tmpContext[0].GetLine().ToString() + ", colomn " + tmpContext[1].GetPos().ToString() + ".", 1);
+                Swift.error("Identifier expected at line " + context[0].GetLine().ToString() + ", colomn " + context[1].GetPos().ToString() + ".", 1);
             }
-            if (tmpTokens[0].type == Global.DataType.VAR)
+            if (tokens[0].type == Global.DataType.VAR)
             {
-                VarDeclaration node = new VarDeclaration(tmpContext[0]);
-                node.Name = new Identifier(tmpTokens[1].value);
+                VarDeclaration node = new VarDeclaration(context[0]);
+                node.Name = new Identifier(tokens[1].value);
                 astBase.Children.Add(node);
-                if (tmpTokens.Count >= 4)
+                if (tokens.Count >= 4)
                 {
-                    if (tmpTokens[2].type == Global.DataType.OPERATOR && tmpTokens[2].value == "=")
+                    if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                     {
-                        astBase.Children.Add(EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1)));
+                        CutData(1);
+                        EatAssignment();
+                        while (tokens.Count > 0)
+                        {
+                            if (tokens[0].type == Global.DataType.COMMA)
+                            {
+                                node = new VarDeclaration(context[0]);
+                                node.Name = new Identifier(tokens[1].value);
+                                astBase.Children.Add(node);
+                                if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
+                                {
+                                    CutData(1);
+                                    EatAssignment();
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        Swift.error("Assignment expected after a declaration without a type specification on line " + tmpContext[2].GetLine() + ", column " + tmpContext[2].GetPos(), -1);
+                        Swift.error("Assignment expected after a declaration without a type specification on line " + context[2].GetLine() + ", column " + context[2].GetPos(), -1);
                     }
                 }
                 else
                 {
-                    Swift.error("Assignment expected after a declaration without a type specification on line " + tmpContext[2].GetLine() + ", column " + tmpContext[2].GetPos(), -1);
+                    Swift.error("Assignment expected after a declaration without a type specification on line " + context[2].GetLine() + ", column " + context[2].GetPos(), -1);
 
                 }
-                return node;
             }
-            else if (tmpTokens[0].type == Global.DataType.LET)
+            else if (tokens[0].type == Global.DataType.LET)
             {
-                if (tokensIn.Count <= 2)
-                    Swift.error("Constants must be initialized; error occurerred on line " + tmpContext[0].GetLine() + ", column " + tmpContext[0].GetPos() + ".", 1);
-                if (tmpTokens.Count >= 4)
+                if (tokens.Count <= 2)
+                    Swift.error("Constants must be initialized; error occurerred on line " + context[0].GetLine() + ", column " + context[0].GetPos() + ".", 1);
+                if (tokens.Count >= 4)
                 {
-                    if (tmpTokens[2].type == Global.DataType.OPERATOR && tmpTokens[2].value == "=")
+                    if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                     {
-                        ConstDeclaration node = new ConstDeclaration(tmpContext[0], EatExpression(tmpTokens.GetRange(3, tmpTokens.Count - 3), tmpContext.GetRange(3, tmpContext.Count - 3)));
-                        node.Name = new Identifier(tmpTokens[1].value);
+                        string tmpToken = tokens[1].value;
+                        CutData(3);
+                        ConstDeclaration node = new ConstDeclaration(context[0], EatExpression());
+                        node.Name = new Identifier(tmpToken);
                         astBase.Children.Add(node);
+                        while (tokens.Count > 0)
+                        {
+                            if (tokens[0].type == Global.DataType.COMMA)
+                            {
+                                tmpToken = tokens[1].value;
+                                if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
+                                {
+                                    CutData(3);
+                                    node = new ConstDeclaration(context[0], EatExpression());
+                                    node.Name = new Identifier(tmpToken);
+                                    astBase.Children.Add(node);
+                                }
+                                else
+                                    Swift.error("Syntax error on line " + context[0].GetLine() + ": Constants must be initialized", 1);
+                            }
+                            else
+                                Swift.error("Unexpected code after constant declaration on line " + context[0].GetLine(), 1);
+                        }
                     }
                     else
                     {
-                        Swift.error("Constants must be initialized; error occurerred on line " + tmpContext[0].GetLine() + ", column " + tmpContext[0].GetPos() + ".", 1);
+                        Swift.error("Constants must be initialized; error occurerred on line " + context[0].GetLine() + ", column " + context[0].GetPos() + ".", 1);
                     }
                 }
-                return node;
+                astBase.Children.Add(node);
             }
             else {
-                Swift.error("Internal error parsing the variable declaration: " + tmpTokens, 1);
-                return null;
+                Swift.error("Internal error parsing the variable declaration: " + tokens, 1);
+                return;
             }
-            //if (tokensIn.Count > 2)
+            //if (tokens.Count > 2)
             //    node.SetChildren();
-            //return EatAssignment(tmpTokens.GetRange(1, tmpTokens.Count - 1), tmpContext.GetRange(1, tmpContext.Count - 1));
+            //return EatAssignment(tokens.GetRange(1, tokens.Count - 1), context.GetRange(1, context.Count - 1));
+        }
+
+        private void CutData(int amount)
+        {
+            int newLength = tokens.Count - amount;
+            tokens = tokens.GetRange(amount, newLength);
+            context = context.GetRange(amount, newLength);
         }
 
 
@@ -352,6 +385,17 @@ namespace Swift
             public UnknownTermException(string message) : base(message) { }
             public UnknownTermException(string message, System.Exception inner) : base(message, inner) { }
             protected UnknownTermException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+        }
+
+
+
+        [Serializable()]
+        private class UnknownOperatorException : System.Exception
+        {
+            public UnknownOperatorException() : base() { }
+            public UnknownOperatorException(string message) : base(message) { }
+            public UnknownOperatorException(string message, System.Exception inner) : base(message, inner) { }
+            protected UnknownOperatorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         }
     }
 }

@@ -1,1 +1,1 @@
-print("Hello World!")
+var a = 0.0, b = 1.0, c = 2.0

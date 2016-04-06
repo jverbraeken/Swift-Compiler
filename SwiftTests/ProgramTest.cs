@@ -37,7 +37,7 @@ namespace SwiftTests
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
 
-            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
+            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.CheckSemantics(ast);
@@ -61,7 +61,7 @@ namespace SwiftTests
             test[0].InterCode.Add(new Pop(rbp));
             test[0].InterCode.Add(new Ret());
 
-            test[0].StringTable.Add("%d", ".LC0");
+            test[0].StringTable.Add("Hello World!", ".LC0");
 
             Assert.IsTrue(ModuleListComparer.Compare(modules, test));
         }
@@ -79,7 +79,7 @@ namespace SwiftTests
             List<Token> tokens = lexicalOutput.Item1;
             List<LineContext> context = lexicalOutput.Item2;
 
-            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context);
+            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             List<Table> symbolTables = semanticAnalyzer.CheckSemantics(ast);

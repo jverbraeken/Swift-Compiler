@@ -229,11 +229,33 @@ namespace Swift
             n.ID.accept(this);
         }
 
-        public override void visit(IntegerLiteral n)
+        public override void visit(Int64Literal n)
         {
             stack.Push(new IntegerConstant(int.Parse(n.Value)));
             //Add(new Move(new IntegerConstant(int.Parse(n.Value)), regRAX));
             //Add(new Move(new IntegerConstant(int.Parse(n.Value)), new RegisterOffset(Global.Registers.STACKBASEPOINTER, --extraStackSize)));
+        }
+
+        //      EXPRESSIONS
+        
+        public override void visit(MinusExp n)
+        {
+            n.e1.accept(this);
+            n.e2.accept(this);
+            Add(new Move(stack.Pop(), regRDX));
+            Add(new Move(stack.Pop(), regRAX));
+            Add(new Sub(regRDX, regRAX));
+            stack.Push(regRAX);
+        }
+
+        public override void visit(MultiplicationExp n)
+        {
+            n.e1.accept(this);
+            n.e2.accept(this);
+            Add(new Move(stack.Pop(), regRDX));
+            Add(new Move(stack.Pop(), regRAX));
+            Add(new Mult(regRDX, regRAX));
+            stack.Push(regRAX);
         }
 
         public override void visit(PlusExp n)
@@ -244,10 +266,6 @@ namespace Swift
             Add(new Move(stack.Pop(), regRAX));
             Add(new Add(regRDX, regRAX));
             stack.Push(regRAX);
-            //Add(new Pop(regRDX));
-            //Add(new Pop(regRAX));
-            //Add(new Add(regRDX, regRAX));
-            //Add(new Push(regRAX));
         }
 
         public override void visit(StringLiteral n)
@@ -269,13 +287,19 @@ namespace Swift
             switch (n.Name.Name)
             {
                 case "print":
-                    if (n.Args[0].Value.accept(typeVisitor).GetType() == (new Int64Type().GetType()))
+                    if (n.Args[0].Value.accept(typeVisitor) is Int8Type)
+                    {
+                        if (!stringTable.ContainsKey("%o"))
+                            stringTable.Add("%o", ".LC" + stringTable.Count);
+                        Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%o"]), new ParamRegister(0)));
+                    }
+                    if (n.Args[0].Value.accept(typeVisitor) is Int64Type)
                     {
                         if (!stringTable.ContainsKey("%d"))
                             stringTable.Add("%d", ".LC" + stringTable.Count);
                         Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%d"]), new ParamRegister(0)));
                     }
-                    else if (n.Args[0].Value.accept(typeVisitor).GetType() == (new StringType().GetType()))
+                    else if (n.Args[0].Value.accept(typeVisitor) is StringType)
                     {
                         n.Args[0].Value.accept(this);
                         if (!stringTable.ContainsKey(tmpStr))
