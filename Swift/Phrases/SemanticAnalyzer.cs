@@ -181,11 +181,20 @@ namespace Swift
                 Symbol reference = scope.Lookup(name);
                 if (reference != null)
                 {
+                    if (reference.GetType() == (new VariableSymbol(null, null).GetType())) {
+                        if (((VariableSymbol) reference).Type.GetType() != (n.RHS.accept(new TypeVisitor())).GetType())
+                            Swift.error("Semantic error: the types of the left-hand and right-hand side of the assignment on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
+                    }
+                    else if (reference.GetType() == (new ConstantSymbol(null, null, null).GetType())) {
+                        if (((ConstantSymbol) reference).Type != n.RHS.accept(new TypeVisitor()))
+                            Swift.error("Semantic error: the types of the left-hand and right-hand side of the assignment on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
+                    }
                     reference.SetReferenced();
                     break;
                 }
                 scope = scope.GetReference();
             }
+            n.RHS.accept(this);
         }
 
         public override void visit(ConstDeclaration n)
@@ -208,5 +217,14 @@ namespace Swift
             VariableSymbol sym = new VariableSymbol(n.Name.Name, n.Type);
             scope.Insert(sym);
         }
+
+
+        ////        EXPRESSIONS
+
+
+        /*public override void visit(StringLiteral n)
+        {
+            base.visit(n);
+        }*/
     }
 }

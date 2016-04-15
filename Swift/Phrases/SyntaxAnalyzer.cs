@@ -1,4 +1,5 @@
 ﻿using Swift.AST_Nodes;
+using Swift.AST_Nodes.Types;
 using Swift.Tokens;
 using System;
 using System.Collections.Generic;
@@ -131,11 +132,10 @@ namespace Swift
 
         private void EatFunctionCall()
         {
-
-            int i = 2;
-            Token token = tokens[i];
-            List<ParameterCall> args = new List<ParameterCall>();
-            while (token.type != Global.DataType.CLOSE_ROUND_BRACKET)
+            FunctionCallExp node = new FunctionCallExp(context[0]);
+            node.Name = new Identifier(tokens[0].value);
+            CutData(1);
+            while (tokens[0].type != Global.DataType.CLOSE_ROUND_BRACKET)
             {
                 List<Token> arg = new List<Token>();
                 List<LineContext> argContext = new List<LineContext>();
@@ -145,11 +145,9 @@ namespace Swift
                     argContext.Add(context[i]);
                     token = tokens[++i];
                 }*/
-                args.Add(EatFunctionArgument());
+                CutData(1);
+                node.Args.Add(EatFunctionArgument());
             }
-            FunctionCallExp node = new FunctionCallExp(context[0]);
-            node.Name = new Identifier(tokens[0].value);
-            node.Args.AddRange(args);
             astBase.Children.Add(node);
         }
 
@@ -176,7 +174,7 @@ namespace Swift
 
         private Exp EatExpPart(int precedence, Exp lhs)
         {
-            if (tokens.Count == 0 || tokens[0].type == Global.DataType.CLOSE_ROUND_BRACKET || tokens[0].type == Global.DataType.COMMA/* || (tokens[0].type != Global.DataType.OPERATOR && tokens[0].type != Global.DataType.INT && tokens[0].type != Global.DataType.IDENTIFIER && tokens[0].type != Global.DataType.STRING && tokens[0].type != Global.DataType.DOUBLE)*/)
+            if (tokens.Count <= 1 || tokens[1].type == Global.DataType.CLOSE_ROUND_BRACKET || tokens[1].type == Global.DataType.COMMA/* || (tokens[0].type != Global.DataType.OPERATOR && tokens[0].type != Global.DataType.INT && tokens[0].type != Global.DataType.IDENTIFIER && tokens[0].type != Global.DataType.STRING && tokens[0].type != Global.DataType.DOUBLE)*/)
                 return lhs;
             if (tokens[0].type != Global.DataType.OPERATOR)
                 Swift.error("Operator expected between the terms in the expression on line " + context[0].GetLine() + ", column" + context[0].GetPos(), 1);
@@ -247,10 +245,14 @@ namespace Swift
                     }
                     break;
                 case Global.DataType.STRING:
-                    return new StringLiteral(context[0], tokens[0].value);
+                    Exp literal = new StringLiteral(context[0], tokens[0].value);
+                    CutData(1);
+                    return literal;
                 case Global.DataType.TRUE:
+                    CutData(1);
                     return new BoolLiteral(context[0], true);
                 case Global.DataType.FALSE:
+                    CutData(1);
                     return new BoolLiteral(context[0], false);
             }
             return null;
@@ -258,7 +260,9 @@ namespace Swift
 
         private Exp EatIdentifier()
         {
-            return new IdentifierExp(context[0], new Identifier(tokens[0].value));
+            Exp literal = new IdentifierExp(context[0], new Identifier(tokens[0].value));
+            CutData(1);
+            return literal;
         }
 
         private void EatAssignment()
@@ -286,13 +290,15 @@ namespace Swift
             }
             if (tokens[0].type == Global.DataType.VAR)
             {
-                VarDeclaration node = new VarDeclaration(context[0]);
-                node.Name = new Identifier(tokens[1].value);
-                astBase.Children.Add(node);
                 if (tokens.Count >= 4)
                 {
+                    VarDeclaration node = new VarDeclaration(context[0]);
+                    if (tokens[1].type != Global.DataType.IDENTIFIER)
+                        Swift.error("Syntax error: identifier expected after keyword \"var\" on line " + context[1].GetLine() + ", column " + context[1].GetPos(), 1);
+                    node.Name = new Identifier(tokens[1].value);
                     if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                     {
+                        astBase.Children.Add(node);
                         CutData(1);
                         EatAssignment();
                         while (tokens.Count > 0)
@@ -309,6 +315,15 @@ namespace Swift
                                 }
                             }
                         }
+                    }
+                    else if (tokens[2].type == Global.DataType.COLON)
+                    {
+                        node = new VarDeclaration(context[1]);
+                        node.Name = new Identifier(tokens[1].value);
+                        if (tokens.Count <= 2)
+                            Swift.error("Syntax error: type expected after the colon on line " + context[2].GetLine() + ", column " + context[2].GetPos(), 1);
+                        node.Type = getASTTypeFromToken(tokens[3], context[3]);
+                        astBase.Children.Add(node);
                     }
                     else
                     {
@@ -374,6 +389,43 @@ namespace Swift
             int newLength = tokens.Count - amount;
             tokens = tokens.GetRange(amount, newLength);
             context = context.GetRange(amount, newLength);
+        }
+
+        private ASTType getASTTypeFromToken(Token token, LineContext context)
+        {
+            switch (token.type)
+            {
+                case Global.DataType.BOOLTYPE: return new BoolType();
+                case Global.DataType.CHARACTERTYPE: return new CharType();
+                case Global.DataType.DOUBLETYPE: return new DoubleType();
+                case Global.DataType.FLOATTYPE: return new FloatType();
+                case Global.DataType.INT16TYPE: return new Int16Type();
+                case Global.DataType.INT32TYPE: return new Int32Type();
+                case Global.DataType.INT64TYPE: return new Int64Type();
+                case Global.DataType.INT8TYPE: return new Int8Type();
+                case Global.DataType.STRINGTYPE: return new StringType();
+                case Global.DataType.UINT16TYPE: return new UInt16Type();
+                case Global.DataType.UINT32TYPE: return new UInt32Type();
+                case Global.DataType.UINT64TYPE: return new UInt64Type();
+                case Global.DataType.UINT8TYPE: return new UInt8Type();
+                    
+                case Global.DataType.OBOOLTYPE: return new BoolType(true);
+                case Global.DataType.OCHARACTERTYPE: return new CharType(true);
+                case Global.DataType.ODOUBLETYPE: return new DoubleType(true);
+                case Global.DataType.OFLOATTYPE: return new FloatType(true);
+                case Global.DataType.OINT16TYPE: return new Int16Type(true);
+                case Global.DataType.OINT32TYPE: return new Int32Type(true);
+                case Global.DataType.OINT64TYPE: return new Int64Type(true);
+                case Global.DataType.OINT8TYPE: return new Int8Type(true);
+                case Global.DataType.OSTRINGTYPE: return new StringType(true);
+                case Global.DataType.OUINT16TYPE: return new UInt16Type(true);
+                case Global.DataType.OUINT32TYPE: return new UInt32Type(true);
+                case Global.DataType.OUINT64TYPE: return new UInt64Type(true);
+                case Global.DataType.OUINT8TYPE: return new UInt8Type(true);
+
+                default: Swift.error("Syntax error: unknown type found after the colon on line " + context.GetLine() + ", column " + context.GetPos(), 1);
+                    return null;
+            }
         }
 
 

@@ -56,6 +56,12 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
+        public virtual string visit(FPRegister n)
+        {
+            throw new NotImplementedException("Register is not implemented yet");
+            // Do nothing; leave the implementation to the main class
+        }
+
         public virtual string visit(RegisterOffset n)
         {
             throw new NotImplementedException("RegisterOffset is not implemented yet");
@@ -201,7 +207,7 @@ namespace Swift
             throw new NotImplementedException();
         }
 
-        public virtual void visit(DoubleLiteral n)
+        public virtual void visit(DoubleLiteral n) 
         {
             throw new NotImplementedException();
         }
@@ -237,6 +243,11 @@ namespace Swift
         }
 
         public virtual void visit(UInt32Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(TypeCast t)
         {
             throw new NotImplementedException();
         }

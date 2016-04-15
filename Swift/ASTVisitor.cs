@@ -55,6 +55,11 @@ namespace Swift
             throw new NotImplementedException();
         }
 
+        public void visit(TypeCast t)
+        {
+            throw new NotImplementedException();
+        }
+
         public void visit(BoolType t)
         {
             throw new NotImplementedException();
@@ -326,6 +331,11 @@ namespace Swift
         }
 
         public string visit(ParamRegister n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string visit(FPRegister n)
         {
             throw new NotImplementedException();
         }

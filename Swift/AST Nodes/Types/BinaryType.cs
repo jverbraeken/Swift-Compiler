@@ -4,7 +4,7 @@ namespace Swift.AST_Nodes.Types
 {
     public class BinaryType : ASTType
     {
-        public BinaryType()
+        public BinaryType(bool optional = false) : base(optional)
         {
         }
         public override void accept(Visitor v)

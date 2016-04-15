@@ -8,10 +8,10 @@ namespace Swift.AST_Nodes.Types
 {
     public class IdentifierType : ASTType
     {
-        private Identifier id;
-        public IdentifierType(Identifier id)
+        public Identifier Id { get; set; }
+        public IdentifierType(Identifier id, bool optional = false) : base(optional)
         {
-            this.id = id;
+            Id = id;
         }
 
         public override void accept(Visitor v)

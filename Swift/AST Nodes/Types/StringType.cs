@@ -4,7 +4,7 @@ namespace Swift.AST_Nodes.Types
 {
     public class StringType : ASTType
     {
-        public StringType()
+        public StringType(bool optional = false) : base(optional)
         {
         }
         public override void accept(Visitor v)

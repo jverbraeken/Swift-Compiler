@@ -9,7 +9,7 @@ namespace Swift.AST_Nodes.Types
     public class TupleType : ASTType
     {
         public List<TupleElement> elements { get; set; }
-        public TupleType()
+        public TupleType(bool optional = false) : base(optional)
         {
             elements = new List<TupleElement>();
         }

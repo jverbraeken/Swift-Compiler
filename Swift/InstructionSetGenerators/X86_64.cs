@@ -155,6 +155,14 @@ namespace Swift.InstructionSetGenerators
             }
         }
 
+        public override string visit(FPRegister n)
+        {
+            if (n.Position < 16)
+                return "%xmm" + n.Position;
+            else
+                return null;
+        }
+
         public override string visit(Register n)
         {
             switch (n.Value)

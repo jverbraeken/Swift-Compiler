@@ -48,6 +48,7 @@
     <Compile Include="AssTargets\ByteConstant.cs" />
     <Compile Include="AssTargets\OctalConstant.cs" />
     <Compile Include="AssTargets\HexadecimalConstant.cs" />
+    <Compile Include="AssTargets\FPRegister.cs" />
     <Compile Include="AssTargets\ParamRegister.cs" />
     <Compile Include="AssTargets\RegisterOffset.cs" />
     <Compile Include="AssTargets\Register.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="AST Nodes\Types\CharType.cs" />
     <Compile Include="AST Nodes\Types\BoolType.cs" />
     <Compile Include="AST Nodes\Types\StringType.cs" />
+    <Compile Include="AST Nodes\TypeCast.cs" />
     <Compile Include="AST Nodes\VarDeclaration.cs" />
     <Compile Include="AST Nodes\Expressions\FunctionCallExp.cs" />
     <Compile Include="AST Nodes\Base.cs" />

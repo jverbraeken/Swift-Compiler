@@ -21,6 +21,7 @@ namespace Swift
         string visit(OctalConstant n);
         string visit(HexadecimalConstant n);
         string visit(ParamRegister n);
+        string visit(FPRegister n);
         string visit(Register n);
         string visit(RegisterOffset n);
         // AST Nodes
@@ -69,6 +70,7 @@ namespace Swift
         void visit(UInt32Literal n);
         void visit(UInt64Literal n);
         // AST Nodes - Types
+        void visit(TypeCast n);
         void visit(BoolType t);
         void visit(CharType t);
         void visit(DoubleType t);

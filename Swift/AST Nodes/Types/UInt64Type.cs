@@ -4,7 +4,7 @@ namespace Swift.AST_Nodes.Types
 {
     public class UInt64Type : ASTType
     {
-        public UInt64Type()
+        public UInt64Type(bool optional = false) : base(optional)
         {
         }
         public override void accept(Visitor v)

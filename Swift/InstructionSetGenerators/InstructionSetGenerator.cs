@@ -51,6 +51,7 @@ namespace Swift.InstructionSetGenerators
         public abstract string visit(Register n);
         public abstract string visit(RegisterOffset n);
         public abstract string visit(ParamRegister n);
+        public abstract string visit(FPRegister n);
         // Instructions
         public abstract void visit(Add n);
         public abstract void visit(Call n);
@@ -145,6 +146,11 @@ namespace Swift.InstructionSetGenerators
         public void visit(StringLiteral n)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual void visit(TypeCast id)
+        {
+            // Do nothing; leave the implementation to the main class
         }
 
         public virtual void visit(IdentifierType id)

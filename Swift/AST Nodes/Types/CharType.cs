@@ -4,7 +4,7 @@ namespace Swift.AST_Nodes.Types
 {
     public class CharType : ASTType
     {
-        public CharType()
+        public CharType(bool optional = false) : base(optional)
         {
         }
         public override void accept(Visitor v)

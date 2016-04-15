@@ -1,1 +1,3 @@
-var a = 0.0, b = 1.0, c = 2.0
+var a: String
+a = "hoi"
+print(a)

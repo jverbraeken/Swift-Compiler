@@ -1,4 +1,9 @@
     .file	"addtwonumbers.swift"
+    .section	.rdata,"dr"
+.LC0:
+    .asciz	"hoi"
+.LC1:
+    .asciz	"%s"
     .text
     .globl	main
 main:
@@ -7,7 +12,11 @@ main:
     subq	$32, %rsp
     subq	$8, %rsp
     call	__main
-    movq	$1, -8(%rbp)
+    leaq	.LC0(%rip), %rax
+    movq	%rax, -8(%rbp)
+    movq	-8(%rbp), %rdx
+    leaq	.LC1(%rip), %rcx
+    call	printf
     nop
     movq	%rbp, %rsp
     popq	%rbp

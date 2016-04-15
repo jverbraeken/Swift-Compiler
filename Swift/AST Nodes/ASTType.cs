@@ -8,6 +8,12 @@ namespace Swift.AST_Nodes
 {
     public abstract class ASTType
     {
+        public bool Optional { get; set; }
+
+        public ASTType(bool optional = false)
+        {
+            Optional = optional;
+        }
         public abstract void accept(Visitor n);
     }
 }

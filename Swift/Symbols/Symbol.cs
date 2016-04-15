@@ -36,6 +36,7 @@ namespace Swift.Symbols
                 stackLocation = value;
             }
         }
+        public ASTType type { get; set; }
 
         public Symbol(string name)
         {
