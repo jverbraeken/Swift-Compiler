@@ -9,8 +9,16 @@ namespace Swift.AST_Nodes
 {
     public class VarDeclaration : ASTNode
     {
-        public ASTType Type { get; set; }
         public Identifier Name { get; set; }
+        /// <summary>
+        /// Type must be used when the type of the variable is declared directly, otherwise TypeByAssignment must be used
+        /// </summary>
+        public ASTType Type { get; set; }
+        /// <summary>
+        /// TypeByAssignment must be used when the type of the variable is declared indirectly, otherwise Type must be used
+        /// </summary>
+        public Assignment TypeByAssignment { get; set; } 
+
         public VarDeclaration(LineContext context) : base(context)
         {
         }

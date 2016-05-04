@@ -30,8 +30,7 @@ namespace SwiftTests
         [TestMethod]
         public void TestHelloWorld()
         {
-            string[] text = new string[1];
-            text[0] = "print(\"Hello World!\")";
+            string[] text = new string[] { "print(\"Hello World!\")" };
 
             Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
@@ -104,6 +103,51 @@ namespace SwiftTests
             test[0].InterCode.Add(new Add(rdx, rax));
             test[0].InterCode.Add(new Move(rax, new RegisterOffset(Global.Registers.STACKBASEPOINTER, -3)));
             test[0].InterCode.Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, -3), new ParamRegister(1)));
+            test[0].InterCode.Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, ".LC0"), new ParamRegister(0)));
+            test[0].InterCode.Add(new Call("printf"));
+            test[0].InterCode.Add(new Nope());
+            test[0].InterCode.Add(new Move(rbp, rsp));
+            test[0].InterCode.Add(new Pop(rbp));
+            test[0].InterCode.Add(new Ret());
+
+            test[0].StringTable.Add("%d", ".LC0");
+
+            Assert.IsTrue(ModuleListComparer.Compare(modules, test));
+        }
+
+        [TestMethod]
+        public void TestConstantAssignment()
+        {
+            string[] text = new string[3];
+            text[0] = "let a = 5";
+            text[1] = "var b = a";
+            text[2] = "print(b)";
+
+            Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
+            List<Token> tokens = lexicalOutput.Item1;
+            List<LineContext> context = lexicalOutput.Item2;
+
+            Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
+
+            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+            List<Table> symbolTables = semanticAnalyzer.CheckSemantics(ast);
+
+            List<Module> modules = (new IntermediateCodeGenerator()).GenerateCode("source", "output", ast, symbolTables);
+
+
+            List<Module> test = new List<Module>();
+            test.Add(new Module(new List<Instruction>(), new Dictionary<string, string>()));
+            test[0].InterCode.Add(new SectionCode());
+            test[0].InterCode.Add(new MakeGlobal("main"));
+            test[0].InterCode.Add(new Label("main"));
+            test[0].InterCode.Add(new Push(rbp));
+            test[0].InterCode.Add(new Move(rsp, rbp));
+            test[0].InterCode.Add(new Sub(new ByteConstant(4), rsp));
+            test[0].InterCode.Add(new Sub(new ByteConstant(2), rsp));
+            test[0].InterCode.Add(new Call("__main"));
+            test[0].InterCode.Add(new Move(new IntegerConstant(5), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -1)));
+            test[0].InterCode.Add(new Move(new IntegerConstant(5), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -2)));
+            test[0].InterCode.Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, -2), new ParamRegister(1)));
             test[0].InterCode.Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, ".LC0"), new ParamRegister(0)));
             test[0].InterCode.Add(new Call("printf"));
             test[0].InterCode.Add(new Nope());

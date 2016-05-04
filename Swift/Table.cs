@@ -63,6 +63,8 @@ namespace Swift
         /// <summary>
         /// Returns the symbol assigned to a name in the symbol table or the first occurence in its parents.
         /// Note: please overload this function when you want to retrieve a function symbol
+        /// 
+        /// This method can throw a NoSuchKeyException that must be handled. Normally this exception is thrown because the symbol is deleted from the table because it was unreferenced/unused.
         /// </summary>
         /// <param name="name">The name of the symbol</param>
         /// <returns></returns>
@@ -73,7 +75,7 @@ namespace Swift
                 return value;
             else {
                 if (reference == null)
-                    return null;
+                    throw new NoSuchKeyException();
                 else
                     return reference.Lookup(name);
             }
@@ -82,6 +84,8 @@ namespace Swift
         /// <summary>
         /// Returns the function symbol assigned to a name in the symbol table.
         /// Note: please skip param if the symbol you want to retrieve isn't a function symbol
+        /// 
+        /// This method can throw a NoSuchKeyException that must be handled. Normally this exception is thrown because the symbol is deleted from the table because it was unreferenced/unused.
         /// </summary>
         /// <param name="name">The name of the symbol</param>
         /// <param name="param">A list of ParameterCalls of the function</param>
@@ -96,7 +100,7 @@ namespace Swift
                 return value;
             else {
                 if (reference == null)
-                    return null;
+                    throw new NoSuchKeyException();
                 else
                     return reference.Lookup(name, param2);
             }
@@ -138,6 +142,25 @@ namespace Swift
         public int GetStackSize()
         {
             return dictionary.Count;
+        }
+
+        /// <summary>
+        /// Remove unused (unreferenced) variables
+        /// </summary>
+        public void Compress()
+        {
+            /////////////////////// Doesn't work in a situation like a=5; b=a; print(b)
+            Dictionary<Tuple<string, List<ASTType>>, Symbol> dictionaryOld = new Dictionary<Tuple<string, List<ASTType>>, Symbol>(dictionary);
+            dictionary = new Dictionary<Tuple<string, List<ASTType>>, Symbol>();
+            int count = 0;
+            foreach (KeyValuePair<Tuple<string, List<ASTType>>, Symbol> entry in dictionaryOld)
+            {
+                if (entry.Value.IsReferenced())
+                {
+                    entry.Value.StackLocation = ++count;
+                    dictionary.Add(entry.Key, entry.Value);
+                }
+            }
         }
     }
 }

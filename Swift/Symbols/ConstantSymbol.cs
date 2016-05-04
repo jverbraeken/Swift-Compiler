@@ -16,7 +16,7 @@ namespace Swift.Symbols
         public ConstantSymbol(string name, ASTType type, Exp value) : base(name)
         {
             Type = type;
-            Value = Value;
+            Value = value;
         }
 
         public override void accept(Visitor v)

@@ -82,10 +82,14 @@ namespace Swift
             Console.ReadLine();
         }
 
-        public static void print(string line)
+        public static void error(Exception exception)
         {
-            Console.WriteLine(line);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(exception.Message);
+            Console.ReadLine();
+            throw exception;
         }
+
         public static void error(string line, int exitcode)
         {
             Console.ForegroundColor = ConsoleColor.Red;

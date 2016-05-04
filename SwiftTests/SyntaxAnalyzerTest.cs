@@ -13,40 +13,8 @@ namespace SwiftTests
     {
 
         [TestMethod]
-        public void TestCheckSyntax()
-        {
-            Token tmpToken;
-            LineContext tmpContext;
-            List<Token> tokens = new List<Token>();
-            tmpToken = new Token(Global.DataType.IDENTIFIER);
-            tmpToken.value = "print";
-            tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.OPEN_ROUND_BRACKET);
-            tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.STRING);
-            tmpToken.value = "\"hoi\"";
-            tokens.Add(tmpToken);
-            tmpToken = new Token(Global.DataType.CLOSE_ROUND_BRACKET);
-            tokens.Add(tmpToken);
-
-            List<LineContext> context = new List<LineContext>();
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
-
-            SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
-            Base result = syntaxAnalyer.CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
-            //Assert.AreEqual("print", result.Children[0].GetName());
-            //Assert.AreEqual("\"hoi\"", result.Children[0].GetName());
-        }
-
-        [TestMethod]
-        public void TestEatDeclaration()
+        [ExpectedException(typeof(SyntaxAnalyzer.NoTypeSpecifiedException))]
+        public void TestEatDeclarationWithoutType()
         {
             Token tmpToken;
             LineContext tmpContext;
@@ -57,17 +25,18 @@ namespace SwiftTests
             tmpToken = new Token(Global.DataType.IDENTIFIER);
             tmpToken.value = "a";
             tokens.Add(tmpToken);
+            tmpToken = new Token(Global.DataType.ENDSTATEMENT);
+            tokens.Add(tmpToken);
 
             List<LineContext> context = new List<LineContext>();
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
-            tmpContext = new LineContext(1, 1);
-            context.Add(tmpContext);
+            for (int i = 0; i < 3; i++)
+            {
+                tmpContext = new LineContext(1, 1);
+                context.Add(tmpContext);
+            }
 
             SyntaxAnalyzer syntaxAnalyer = new SyntaxAnalyzer();
             Base result = syntaxAnalyer.CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
-            //Assert.AreEqual(Global.ASTType.VAR_DECLARATION, result.GetChildren()[0].GetType());
-            //Assert.AreEqual("a", result.GetChildren()[0].GetName());
         }
 
         [TestMethod]

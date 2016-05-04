@@ -30,9 +30,11 @@ namespace Swift
         private TypeVisitor typeVisitor = new TypeVisitor();
         private string tmpStr;
         private Stack<AssTarget> stack = new Stack<AssTarget>();
-
+            
         public List<Module> GenerateCode(string source, string dest, Base ast, List<Table> tables)
         {
+            //tables[1].Compress(); // Doesn't work in a situation like a=5; b=a; print(b)
+
             this.tables = tables;
             //result = new List<string>();
 
@@ -182,10 +184,15 @@ namespace Swift
 
         public override void visit(Assignment n)
         {
-            int stackLocation = tables[scope].Lookup(n.LHS.Name).StackLocation;
-            n.RHS.accept(this);
-            //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
-            Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
+            try {
+                int stackLocation = tables[scope].Lookup(n.LHS.Name).StackLocation;
+                n.RHS.accept(this);
+                //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
+                Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
+            } catch (NoSuchKeyException e)
+            {
+                // Do nothing, emit the declaration of the constant, normally because the constant was unreferenced and thus unused
+            }
         }
 
         public override void visit(Base n)
@@ -196,10 +203,15 @@ namespace Swift
 
         public override void visit(ConstDeclaration n)
         {
-            int stackLocation = tables[scope].Lookup(n.Name.Name).StackLocation;
-            n.RHS.accept(this);
-            //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
-            Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
+            try {
+                int stackLocation = tables[scope].Lookup(n.Name.Name).StackLocation;
+                n.RHS.accept(this);
+                //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
+                Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
+            } catch (NoSuchKeyException e)
+            {
+                // Do nothing, emit the declaration of the constant, normally because the constant was unreferenced and thus unused
+            }
         }
 
         public override void visit(FunctionCallExp n)

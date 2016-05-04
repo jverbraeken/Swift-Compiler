@@ -1,21 +1,19 @@
     .file	"addtwonumbers.swift"
     .section	.rdata,"dr"
 .LC0:
-    .asciz	"hoi"
-.LC1:
-    .asciz	"%s"
+    .asciz	"%d"
     .text
     .globl	main
 main:
     pushq	%rbp
     movq	%rsp, %rbp
     subq	$32, %rsp
-    subq	$8, %rsp
+    subq	$16, %rsp
     call	__main
-    leaq	.LC0(%rip), %rax
-    movq	%rax, -8(%rbp)
+    movq	$70, -8(%rbp)
+    movq	$70, -16(%rbp)
     movq	-8(%rbp), %rdx
-    leaq	.LC1(%rip), %rcx
+    leaq	.LC0(%rip), %rcx
     call	printf
     nop
     movq	%rbp, %rsp

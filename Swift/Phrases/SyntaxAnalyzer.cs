@@ -1,5 +1,6 @@
 ﻿using Swift.AST_Nodes;
 using Swift.AST_Nodes.Types;
+using Swift.Phrases;
 using Swift.Tokens;
 using System;
 using System.Collections.Generic;
@@ -221,7 +222,8 @@ namespace Swift
                 case "&-": return new OverflowSubExp(null, lhs, rhs);
                 case "+": return new PlusExp(null, lhs, rhs);
             }
-            throw new UnknownOperatorException("The operator \"" + op.value + "\" is unknown");
+            Swift.error(new UnknownOperatorException("The operator \"" + op.value + "\" is unknown"));
+            return null;
         }
 
         private Exp EatPrimary()
@@ -265,7 +267,7 @@ namespace Swift
             return literal;
         }
 
-        private void EatAssignment()
+        private Assignment EatAssignment()
         {
             Assignment node = new Assignment(context[0]);
             Identifier lhs = new Identifier(tokens[0].value);
@@ -274,6 +276,7 @@ namespace Swift
             node.LHS = lhs;
             node.RHS = rhs;
             astBase.Children.Add(node);
+            return node;
         }
 
         /// <summary>
@@ -292,15 +295,15 @@ namespace Swift
             {
                 if (tokens.Count >= 4)
                 {
-                    VarDeclaration node = new VarDeclaration(context[0]);
                     if (tokens[1].type != Global.DataType.IDENTIFIER)
                         Swift.error("Syntax error: identifier expected after keyword \"var\" on line " + context[1].GetLine() + ", column " + context[1].GetPos(), 1);
-                    node.Name = new Identifier(tokens[1].value);
                     if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                     {
+                        VarDeclaration node = new VarDeclaration(context[0]);
+                        node.Name = new Identifier(tokens[1].value);
                         astBase.Children.Add(node);
                         CutData(1);
-                        EatAssignment();
+                        node.TypeByAssignment = EatAssignment();
                         while (tokens.Count > 0)
                         {
                             if (tokens[0].type == Global.DataType.COMMA)
@@ -311,19 +314,32 @@ namespace Swift
                                 if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                                 {
                                     CutData(1);
-                                    EatAssignment();
+                                    node.TypeByAssignment = EatAssignment();
                                 }
                             }
                         }
                     }
                     else if (tokens[2].type == Global.DataType.COLON)
                     {
-                        node = new VarDeclaration(context[1]);
+                        VarDeclaration node = new VarDeclaration(context[1]);
                         node.Name = new Identifier(tokens[1].value);
-                        if (tokens.Count <= 2)
+                        if (tokens.Count < 3)
                             Swift.error("Syntax error: type expected after the colon on line " + context[2].GetLine() + ", column " + context[2].GetPos(), 1);
                         node.Type = getASTTypeFromToken(tokens[3], context[3]);
                         astBase.Children.Add(node);
+                        if (tokens.Count == 4)
+                            Swift.error("Syntax error: assignment expected after \"=\" token on line" + context[3].GetLine() + ", column " + context[3].GetPos(), 1);
+                        if (tokens.Count > 4 && tokens[4].type == Global.DataType.OPERATOR && tokens[4].value == "=")
+                        {
+                            CutData(1);
+                            CutData(1, 2);
+                            EatAssignment();
+                        }
+                        else
+                        {
+                            CutData(4);
+                        }
+
                     }
                     else
                     {
@@ -332,8 +348,7 @@ namespace Swift
                 }
                 else
                 {
-                    Swift.error("Assignment expected after a declaration without a type specification on line " + context[2].GetLine() + ", column " + context[2].GetPos(), -1);
-
+                    Swift.error(new NoTypeSpecifiedException("Assignment expected after a declaration without a type specification on line " + context[1].GetLine() + ", column " + context[1].GetPos()));
                 }
             }
             else if (tokens[0].type == Global.DataType.LET)
@@ -368,12 +383,21 @@ namespace Swift
                                 Swift.error("Unexpected code after constant declaration on line " + context[0].GetLine(), 1);
                         }
                     }
+                    else if (tokens[2].type == Global.DataType.COLON)
+                    {
+                        string tmpToken = tokens[1].value;
+                        ASTType type = getASTTypeFromToken(tokens[3], context[3]);
+                        CutData(5);
+                        ConstDeclaration node = new ConstDeclaration(context[0], EatExpression());
+                        node.Name = new Identifier(tmpToken);
+                        node.Type = type;
+                        astBase.Children.Add(node);
+                    }
                     else
                     {
                         Swift.error("Constants must be initialized; error occurerred on line " + context[0].GetLine() + ", column " + context[0].GetPos() + ".", 1);
                     }
                 }
-                astBase.Children.Add(node);
             }
             else {
                 Swift.error("Internal error parsing the variable declaration: " + tokens, 1);
@@ -389,6 +413,12 @@ namespace Swift
             int newLength = tokens.Count - amount;
             tokens = tokens.GetRange(amount, newLength);
             context = context.GetRange(amount, newLength);
+        }
+
+        private void CutData(int index, int amount)
+        {
+            tokens.RemoveRange(index, amount);
+            context.RemoveRange(index, amount);
         }
 
         private ASTType getASTTypeFromToken(Token token, LineContext context)
@@ -431,23 +461,27 @@ namespace Swift
 
 
         [Serializable()]
-        private class UnknownTermException : System.Exception
+        public class UnknownTermException : Exception
         {
             public UnknownTermException() : base() { }
             public UnknownTermException(string message) : base(message) { }
-            public UnknownTermException(string message, System.Exception inner) : base(message, inner) { }
-            protected UnknownTermException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+            public UnknownTermException(string message, Exception inner) : base(message, inner) { }
         }
 
-
-
         [Serializable()]
-        private class UnknownOperatorException : System.Exception
+        public class UnknownOperatorException : Exception
         {
             public UnknownOperatorException() : base() { }
             public UnknownOperatorException(string message) : base(message) { }
-            public UnknownOperatorException(string message, System.Exception inner) : base(message, inner) { }
-            protected UnknownOperatorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+            public UnknownOperatorException(string message, Exception inner) : base(message, inner) { }
+        }
+
+        [Serializable()]
+        public class NoTypeSpecifiedException : Exception
+        {
+            public NoTypeSpecifiedException() : base() { }
+            public NoTypeSpecifiedException(string message) : base(message) { }
+            public NoTypeSpecifiedException(string message, Exception inner) : base(message, inner) { }
         }
     }
 }
