@@ -115,6 +115,7 @@ namespace Swift
         void visit(Ret n);
         void visit(Shl n);
         void visit(Shr n);
+        void visit(StringAsParameter n);
         void visit(Sub n);
         void visit(Xchg n);
         void visit(Xor n);

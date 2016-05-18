@@ -58,6 +58,7 @@
     <Compile Include="LexicalAnalyzerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestVisitor.cs" />
+    <Compile Include="X86_64Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Swift\Swift.csproj">

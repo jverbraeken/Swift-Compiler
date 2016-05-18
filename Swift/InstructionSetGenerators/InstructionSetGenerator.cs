@@ -62,6 +62,7 @@ namespace Swift.InstructionSetGenerators
         public abstract void visit(Leave n);
         public abstract void visit(Move n);
         public abstract void visit(Mult n);
+        public abstract void visit(StringAsParameter n);
 
         public void visit(Assignment n)
         {

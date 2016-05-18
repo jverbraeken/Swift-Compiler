@@ -117,6 +117,7 @@
     <Compile Include="AST Nodes\Expressions\OrExp.cs" />
     <Compile Include="AST Nodes\Expressions\BitwiseNotExp.cs" />
     <Compile Include="AST Nodes\Expressions\PlusExp.cs" />
+    <Compile Include="Instructions\StringAsParameter.cs" />
     <Compile Include="NoSuchKeyException.cs" />
     <Compile Include="InstructionSetGenerators\InstructionSetGenerator.cs" />
     <Compile Include="InstructionSetGenerators\X86_64.cs" />

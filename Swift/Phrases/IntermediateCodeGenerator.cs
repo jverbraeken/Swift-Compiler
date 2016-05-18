@@ -15,6 +15,16 @@ namespace Swift
 {
     public class IntermediateCodeGenerator : VisitorAdapter
     {
+        public static int AsciiToInt(string ascii)
+        {
+            int result = 0;
+            for (int i = ascii.Count()-1; i >= 0; i--)
+            {
+                result = 256 * result + (ascii[i]);
+            }
+            return result;
+        }
+
         //List<string> result;
         private List<Table> tables;
         private List<Instruction> postfixList = new List<Instruction>();
@@ -30,6 +40,10 @@ namespace Swift
         private TypeVisitor typeVisitor = new TypeVisitor();
         private string tmpStr;
         private Stack<AssTarget> stack = new Stack<AssTarget>();
+        /// <summary>
+        /// Indicates the nth parameter of a functioncall
+        /// </summary>
+        private int parameterNum;
             
         public List<Module> GenerateCode(string source, string dest, Base ast, List<Table> tables)
         {
@@ -216,6 +230,7 @@ namespace Swift
 
         public override void visit(FunctionCallExp n)
         {
+            parameterNum = 0;
             foreach (ParameterCall call in n.Args)
                 call.Value.accept(this);
             int count = n.Args.Count;
@@ -226,7 +241,7 @@ namespace Swift
             if (!(n.Args[0].Value is StringLiteral))
                 for (int i = 0; i < count; i++)
                     Add(new Move(stack.Pop(), new ParamRegister(count - 1 + occupiedParamRegisters - i)));
-            if (tables[0].Lookup(n.Name.Name, n.Args) is BuiltinFunctionSymbol)
+            if (builtin)
                 executeBuiltinFunction(n);
         }
 
@@ -284,8 +299,7 @@ namespace Swift
         {
             if (!stringTable.ContainsKey(n.Text))
                 stringTable.Add(n.Text, ".LC" + stringTable.Count);
-            Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable[n.Text]), regRAX));
-            stack.Push(regRAX);
+            Add(new StringAsParameter(stringTable[n.Text], parameterNum++));
         }
 
         public override void visit(VarDeclaration n)
@@ -316,10 +330,10 @@ namespace Swift
                     }
                     else if (n.Args[0].Value.accept(typeVisitor) is StringType)
                     {
-                        if (!stringTable.ContainsKey("%s"))
+                        /*if (!stringTable.ContainsKey("%s"))
                             stringTable.Add("%s", ".LC" + stringTable.Count);
                         n.Args[0].Value.accept(this);
-                        Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%s"]), new ParamRegister(0)));
+                        Add(new Lea(new RegisterOffset(Global.Registers.INSTRUCTIONPOINTER, stringTable["%s"]), new ParamRegister(0)));*/
                     }
                     Add(new Call("printf")); break;
             }

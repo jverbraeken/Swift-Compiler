@@ -137,6 +137,11 @@ namespace Swift
             // Do nothing; leave the implementation to the main class
         }
 
+        public virtual void visit(StringAsParameter n)
+        {
+            // Do nothing; leave the implementation to the main class
+        }
+
         public virtual void visit(Sub n)
         {
             // Do nothing; leave the implementation to the main class

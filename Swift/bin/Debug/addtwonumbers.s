@@ -21,102 +21,76 @@ test:
 	nop
 	leave
 	ret
+	.globl	test2
+	.def	test2;	.scl	2;	.type	32;	.endef
+test2:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	movq	16(%rbp), %rcx
+	call	printf
+	movq	24(%rbp), %rax
+	movq	%rax, %rcx
+	call	printf
+	movq	32(%rbp), %rax
+	movq	%rax, %rcx
+	call	printf
+	movq	40(%rbp), %rax
+	movq	%rax, %rcx
+	call	printf
+	movq	48(%rbp), %rax
+	movq	%rax, %rcx
+	call	printf
+	movq	56(%rbp), %rax
+	movq	%rax, %rcx
+	call	printf
+	nop
+	leave
+	ret
 	.def	__main;	.scl	2;	.type	32;	.endef
+	.section .rdata,"dr"
+.LC0:
+	.ascii "4\0"
+.LC1:
+	.ascii "3\0"
+.LC2:
+	.ascii "2\0"
+.LC3:
+	.ascii "1\0"
+.LC4:
+	.ascii "6\0"
+.LC5:
+	.ascii "5\0"
+	.text
 	.globl	main
 	.def	main;	.scl	2;	.type	32;	.endef
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$320, %rsp
+	addq	$-128, %rsp
 	call	__main
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -32(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -24(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -16(%rbp)
-	movl	$1953719668, -8(%rbp)
-	movw	$12576, -4(%rbp)
-	movb	$0, -2(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -64(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -56(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -48(%rbp)
-	movl	$1953719668, -40(%rbp)
-	movw	$12832, -36(%rbp)
-	movb	$0, -34(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -96(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -88(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -80(%rbp)
-	movl	$1953719668, -72(%rbp)
-	movw	$13088, -68(%rbp)
-	movb	$0, -66(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -128(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -120(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -112(%rbp)
-	movl	$1953719668, -104(%rbp)
-	movw	$13344, -100(%rbp)
-	movb	$0, -98(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -160(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -152(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -144(%rbp)
-	movl	$1953719668, -136(%rbp)
-	movw	$13600, -132(%rbp)
-	movb	$0, -130(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -192(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -184(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -176(%rbp)
-	movl	$1953719668, -168(%rbp)
-	movw	$13856, -164(%rbp)
-	movb	$0, -162(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -224(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -216(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -208(%rbp)
-	movl	$1953719668, -200(%rbp)
-	movw	$14112, -196(%rbp)
-	movb	$0, -194(%rbp)
-	movabsq	$7238236157302825288, %rax
-	movq	%rax, -256(%rbp)
-	movabsq	$7379540993474261350, %rax
-	movq	%rax, -248(%rbp)
-	movabsq	$2334663869381960042, %rax
-	movq	%rax, -240(%rbp)
-	movl	$1953719668, -232(%rbp)
-	movw	$14368, -228(%rbp)
-	movb	$0, -226(%rbp)
-	leaq	-128(%rbp), %r9
-	leaq	-96(%rbp), %r8
-	leaq	-64(%rbp), %rdx
-	leaq	-32(%rbp), %rax
-	leaq	-256(%rbp), %rcx
-	movq	%rcx, 56(%rsp)
-	leaq	-224(%rbp), %rcx
-	movq	%rcx, 48(%rsp)
-	leaq	-192(%rbp), %rcx
-	movq	%rcx, 40(%rsp)
-	leaq	-160(%rbp), %rcx
-	movq	%rcx, 32(%rsp)
+	leaq	-80(%rbp), %rax
+	movl	$1819043144, (%rax)
+	movw	$111, 4(%rax)
+	leaq	-80(%rbp), %rax
 	movq	%rax, %rcx
-	call	test
+	call	printf
+	leaq	.LC4(%rip), %rax
+	movq	%rax, 40(%rsp)
+	leaq	.LC5(%rip), %rax
+	movq	%rax, 32(%rsp)
+	leaq	.LC0(%rip), %r9
+	leaq	.LC1(%rip), %r8
+	leaq	.LC2(%rip), %rdx
+	leaq	.LC3(%rip), %rcx
+	call	test2
 	nop
 	leave
 	ret
 	.ident	"GCC: (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 5.3.0"
 	.def	strcpy;	.scl	2;	.type	32;	.endef
+	.def	printf;	.scl	2;	.type	32;	.endef

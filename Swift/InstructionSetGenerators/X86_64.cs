@@ -95,6 +95,25 @@ namespace Swift.InstructionSetGenerators
             w(".text");
         }
 
+        public override void visit(StringAsParameter n)
+        {
+            if (n.Number < 4)
+            {
+                switch (n.Number)
+                {
+                    case 0: w("leaq\t" + n.Name + "(" + "%rip" + "), %rcx"); break;
+                    case 1: w("leaq\t" + n.Name + "(" + "%rip" + "), %rdx"); break;
+                    case 2: w("leaq\t" + n.Name + "(" + "%rip" + "), %r8"); break;
+                    case 3: w("leaq\t" + n.Name + "(" + "%rip" + "), %r9"); break;
+                }
+            }
+            else
+            {
+                w("leaq\t" + n.Name + "(" + "%rip" + "), %rax");
+                w("movq\t%rax, " + n.Number * 8 + "(%rsp)");
+            }
+        }
+
         public override void visit(Sub n)
         {
             w("subq\t" + n.Value.accept(this) + ", " + n.Target.accept(this));

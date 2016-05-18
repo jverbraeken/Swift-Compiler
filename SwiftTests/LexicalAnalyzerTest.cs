@@ -42,7 +42,7 @@ namespace SwiftTests
             Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             Assert.AreEqual(tokens[0].value, "print");
-            Assert.AreEqual(tokens[2].value, "\"hoi\"");
+            Assert.AreEqual(tokens[2].value, "hoi");
             Assert.AreEqual(tokens[0].type, Global.DataType.IDENTIFIER);
             Assert.AreEqual(tokens[1].type, Global.DataType.OPEN_ROUND_BRACKET);
             Assert.AreEqual(tokens[2].type, Global.DataType.STRING);

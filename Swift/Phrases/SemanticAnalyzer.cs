@@ -19,8 +19,7 @@ namespace Swift
         public List<Table> CheckSemantics(Base ast)
         {
             tables = new List<Table>();
-            Table swiftTable = new Table(null);
-            CreateBuiltinSymbols(swiftTable);
+            Table swiftTable = CreateBuiltinSymbols();
             tables.Add(swiftTable);
             tables.Add(new Table(tables[0]));
             ScopeAssignVisitor scopeAssignVisitor = new ScopeAssignVisitor();
@@ -39,8 +38,9 @@ namespace Swift
             return tables;
         }
 
-        private void CreateBuiltinSymbols(Table swiftTable)
+        public static Table CreateBuiltinSymbols()
         {
+            Table swiftTable = new Table(null);
             // print(string)
             BuiltinFunctionSymbol printSymbol = new BuiltinFunctionSymbol("print");
             List<ParameterDeclaration> lst = new List<ParameterDeclaration>();
@@ -130,6 +130,8 @@ namespace Swift
             printSymbol.ReturnValue = new TupleType();
             printSymbol.OccupiedParamRegisters = 1;
             swiftTable.Insert(printSymbol);
+
+            return swiftTable;
         }
 
         /*private void CheckFunction(FunctionCall node)

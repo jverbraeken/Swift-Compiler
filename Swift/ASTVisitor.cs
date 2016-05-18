@@ -280,6 +280,11 @@ namespace Swift
             throw new NotImplementedException();
         }
 
+        public void visit(StringAsParameter n)
+        {
+            throw new NotImplementedException();
+        }
+
         public void visit(TupleType t)
         {
             throw new NotImplementedException();
