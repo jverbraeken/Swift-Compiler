@@ -39,7 +39,7 @@ namespace SwiftTests
         public void TestPrint()
         {
             string[] input = new string[] { "print(\"hoi\") //comments" };
-            Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
+            Tuple<List<Token>, List<ILineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             Assert.AreEqual(tokens[0].value, "print");
             Assert.AreEqual(tokens[2].value, "hoi");
@@ -54,7 +54,7 @@ namespace SwiftTests
         public void TestAssignment()
         {
             string[] input = new string[] { "let a = 3 + 2" };
-            Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
+            Tuple<List<Token>, List<ILineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             Assert.AreEqual(tokens[1].value, "a");
             Assert.AreEqual(tokens[3].value, "3");
@@ -72,7 +72,7 @@ namespace SwiftTests
         public void TestMultiline()
         {
             string[] input = new string[] { "     print(\"hoi\") //comments", "let a = 3 + 2" };
-            Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
+            Tuple<List<Token>, List<ILineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             Assert.AreEqual(tokens[0].value, "print");
             Assert.AreEqual(tokens[2].value, "hoi");
@@ -109,7 +109,7 @@ namespace SwiftTests
             string[] input = new string[] { "let multiplier = 3",
                 "let message = \"\\(multiplier) times 2.5 is \\(Double(multiplier) * 2.5)\"",
                 "print(message)" };
-            Tuple<List<Token>, List<LineContext>> result = lexicalAnalyzer.GetTokens(input);
+            Tuple<List<Token>, List<ILineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             AssertControl control = new AssertControl(tokens);
             control.assertNext(Global.DataType.LET);

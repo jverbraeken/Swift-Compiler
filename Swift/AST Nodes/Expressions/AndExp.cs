@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift
 {
     public class AndExp : BinaryExp, Exp
     {
-        public AndExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public AndExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

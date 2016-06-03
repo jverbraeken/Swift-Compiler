@@ -11,7 +11,7 @@ namespace Swift
 {
     public class OverflowMultExp : BinaryExp, Exp
     {
-        public OverflowMultExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public OverflowMultExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

@@ -11,7 +11,7 @@ namespace Swift
 {
     public class OrExp : BinaryExp, Exp
     {
-        public OrExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public OrExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

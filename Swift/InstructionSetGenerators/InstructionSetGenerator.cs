@@ -69,6 +69,21 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
+        public void visit(ParameterDeclaration n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(TupleElement n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(TupleElementList n)
+        {
+            throw new NotImplementedException();
+        }
+
         public void visit(ConstDeclaration n)
         {
             throw new NotImplementedException();
@@ -325,6 +340,11 @@ namespace Swift.InstructionSetGenerators
         }
 
         public void visit(UOctalLiteral n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visit(Literal n)
         {
             throw new NotImplementedException();
         }

@@ -20,7 +20,7 @@ namespace Swift.Phrases
             ASTType t2 = n.e2.accept(this);
             if (t1.GetType() == t2.GetType())
                 return t1;
-            Swift.error("The types of the terms of the expression on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
+            Swift.error("The types of the terms of the expression on line " + n.Context.Line + ", column " + n.Context.Pos + " don't match", 1);
             return null;
         }
 

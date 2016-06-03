@@ -11,7 +11,7 @@ namespace Swift
 {
     public class MinusExp : BinaryExp, Exp
     {
-        public MinusExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public MinusExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

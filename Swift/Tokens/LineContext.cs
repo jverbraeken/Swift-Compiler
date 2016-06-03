@@ -3,28 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift.Tokens
 {
-    public class LineContext
+    public interface ILineContext
     {
-        private int pos; //position in the line
-        private int line; //line in the source code
+        int Pos { get; }
+        int Line { get; }
+        XElement ToXML();
+    }
+
+    public class LineContext : ILineContext
+    {
+        public int Pos { get; internal set; } //position in the line
+        public int Line { get; internal set; } //line in the source code
 
         public LineContext(int pos, int line)
         {
-            this.pos = pos;
-            this.line = line;
+            Pos = pos;
+            Line = line;
         }
 
-        public int GetPos()
+        public XElement ToXML()
         {
-            return pos;
-        }
-
-        public int GetLine()
-        {
-            return line;
+            return new XElement(GetType().Name, new XAttribute[] { new XAttribute("pos", Pos), new XAttribute("line", Line) });
         }
     }
 }

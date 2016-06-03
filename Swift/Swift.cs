@@ -59,9 +59,9 @@ namespace Swift
             Console.WriteLine("Swift Compiler by Joost Verbraeken");
             string[] text = System.IO.File.ReadAllLines(source);
 
-            Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
+            Tuple<List<Token>, List<ILineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
-            List<LineContext> context = lexicalOutput.Item2;
+            List<ILineContext> context = lexicalOutput.Item2;
 
             Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, architecture);
 

@@ -11,7 +11,7 @@ namespace Swift
 {
     public class MultiplicationExp : BinaryExp, Exp
     {
-        public MultiplicationExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public MultiplicationExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

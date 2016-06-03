@@ -8,10 +8,10 @@ namespace Swift.AST_Nodes.Types
 {
     public class TupleType : ASTType
     {
-        public List<TupleElement> elements { get; set; }
+        public TupleElementList elements { get; set; }
         public TupleType(bool optional = false) : base(optional)
         {
-            elements = new List<TupleElement>();
+            elements = new TupleElementList(null);
         }
 
         public override void accept(Visitor v)

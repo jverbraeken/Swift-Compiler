@@ -262,52 +262,72 @@ namespace Swift
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseAndExp n)
+        public virtual void visit(BitwiseAndExp n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseOrExp n)
+        public virtual void visit(BitwiseOrExp n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseXorExp n)
+        public virtual void visit(BitwiseXorExp n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(OverflowMultExp n)
+        public virtual void visit(OverflowMultExp n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(Divide n)
+        public virtual void visit(ParameterDeclaration n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(Mult n)
+        public virtual void visit(TupleElementList n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(OverflowSubExp n)
+        public virtual void visit(Literal n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(OverflowAddExp n)
+        public virtual void visit(TupleElement n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseRightShiftExp n)
+        public virtual void visit(Divide n)
         {
             throw new NotImplementedException();
         }
 
-        public void visit(BitwiseLeftShiftExp n)
+        public virtual void visit(Mult n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(OverflowSubExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(OverflowAddExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(BitwiseRightShiftExp n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void visit(BitwiseLeftShiftExp n)
         {
             throw new NotImplementedException();
         }

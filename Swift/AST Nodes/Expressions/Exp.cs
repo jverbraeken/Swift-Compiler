@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift
 {
@@ -12,5 +13,6 @@ namespace Swift
     {
         void accept(Visitor v);
         ASTType accept(TypeVisitor v);
+        XElement ToXML(XMLParser.XMLProperties prop);
     }
 }

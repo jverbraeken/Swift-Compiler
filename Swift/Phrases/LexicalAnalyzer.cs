@@ -14,7 +14,7 @@ namespace Swift
         private int lineY = 1; //The nth line as seen from the top
         private int multilineCommentLevel = 0;
         private List<Token> tokens = new List<Token>();
-        private List<LineContext> context = new List<LineContext>();
+        private List<ILineContext> context = new List<ILineContext>();
         internal static readonly string regexIdentifier = "[_a-zA-Z_][a-zA-Z_0-9]*",
         regexIdentity = "^([\\+\\-]{2,})?(" + regexIdentifier + ")([\\+\\-]{2,})?",
         //Literals
@@ -68,7 +68,7 @@ namespace Swift
         regexUnderscore = "^_\\s+",
         //Comments
         regexComment = "^\\/\\/";
-        public Tuple<List<Token>, List<LineContext>> GetTokens(string[] input)
+        public Tuple<List<Token>, List<ILineContext>> GetTokens(string[] input)
         {
             foreach (string line_raw in input)
             {
@@ -159,7 +159,11 @@ namespace Swift
                     while (true)
                     {
                         if (str == "")
+                        {
+                            line = line.Substring(match.Length);
+                            lineX += match.Length;
                             break;
+                        }
                         Match match2 = Regex.Match(str, regexStringInterpolation);
                         if (match2.Success) // We found a string interpolation \(
                         {
@@ -198,7 +202,8 @@ namespace Swift
                             {
                                 tokens.Add(new Token(Global.DataType.STRING, str));
                                 context.Add(new LineContext(lineX, lineY));
-                                line = line.Substring(match.Length); lineX += match.Length;
+                                line = line.Substring(match.Length);
+                                lineX += match.Length;
                             }
                             break;
                         }

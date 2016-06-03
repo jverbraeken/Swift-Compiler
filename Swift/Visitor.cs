@@ -29,6 +29,9 @@ namespace Swift
         void visit(Base n);
         void visit(ConstDeclaration n);
         void visit(FunctionCallExp n);
+        void visit(ParameterDeclaration n);
+        void visit(TupleElement n);
+        void visit(TupleElementList n);
         void visit(VarDeclaration n);
         // AST Nodes - Expressions
         void visit(AndExp n);
@@ -51,6 +54,7 @@ namespace Swift
         void visit(Identifier identifier);
         void visit(PlusExp n);
         // AST Nodes - Expressions - Literals
+        void visit(Literal n);
         void visit(BoolLiteral n);
         void visit(DoubleLiteral n);
         void visit(FloatLiteral n);

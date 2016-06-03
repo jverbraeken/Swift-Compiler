@@ -17,6 +17,24 @@ namespace Swift.Phrases
             n.RHS.accept(this);
         }
 
+        public override void visit(TupleElement n)
+        {
+            n.Scope = Scope;
+        }
+
+        public override void visit(TupleElementList n)
+        {
+            n.Scope = Scope;
+            foreach (ITupleParentElement element in n.List)
+                element.Scope = Scope;
+        }
+
+        public override void visit(ParameterDeclaration n)
+        {
+            n.Scope = Scope;
+            n.DefaultValue.accept(this);
+        }
+
         public override void visit(ConstDeclaration n)
         {
             n.Scope = Scope;

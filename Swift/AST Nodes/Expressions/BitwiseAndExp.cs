@@ -11,7 +11,7 @@ namespace Swift
 {
     public class BitwiseAndExp : BinaryExp, Exp
     {
-        public BitwiseAndExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public BitwiseAndExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

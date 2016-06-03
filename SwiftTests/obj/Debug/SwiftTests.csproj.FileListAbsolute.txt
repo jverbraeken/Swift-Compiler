@@ -15,3 +15,7 @@ D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\Swift.pdb
 D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.csprojResolveAssemblyReference.cache
 D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.dll
 D:\Documents\Git\Swift-Compiler\SwiftTests\obj\Debug\SwiftTests.pdb
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\NSubstitute.dll
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\NSubstitute.xml
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\FakeItEasy.dll
+D:\Documents\Git\Swift-Compiler\SwiftTests\bin\Debug\FakeItEasy.xml

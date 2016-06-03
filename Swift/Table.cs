@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift
 {
@@ -16,17 +17,34 @@ namespace Swift
     /// </summary>
     public class Table
     {
+        public static int Count { get; set; }
+
         private Dictionary<Tuple<string, List<ASTType>>, Symbol> dictionary;
         private Table reference; //For scoping a table references its parent.
         private SymbolToTableVisitor symbolToTableVisitor;
+        /// <summary>
+        /// Specifies the type of the table, eg MainScope, ClassScope or MethodScope
+        /// </summary>
+        private Global.Scope scopeType;
+        /// <summary>
+        /// Gives a name to the scope, eg MyMainClass, CalculateResult
+        /// </summary>
+        private string identifier;
+
+        public List<Table> ParentOf { get; set; }
 
         /// <summary>
         /// Creates a new Symbol Table
         /// </summary>
-        public Table(Table reference)
+        public Table(Table reference, Global.Scope scopeType, string identifier)
         {
+            ParentOf = new List<Table>();
             dictionary = new Dictionary<Tuple<string, List<ASTType>>, Symbol>(new TableFunctionComparator());
             this.reference = reference;
+            if (reference != null)
+                reference.ParentOf.Add(this);
+            this.scopeType = scopeType;
+            this.identifier = identifier;
             symbolToTableVisitor = new SymbolToTableVisitor(dictionary);
         }
 
@@ -161,6 +179,11 @@ namespace Swift
                     dictionary.Add(entry.Key, entry.Value);
                 }
             }
+        }
+
+        public XElement ToXML()
+        {
+            return new XElement(GetType().Name, new XAttribute[] { new XAttribute("Scope", Enum.GetName(typeof(Global.Scope), scopeType)), new XAttribute("Identifier", identifier) });
         }
     }
 }

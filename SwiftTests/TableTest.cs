@@ -17,10 +17,10 @@ namespace SwiftTests
         [TestMethod]
         public void TestLookup()
         {
-            Table swiftTable = new Table(null);
+            Table swiftTable = new Table(null, 0, null);
             BuiltinFunctionSymbol printSymbol = new BuiltinFunctionSymbol("print");
             List<ParameterDeclaration> lst = new List<ParameterDeclaration>();
-            ParameterDeclaration par = new ParameterDeclaration(new Int64Type(), null);
+            ParameterDeclaration par = new ParameterDeclaration(null, new Int64Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();

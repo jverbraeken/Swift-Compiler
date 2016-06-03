@@ -21,7 +21,7 @@ namespace Swift
             tables = new List<Table>();
             Table swiftTable = CreateBuiltinSymbols();
             tables.Add(swiftTable);
-            tables.Add(new Table(tables[0]));
+            tables.Add(new Table(tables[0], Global.Scope.MainScope, "Main"));
             ScopeAssignVisitor scopeAssignVisitor = new ScopeAssignVisitor();
             scopeAssignVisitor.Scope = tables[1];
 
@@ -40,11 +40,11 @@ namespace Swift
 
         public static Table CreateBuiltinSymbols()
         {
-            Table swiftTable = new Table(null);
+            Table swiftTable = new Table(null, Global.Scope.BuiltinScope, "Builtin");
             // print(string)
             BuiltinFunctionSymbol printSymbol = new BuiltinFunctionSymbol("print");
             List<ParameterDeclaration> lst = new List<ParameterDeclaration>();
-            ParameterDeclaration par = new ParameterDeclaration(new StringType(), null);
+            ParameterDeclaration par = new ParameterDeclaration(null, new StringType(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -54,7 +54,7 @@ namespace Swift
             // print(int8)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new Int8Type(), null);
+            par = new ParameterDeclaration(null, new Int8Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -64,7 +64,7 @@ namespace Swift
             // print(int16)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new Int16Type(), null);
+            par = new ParameterDeclaration(null, new Int16Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -74,7 +74,7 @@ namespace Swift
             // print(int32)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new Int32Type(), null);
+            par = new ParameterDeclaration(null, new Int32Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -84,7 +84,7 @@ namespace Swift
             // print(int64)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new Int64Type(), null);
+            par = new ParameterDeclaration(null, new Int64Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -94,7 +94,7 @@ namespace Swift
             // print(uint8)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new UInt8Type(), null);
+            par = new ParameterDeclaration(null, new UInt8Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -104,7 +104,7 @@ namespace Swift
             // print(uint16)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new UInt16Type(), null);
+            par = new ParameterDeclaration(null, new UInt16Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -114,7 +114,7 @@ namespace Swift
             // print(uint32)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new UInt32Type(), null);
+            par = new ParameterDeclaration(null, new UInt32Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -124,7 +124,7 @@ namespace Swift
             // print(uint64)
             printSymbol = new BuiltinFunctionSymbol("print");
             lst = new List<ParameterDeclaration>();
-            par = new ParameterDeclaration(new UInt64Type(), null);
+            par = new ParameterDeclaration(null, new UInt64Type(), null);
             lst.Add(par);
             printSymbol.Parameters = lst;
             printSymbol.ReturnValue = new TupleType();
@@ -143,7 +143,7 @@ namespace Swift
             if (reference != null) //The identifier exists in the current scope
                 reference.accept(this);
             else if (scope == null)
-                Swift.error("The function you called could not be found, line " + node.Context.GetLine().ToString() + ", column " + node.Context.GetPos().ToString(), 1);
+                Swift.error("The function you called could not be found, line " + node.Context.Line.ToString() + ", column " + node.Context.Pos.ToString(), 1);
         }*/
 
 
@@ -165,12 +165,12 @@ namespace Swift
                 for (int i = 0; i < paramTypes.Count; i++)
                 {
                     if (!(paramTypes[i] == n.Parameters[i].Type))
-                        Swift.error("The type of the parameter you supplied when calling \"" + name + "\" at the line " + Node.Context.GetLine().ToString() + ", column " + Node.Context.GetPos().ToString() + " is not the same type as required by the function", 1);
+                        Swift.error("The type of the parameter you supplied when calling \"" + name + "\" at the line " + Node.Context.Line.ToString() + ", column " + Node.Context.Pos.ToString() + " is not the same type as required by the function", 1);
                 }
             }
             else
             {
-                Swift.error("The number of parameters you supplied when calling \"" + name + "\" at the line " + Node.Context.GetLine().ToString() + ", column " + Node.Context.GetPos().ToString() + " does not match the required number of parameters as defined in the function", 1);
+                Swift.error("The number of parameters you supplied when calling \"" + name + "\" at the line " + Node.Context.Line.ToString() + ", column " + Node.Context.Pos.ToString() + " does not match the required number of parameters as defined in the function", 1);
             }
         }*/
 
@@ -189,16 +189,16 @@ namespace Swift
                                 n.RHS = ((ConstantSymbol)n.Scope.Lookup(((IdentifierExp)n.RHS).ID.Name)).Value;
                         ASTType type = n.RHS.accept(new TypeVisitor());
                         if (((VariableSymbol)reference).Type.GetType() != type.GetType())
-                            Swift.error("Semantic error: the types of the left-hand and right-hand side of the assignment on line " + n.Context.GetLine() + ", column " + n.Context.GetPos() + " don't match", 1);
+                            Swift.error("Semantic error: the types of the left-hand and right-hand side of the assignment on line " + n.Context.Line + ", column " + n.Context.Pos + " don't match", 1);
                     }
                     else if (reference is ConstantSymbol) {
-                        Swift.error("Cannot change the value of the constant " + name + " at line " + n.Context.GetLine() + ", column " + n.Context.GetPos(), 1);
+                        Swift.error("Cannot change the value of the constant " + name + " at line " + n.Context.Line + ", column " + n.Context.Pos, 1);
                     }
                     reference.SetReferenced();
                     break;
                 }
                 else
-                    Swift.error("Assignment to unknown variable at line " + n.Context.GetLine() + ", column " + n.Context.GetPos(), 1);
+                    Swift.error("Assignment to unknown variable at line " + n.Context.Line + ", column " + n.Context.Pos, 1);
                 scope = scope.GetReference();
             }
         }

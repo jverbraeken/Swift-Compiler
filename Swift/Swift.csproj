@@ -33,6 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FakeItEasy, Version=2.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
+      <HintPath>..\packages\FakeItEasy.2.0.0\lib\net40\FakeItEasy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSubstitute.1.10.0.0\lib\net45\NSubstitute.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -65,6 +73,7 @@
     <Compile Include="AST Nodes\Expressions\Literals\BoolLiteral.cs" />
     <Compile Include="AST Nodes\Expressions\Literals\DoubleLiteral.cs" />
     <Compile Include="AST Nodes\Expressions\Literals\FloatLiteral.cs" />
+    <Compile Include="AST Nodes\Expressions\Literals\Literal.cs" />
     <Compile Include="AST Nodes\Expressions\Literals\UInt16Literal.cs" />
     <Compile Include="AST Nodes\Expressions\Literals\UInt32Literal.cs" />
     <Compile Include="AST Nodes\Expressions\Literals\UInt64Literal.cs" />
@@ -83,6 +92,8 @@
     <Compile Include="AST Nodes\Expressions\OverflowMultExp.cs" />
     <Compile Include="AST Nodes\Expressions\OverflowSubExp.cs" />
     <Compile Include="AST Nodes\Expressions\OverflowAddExp.cs" />
+    <Compile Include="AST Nodes\ITupleParentElement.cs" />
+    <Compile Include="AST Nodes\TupleElementList.cs" />
     <Compile Include="AST Nodes\Types\FloatType.cs" />
     <Compile Include="AST Nodes\Types\Int16Type.cs" />
     <Compile Include="AST Nodes\Types\HexaType.cs" />
@@ -186,10 +197,12 @@
     <Compile Include="ASTVisitor.cs" />
     <Compile Include="Visitor.cs" />
     <Compile Include="VisitorAdapter.cs" />
+    <Compile Include="XMLParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

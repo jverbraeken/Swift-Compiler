@@ -13,9 +13,9 @@ namespace Swift.Phrases
     class LexicalRepresentation
     {
         List<Token> tokens;
-        List<LineContext> context;
+        List<ILineContext> context;
 
-        public LexicalRepresentation(List<Token> tokens, List<LineContext> context)
+        public LexicalRepresentation(List<Token> tokens, List<ILineContext> context)
         {
             this.tokens = tokens;
             this.context = context;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift
 {
@@ -15,7 +16,7 @@ namespace Swift
         {
             get; set;
         }
-        public IdentifierExp(LineContext context, Identifier id) : base(context)
+        public IdentifierExp(ILineContext context, Identifier id) : base(context)
         {
             ID = id;
         }
@@ -28,6 +29,13 @@ namespace Swift
         public ASTType accept(TypeVisitor v)
         {
             return v.visit(this);
+        }
+
+        public override XElement ToXML(XMLParser.XMLProperties prop)
+        {
+            XElement res = new XElement(GetType().Name, new XAttribute("ID", ID.Name));
+            XMLParser.ParseXMLProperties(this, res, prop);
+            return res;
         }
     }
 }

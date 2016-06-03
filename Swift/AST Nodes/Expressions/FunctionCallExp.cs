@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Swift.Phrases;
+using System.Xml.Linq;
 
 namespace Swift.AST_Nodes
 {
@@ -12,7 +13,7 @@ namespace Swift.AST_Nodes
     {
         public Identifier Name { get; set; }
         public List<ParameterCall> Args { get; set; }
-        public FunctionCallExp(LineContext context) : base(context)
+        public FunctionCallExp(ILineContext context) : base(context)
         {
             Args = new List<ParameterCall>();
         }
@@ -25,6 +26,17 @@ namespace Swift.AST_Nodes
         public ASTType accept(TypeVisitor v)
         {
             return v.visit(this);
+        }
+
+        public override XElement ToXML(XMLParser.XMLProperties prop)
+        {
+            XElement res = new XElement(GetType().Name, new XAttribute("Name", Name.Name));
+            XMLParser.ParseXMLProperties(this, res, prop);
+            foreach (ParameterCall param in Args)
+            {
+                res.Add(param.ToXML(prop));
+            }
+            return res;
         }
     }
 }

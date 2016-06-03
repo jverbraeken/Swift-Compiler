@@ -11,7 +11,7 @@ namespace Swift
 {
     public class BitwiseLeftShiftExp : BinaryExp, Exp
     {
-        public BitwiseLeftShiftExp(LineContext context, Exp e1, Exp e2) : base(context, e1, e2)
+        public BitwiseLeftShiftExp(ILineContext context, Exp e1, Exp e2) : base(context, e1, e2)
         {
         }
 

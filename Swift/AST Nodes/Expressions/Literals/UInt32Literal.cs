@@ -2,16 +2,16 @@
 using Swift.AST_Nodes;
 using Swift.Phrases;
 using Swift.Tokens;
+using System.Xml.Linq;
 
 namespace Swift
 {
-    public class UInt32Literal : ASTNode, Exp
+    public class UInt32Literal : Literal, Exp
     {
-        public string Value { get; set; }
-        public UInt32Literal(LineContext context, string value) : base(context)
+        public UInt32Literal(ILineContext context, string value) : base(context, value)
         {
-            Value = value;
         }
+
         public override void accept(Visitor v)
         {
             v.visit(this);
@@ -20,6 +20,13 @@ namespace Swift
         public ASTType accept(TypeVisitor v)
         {
             return v.visit(this);
+        }
+
+        public override XElement ToXML(XMLParser.XMLProperties prop)
+        {
+            XElement res = new XElement(GetType().Name, new XAttribute("Value", Value));
+            XMLParser.ParseXMLProperties(this, res, prop);
+            return res;
         }
     }
 }

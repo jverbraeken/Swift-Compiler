@@ -32,9 +32,9 @@ namespace SwiftTests
         {
             string[] text = new string[] { "print(\"Hello World!\")" };
 
-            Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
+            Tuple<List<Token>, List<ILineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
-            List<LineContext> context = lexicalOutput.Item2;
+            List<ILineContext> context = lexicalOutput.Item2;
 
             Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 
@@ -74,9 +74,9 @@ namespace SwiftTests
             text[2] = "let c = a + b";
             text[3] = "print(c)";
 
-            Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
+            Tuple<List<Token>, List<ILineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
-            List<LineContext> context = lexicalOutput.Item2;
+            List<ILineContext> context = lexicalOutput.Item2;
 
             Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 
@@ -123,9 +123,9 @@ namespace SwiftTests
             text[1] = "var b = a";
             text[2] = "print(b)";
 
-            Tuple<List<Token>, List<LineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
+            Tuple<List<Token>, List<ILineContext>> lexicalOutput = (new LexicalAnalyzer()).GetTokens(text);
             List<Token> tokens = lexicalOutput.Item1;
-            List<LineContext> context = lexicalOutput.Item2;
+            List<ILineContext> context = lexicalOutput.Item2;
 
             Base ast = (new SyntaxAnalyzer()).CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 

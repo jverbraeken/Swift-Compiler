@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Swift.AST_Nodes
 {
-    public class StringLiteral : ASTNode, Exp
+    public class StringLiteral : Literal, Exp
     {
-        public string Text { get; set; }
-
-        public StringLiteral(LineContext context, string text) : base(context)
+        public StringLiteral(ILineContext context, string value) : base(context, value)
         {
-            Text = text;
         }
 
         public override void accept(Visitor v)
@@ -25,6 +23,13 @@ namespace Swift.AST_Nodes
         public ASTType accept(TypeVisitor v)
         {
             return v.visit(this);
+        }
+
+        public override XElement ToXML(XMLParser.XMLProperties prop)
+        {
+            XElement res = new XElement(GetType().Name, new XAttribute("Value", Value));
+            XMLParser.ParseXMLProperties(this, res, prop);
+            return res;
         }
     }
 }

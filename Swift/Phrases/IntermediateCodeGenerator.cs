@@ -203,7 +203,7 @@ namespace Swift
                 n.RHS.accept(this);
                 //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
                 Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
-            } catch (NoSuchKeyException e)
+            } catch (NoSuchKeyException)
             {
                 // Do nothing, emit the declaration of the constant, normally because the constant was unreferenced and thus unused
             }
@@ -222,7 +222,7 @@ namespace Swift
                 n.RHS.accept(this);
                 //Add(new Move(new RegisterOffset(Global.Registers.STACKBASEPOINTER, extraStackSize++), regRAX));
                 Add(new Move(stack.Pop(), new RegisterOffset(Global.Registers.STACKBASEPOINTER, -stackLocation)));
-            } catch (NoSuchKeyException e)
+            } catch (NoSuchKeyException)
             {
                 // Do nothing, emit the declaration of the constant, normally because the constant was unreferenced and thus unused
             }
@@ -297,9 +297,9 @@ namespace Swift
 
         public override void visit(StringLiteral n)
         {
-            if (!stringTable.ContainsKey(n.Text))
-                stringTable.Add(n.Text, ".LC" + stringTable.Count);
-            Add(new StringAsParameter(stringTable[n.Text], parameterNum++));
+            if (!stringTable.ContainsKey(n.Value))
+                stringTable.Add(n.Value, ".LC" + stringTable.Count);
+            Add(new StringAsParameter(stringTable[n.Value], parameterNum++));
         }
 
         public override void visit(VarDeclaration n)

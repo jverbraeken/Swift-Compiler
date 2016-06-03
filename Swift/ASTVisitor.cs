@@ -35,6 +35,11 @@ namespace Swift
         public abstract void visit(UHexaLiteral n);
         public abstract void visit(UInt8Literal n);
 
+        public void visit(Literal n)
+        {
+            throw new NotImplementedException();
+        }
+
         public string visit(IntegerConstant n)
         {
             throw new NotImplementedException();
@@ -377,5 +382,8 @@ namespace Swift
         public abstract void visit(AndExp n);
         public abstract void visit(FunctionCallExp n);
         public abstract void visit(Base n);
+        public abstract void visit(ParameterDeclaration n);
+        public abstract void visit(TupleElement n);
+        public abstract void visit(TupleElementList n);
     }
 }
