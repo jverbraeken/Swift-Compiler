@@ -2,6 +2,7 @@
 using Swift.AST_Nodes.Types;
 using Swift.Phrases;
 using Swift.Symbols;
+using Swift.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -189,16 +190,16 @@ namespace Swift
                                 n.RHS = ((ConstantSymbol)n.Scope.Lookup(((IdentifierExp)n.RHS).ID.Name)).Value;
                         ASTType type = n.RHS.accept(new TypeVisitor());
                         if (((VariableSymbol)reference).Type.GetType() != type.GetType())
-                            Swift.error("Semantic error: the types of the left-hand and right-hand side of the assignment on line " + n.Context.Line + ", column " + n.Context.Pos + " don't match", 1);
+                            Swift.error(new IncompatibleTypesException(n.Context));
                     }
                     else if (reference is ConstantSymbol) {
-                        Swift.error("Cannot change the value of the constant " + name + " at line " + n.Context.Line + ", column " + n.Context.Pos, 1);
+                        Swift.error(new ConstantReassignmentException(n.Context));
                     }
                     reference.SetReferenced();
                     break;
                 }
                 else
-                    Swift.error("Assignment to unknown variable at line " + n.Context.Line + ", column " + n.Context.Pos, 1);
+                    Swift.error(new AssignmentUnknownVariable(n.Context));
                 scope = scope.GetReference();
             }
         }
@@ -234,5 +235,23 @@ namespace Swift
         {
             base.visit(n);
         }*/
+
+        [Serializable()]
+        public class IncompatibleTypesException : SwiftException
+        {
+            public IncompatibleTypesException(ILineContext context, string message = "the types of the left-hand and right-hand side of the assignment don't match") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class ConstantReassignmentException : SwiftException
+        {
+            public ConstantReassignmentException(ILineContext context, string message = "the value of constants cannot be changed") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class AssignmentUnknownVariable : SwiftException
+        {
+            public AssignmentUnknownVariable(ILineContext context, string message = "assignment to unknown variable") : base(context, message) { }
+        }
     }
 }

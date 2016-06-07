@@ -9,10 +9,18 @@ using System.Xml.Linq;
 
 namespace Swift.AST_Nodes
 {
-    public class StringLiteral : Literal, Exp
+    public interface IStringLiteral : Exp
     {
-        public StringLiteral(ILineContext context, string value) : base(context, value)
+        List<IStringElement> Elements { get; set; }
+    }
+
+    public class StringLiteral : Literal, Exp, IStringLiteral
+    {
+        public List<IStringElement> Elements { get; set; }
+
+        public StringLiteral(ILineContext context) : base(context)
         {
+            Elements = new List<IStringElement>();
         }
 
         public override void accept(Visitor v)
@@ -31,5 +39,47 @@ namespace Swift.AST_Nodes
             XMLParser.ParseXMLProperties(this, res, prop);
             return res;
         }
+    }
+
+    public interface IStringElement
+    {
+        Global.ElementTypes ElementType { get; }
+        string QuotedTextItem { get; }
+        Exp Expression { get; }
+        Global.EscapedCharacter EscapedCharacter { get; }
+    }
+
+    public class StringElement : IStringElement
+    {
+        public Global.ElementTypes ElementType { get; internal set; }
+        public string QuotedTextItem { get; internal set; }
+        public Exp Expression { get; internal set; }
+        public Global.EscapedCharacter EscapedCharacter { get; internal set; }
+
+        public StringElement(string quotedTextItem)
+        {
+            ElementType = Global.ElementTypes.quotedTextItem;
+            QuotedTextItem = quotedTextItem;
+        }
+
+        public StringElement(Exp expression)
+        {
+            ElementType = Global.ElementTypes.interpolation;
+            Expression = expression;
+        }
+
+        public StringElement(Global.EscapedCharacter escapedCharacter)
+        {
+            ElementType = Global.ElementTypes.escapedCharacter;
+            EscapedCharacter = escapedCharacter;
+        }
+    }
+
+
+    [Serializable()]
+    public class InternalError : SwiftException
+    {
+        public InternalError() : base() { }
+        public InternalError(string message) : base(message) { }
     }
 }

@@ -25,6 +25,7 @@ namespace Swift
         regexInt = "^[0-9]+",
         regexString = "^\"[^\"]*\"",
         regexStringInterpolation = @"\\\(",
+        regexStringInterpolationAtStart = @"^\\\(",
         //Keywords
         regexVar = "^var\\(? +",
         regexLet = "^let\\(? +",
@@ -62,528 +63,12 @@ namespace Swift
         regexOpenBraces = "^\\{",
         regexCloseBraces = "^\\}",
         //Operators
-        regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\%\\|\\^\\~\\?]",
+        regexOperator = "^[\\/\\=\\-\\+\\!\\*\\%\\<\\>\\&\\|\\^\\~\\?]",
         regexComma = "^\\,",
         regexColon = "^: +",
         regexUnderscore = "^_\\s+",
         //Comments
         regexComment = "^\\/\\/";
-        public Tuple<List<Token>, List<ILineContext>> GetTokens(string[] input)
-        {
-            foreach (string line_raw in input)
-            {
-                lineX = 1;
-                string line = line_raw;
-                evaluateString(line);
-                tokens.Add(new Token(Global.DataType.ENDSTATEMENT, ""));
-                context.Add(new LineContext(lineX, lineY));
-                lineY++;
-            }
-            return Tuple.Create(tokens, context);
-        }
-
-        public void evaluateString(string line)
-        {
-            while (line != "")
-            {
-                Match match;
-                string[] tmp = EatWhitespace(line);
-                line = tmp[0];
-                lineX += int.Parse(tmp[1]);
-
-
-                //Comments
-
-
-                //Single line
-                match = Regex.Match(line, regexComment);
-                if (match.Success)
-                {
-                    break;
-                };
-
-
-                //Literals
-
-
-                //Binary
-                match = Regex.Match(line, regexBinary);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.BINARY, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Octal
-                match = Regex.Match(line, regexOctal);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OCTAL, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Hexadecimal
-                match = Regex.Match(line, regexHexadecimal);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.HEXADECIMAL, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Double
-                match = Regex.Match(line, regexDouble);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.DOUBLE, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Integer
-                match = Regex.Match(line, regexInt);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.INT, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //String
-                match = Regex.Match(line, regexString);
-                if (match.Success)
-                {
-                    string str = match.Groups[0].Value.Substring(1, match.Groups[0].Value.Length - 2);
-                    while (true)
-                    {
-                        if (str == "")
-                        {
-                            line = line.Substring(match.Length);
-                            lineX += match.Length;
-                            break;
-                        }
-                        Match match2 = Regex.Match(str, regexStringInterpolation);
-                        if (match2.Success) // We found a string interpolation \(
-                        {
-                            int level = 1;
-                            int pos = 2 + match2.Index;
-                            while (true)
-                            {
-                                if (pos >= str.Length)
-                                    Swift.error("Error in lexical analysis: cannot find the end of the string interpolation on line " + lineX + ", column " + lineY, 1);
-                                if (str[pos] == '(')
-                                    level++;
-                                else if (str[pos] == ')')
-                                    level--;
-                                if (level == 0) // We found the finishing )
-                                {
-                                    if (match2.Index > 0) // Add the string before the string interpolation starts
-                                    {
-                                        tokens.Add(new Token(Global.DataType.STRING, str.Substring(0, match2.Index)));
-                                        context.Add(new LineContext(lineX, lineY));
-                                    }
-                                    // Add the string interpolation
-                                    tokens.Add(new Token(Global.DataType.STRINGINTERPOLATION, null));
-                                    context.Add(new LineContext(lineX, lineY));
-                                    evaluateString(str.Substring(match2.Index + 2, pos - match2.Index - 2));
-                                    tokens.Add(new Token(Global.DataType.STRINGINTERPOLATIONEND, null));
-                                    context.Add(new LineContext(lineX, lineY));
-                                    str = str.Substring(pos + 1);
-                                    break;
-                                }
-                                pos++;
-                            }
-                        }
-                        else
-                        {
-                            if (str != "")
-                            {
-                                tokens.Add(new Token(Global.DataType.STRING, str));
-                                context.Add(new LineContext(lineX, lineY));
-                                line = line.Substring(match.Length);
-                                lineX += match.Length;
-                            }
-                            break;
-                        }
-                    }
-                    continue;
-                };
-
-
-                //Keywords
-
-
-                //Let
-                match = Regex.Match(line, regexLet);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.LET));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Var
-                match = Regex.Match(line, regexVar);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.VAR));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //BoolType
-                match = Regex.Match(line, regexBoolType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.BOOLTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //CharType
-                match = Regex.Match(line, regexCharType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.CHARACTERTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //DoubleType
-                match = Regex.Match(line, regexDoubleType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.DOUBLETYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //FloatType
-                match = Regex.Match(line, regexFloatType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.FLOATTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Int8Type
-                match = Regex.Match(line, regexInt8Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.INT8TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Int16Type
-                match = Regex.Match(line, regexInt16Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.INT16TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Int32Type
-                match = Regex.Match(line, regexInt32Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.INT32TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Int64Type
-                match = Regex.Match(line, regexInt64Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.INT64TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //StringType
-                match = Regex.Match(line, regexStringType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.STRINGTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //UInt8Type
-                match = Regex.Match(line, regexUInt8Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.UINT8TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //UInt16Type
-                match = Regex.Match(line, regexUInt16Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.UINT16TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //UInt32Type
-                match = Regex.Match(line, regexUInt32Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.UINT32TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //UInt64Type
-                match = Regex.Match(line, regexUInt64Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.UINT64TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                ///////////         OPTIONALS
-
-
-                //OBoolType
-                match = Regex.Match(line, regexOBoolType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OBOOLTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OCharType
-                match = Regex.Match(line, regexOCharType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OCHARACTERTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //ODoubleType
-                match = Regex.Match(line, regexODoubleType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.ODOUBLETYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OFloatType
-                match = Regex.Match(line, regexOFloatType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OFLOATTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OInt8Type
-                match = Regex.Match(line, regexOInt8Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OINT8TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OInt16Type
-                match = Regex.Match(line, regexOInt16Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OINT16TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OInt32Type
-                match = Regex.Match(line, regexOInt32Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OINT32TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OInt64Type
-                match = Regex.Match(line, regexOInt64Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OINT64TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OStringType
-                match = Regex.Match(line, regexOStringType);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OSTRINGTYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OUInt8Type
-                match = Regex.Match(line, regexOUInt8Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OUINT8TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OUInt16Type
-                match = Regex.Match(line, regexOUInt16Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OUINT16TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OUInt32Type
-                match = Regex.Match(line, regexOUInt32Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OUINT32TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //OUInt64Type
-                match = Regex.Match(line, regexOUInt64Type);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OUINT64TYPE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-
-
-
-
-                //Punctuation
-
-
-                //Open Round Bracket
-                match = Regex.Match(line, regexOpenRoundBracket);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OPEN_ROUND_BRACKET));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Close Round Bracket
-                match = Regex.Match(line, regexCloseRoundBracket);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.CLOSE_ROUND_BRACKET));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Open Square Bracket
-                match = Regex.Match(line, regexOpenSquareBracket);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OPEN_SQUARE_BRACKET));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Close Square Bracket
-                match = Regex.Match(line, regexCloseSquareBracket);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.CLOSE_SQUARE_BRACKET));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Open Braces
-                match = Regex.Match(line, regexOpenBraces);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OPEN_BRACE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Close Braces
-                match = Regex.Match(line, regexCloseBraces);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.CLOSE_BRACE));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-
-                //Operator
-
-
-                //Operator
-                match = Regex.Match(line, regexOperator);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.OPERATOR, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Comma
-                match = Regex.Match(line, regexComma);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.COMMA));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Annotation
-                match = Regex.Match(line, regexColon);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.COLON, ":"));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Annotation
-                match = Regex.Match(line, regexUnderscore);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.UNDERSCORE, "_"));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-                //Identifiers
-                match = Regex.Match(line, regexIdentity);
-                if (match.Success)
-                {
-                    tokens.Add(new Token(Global.DataType.IDENTIFIER, match.Groups[0].Value));
-                    context.Add(new LineContext(lineX, lineY));
-                    line = line.Substring(match.Length); lineX += match.Length; continue;
-                };
-
-
-                Swift.error("Syntax error: \"" + line + "\" could not be identified", 1);
-            }
-        }
 
         /// <summary>
         /// Removes the whitespace from the start of one line.
@@ -707,6 +192,563 @@ namespace Swift
         public static bool isLiteral(string s)
         {
             return (s[0] == '"' || s == "true" || s == "false" || Regex.Match(s, @"[0-9]*\.?[0-9]+").Value == s);
+        }
+
+
+
+
+
+        public Tuple<List<Token>, List<ILineContext>> GetTokens(string[] input)
+        {
+            foreach (string line_raw in input)
+            {
+                lineX = 1;
+                string line = line_raw;
+                evaluateString(line);
+                tokens.Add(new Token(Global.DataType.ENDSTATEMENT, ""));
+                context.Add(new LineContext(lineX, lineY));
+                lineY++;
+            }
+            return Tuple.Create(tokens, context);
+        }
+
+        public void evaluateString(string line)
+        {
+            bool shouldContinue;
+            while (line != "")
+            {
+                shouldContinue = evaluateFirstToken(ref line);
+                if (!shouldContinue)
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Evaluates the first token of line
+        /// </summary>
+        /// <param name="line">A string of which the first token will be evaluate (and possibly others in special cases like string interpolation)</param>
+        /// <returns>False if a comment is found and thus the sentence should not be evaluated any further</returns>
+        public bool evaluateFirstToken(ref string line)
+        {
+
+            Match match;
+            string[] tmp = EatWhitespace(line);
+            line = tmp[0];
+            lineX += int.Parse(tmp[1]);
+
+
+            //Comments
+
+
+            //Single line
+            match = Regex.Match(line, regexComment);
+            if (match.Success)
+            {
+                return false;
+            };
+
+
+            //Literals
+
+
+            //Binary
+            match = Regex.Match(line, regexBinary);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.BINARY, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Octal
+            match = Regex.Match(line, regexOctal);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OCTAL, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Hexadecimal
+            match = Regex.Match(line, regexHexadecimal);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.HEXADECIMAL, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Double
+            match = Regex.Match(line, regexDouble);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.DOUBLE, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Integer
+            match = Regex.Match(line, regexInt);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.INT, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //String
+            match = Regex.Match(line, regexString);
+            if (match.Success)
+            {
+                line = line.Substring(1); // Remove the '"'
+                while (true)
+                {
+                    Match match2 = Regex.Match(line, regexStringInterpolation);
+                    if (match2.Success) // We found a string interpolation \(
+                    {
+                        tokens.Add(new Token(Global.DataType.STRING, line.Substring(0, match2.Index)));
+                        context.Add(new LineContext(lineX, lineY));
+                        line = line.Substring(match2.Index); // Now the string interpolation is at the start of line
+                        bool shouldContinue = evaluateFirstToken(ref line);
+                        if (!shouldContinue)
+                            Swift.error(new StringInterpolationWithoutEndException(lineX, lineY, "Error in lexical analysis: cannot find the end of the string interpolation"));
+                        if (line[0] == '"')
+                            break;
+                    }
+                    else
+                    {
+                        if (line != "")
+                        {
+                            tokens.Add(new Token(Global.DataType.STRING, line.Remove(line.Count() - 1, 1))); // Remove the '"' at the end of the string as well
+                            context.Add(new LineContext(lineX, lineY));
+                            line = line.Substring(match.Length); // Remove the string from 
+                            lineX += match.Length;
+                        }
+                        break;
+                    }
+                }
+                return true;
+            };
+
+            // String interpolation (used when the string interpolation happens not at the start of a sentence
+            match = Regex.Match(line, regexStringInterpolationAtStart);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.STRINGINTERPOLATION, null));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(2); // Remove the string interpolation
+                int level = 1;
+                bool shouldContinue;
+                int firstSize = line.Count();
+                Token lastToken;
+                while (true)
+                {
+                    shouldContinue = evaluateFirstToken(ref line);
+                    if (!shouldContinue)
+                        Swift.error(new StringInterpolationWithoutEndException(lineX, lineY, "Error in lexical analysis: cannot find the end of the string interpolation"));
+                    lastToken = tokens[tokens.Count - 1];
+                    if (lastToken.type == Global.DataType.OPEN_ROUND_BRACKET)
+                        level++;
+                    else if (lastToken.type == Global.DataType.CLOSE_ROUND_BRACKET)
+                        level--;
+                    if (level == 0) // We found the finishing ')'
+                    {
+                        tokens.RemoveAt(tokens.Count - 1); // Remove the last token ')' because this isn't needed anymore as we replace it with STRINGINTERPOLATIONEND
+                        context.RemoveAt(context.Count - 1);
+                        tokens.Add(new Token(Global.DataType.STRINGINTERPOLATIONEND, null));
+                        context.Add(new LineContext(lineX, lineY));
+                        break;
+                    }
+                }
+                return true;
+            }
+
+
+                //Keywords
+
+
+                //Let
+                match = Regex.Match(line, regexLet);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.LET));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Var
+            match = Regex.Match(line, regexVar);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.VAR));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //BoolType
+            match = Regex.Match(line, regexBoolType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.BOOLTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //CharType
+            match = Regex.Match(line, regexCharType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.CHARACTERTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //DoubleType
+            match = Regex.Match(line, regexDoubleType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.DOUBLETYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //FloatType
+            match = Regex.Match(line, regexFloatType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.FLOATTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Int8Type
+            match = Regex.Match(line, regexInt8Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.INT8TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Int16Type
+            match = Regex.Match(line, regexInt16Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.INT16TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Int32Type
+            match = Regex.Match(line, regexInt32Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.INT32TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Int64Type
+            match = Regex.Match(line, regexInt64Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.INT64TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //StringType
+            match = Regex.Match(line, regexStringType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.STRINGTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //UInt8Type
+            match = Regex.Match(line, regexUInt8Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.UINT8TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //UInt16Type
+            match = Regex.Match(line, regexUInt16Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.UINT16TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //UInt32Type
+            match = Regex.Match(line, regexUInt32Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.UINT32TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //UInt64Type
+            match = Regex.Match(line, regexUInt64Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.UINT64TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            ///////////         OPTIONALS
+
+
+            //OBoolType
+            match = Regex.Match(line, regexOBoolType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OBOOLTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OCharType
+            match = Regex.Match(line, regexOCharType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OCHARACTERTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //ODoubleType
+            match = Regex.Match(line, regexODoubleType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.ODOUBLETYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OFloatType
+            match = Regex.Match(line, regexOFloatType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OFLOATTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OInt8Type
+            match = Regex.Match(line, regexOInt8Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OINT8TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OInt16Type
+            match = Regex.Match(line, regexOInt16Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OINT16TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OInt32Type
+            match = Regex.Match(line, regexOInt32Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OINT32TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OInt64Type
+            match = Regex.Match(line, regexOInt64Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OINT64TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OStringType
+            match = Regex.Match(line, regexOStringType);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OSTRINGTYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OUInt8Type
+            match = Regex.Match(line, regexOUInt8Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OUINT8TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OUInt16Type
+            match = Regex.Match(line, regexOUInt16Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OUINT16TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OUInt32Type
+            match = Regex.Match(line, regexOUInt32Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OUINT32TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //OUInt64Type
+            match = Regex.Match(line, regexOUInt64Type);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OUINT64TYPE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+
+
+
+
+            //Punctuation
+
+
+            //Open Round Bracket
+            match = Regex.Match(line, regexOpenRoundBracket);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OPEN_ROUND_BRACKET));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Close Round Bracket
+            match = Regex.Match(line, regexCloseRoundBracket);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.CLOSE_ROUND_BRACKET));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Open Square Bracket
+            match = Regex.Match(line, regexOpenSquareBracket);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OPEN_SQUARE_BRACKET));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Close Square Bracket
+            match = Regex.Match(line, regexCloseSquareBracket);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.CLOSE_SQUARE_BRACKET));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Open Braces
+            match = Regex.Match(line, regexOpenBraces);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OPEN_BRACE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Close Braces
+            match = Regex.Match(line, regexCloseBraces);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.CLOSE_BRACE));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+
+            //Operator
+
+
+            //Operator
+            match = Regex.Match(line, regexOperator);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.OPERATOR, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Comma
+            match = Regex.Match(line, regexComma);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.COMMA));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Annotation
+            match = Regex.Match(line, regexColon);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.COLON, ":"));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Annotation
+            match = Regex.Match(line, regexUnderscore);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.UNDERSCORE, "_"));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+            //Identifiers
+            match = Regex.Match(line, regexIdentity);
+            if (match.Success)
+            {
+                tokens.Add(new Token(Global.DataType.IDENTIFIER, match.Groups[0].Value));
+                context.Add(new LineContext(lineX, lineY));
+                line = line.Substring(match.Length); lineX += match.Length; return true;
+            };
+
+
+            Swift.error(new UndentifiedTokenException(lineX, lineY, "\"" + line + "\" could not be identified"));
+            return false;
+        }
+
+
+
+        [Serializable()]
+        public class StringInterpolationWithoutEndException : SwiftException
+        {
+            public StringInterpolationWithoutEndException(int line, int pos, string message = "end of string interpolation not found") : base(line, pos, message) { }
+        }
+
+        [Serializable()]
+        public class UndentifiedTokenException : SwiftException
+        {
+            public UndentifiedTokenException(int line, int pos, string message = "") : base(line, pos, message) { }
         }
     }
 }

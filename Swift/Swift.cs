@@ -31,14 +31,14 @@ namespace Swift
                         else if (args[i] == "-IS")
                             lookingFor = "instructionSet";
                         else
-                            error("An invalid argument was supplied: " + args[i], -1);
+                            error(new InvalidArgumentException("An invalid argument was supplied: " + args[i]));
                     }
                     else
                     {
                         if (source == "")
                             source = args[i];
                         else
-                            error("The source can be supplied only once: " + args[i], -1);
+                            error(new MultipleSourceFilesException("The source can be supplied only once: " + args[i]));
                     }
                 }
                 else
@@ -51,7 +51,7 @@ namespace Swift
                         {
                             case "x86": architecture = Global.InstructionSets.X86; break;
                             case "x86_64": architecture = Global.InstructionSets.X86_64; break;
-                            default: error("An unknown Instruction Set was supplied: " + args[i], -1); break;
+                            default: error(new UnknownInstructionSetException("an unknown Instruction Set was supplied: " + args[i])); break;
                         }
                     }
                 }
@@ -82,20 +82,37 @@ namespace Swift
             Console.ReadLine();
         }
 
-        public static void error(Exception exception)
+        public static void error(ISwiftException exception)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(exception.Message);
+            if (exception.Line == 0)
+                Console.WriteLine("Line " + exception.Line + ", column " + exception.Pos + ": " + exception.ToString());
+            else
+                Console.WriteLine(exception.ToString());
             Console.ReadLine();
-            throw exception;
+            throw (Exception) exception;
         }
 
-        public static void error(string line, int exitcode)
+
+
+
+
+        [Serializable()]
+        public class UnknownInstructionSetException : SwiftException
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(line);
-            Console.ReadLine();
-            Environment.Exit(exitcode);
+            public UnknownInstructionSetException(string message = "") : base(message) { }
+        }
+
+        [Serializable()]
+        public class MultipleSourceFilesException : SwiftException
+        {
+            public MultipleSourceFilesException(string message = "") : base(message) { }
+        }
+
+        [Serializable()]
+        public class InvalidArgumentException : SwiftException
+        {
+            public InvalidArgumentException(string message = "") : base(message) { }
         }
     }
 }

@@ -17,7 +17,6 @@ namespace SwiftTests.SyntaxAnalyzerTests
     public class InterpolationSyntaxTest
     {
         SyntaxAnalyzer syntaxAnalyzer;
-        Token token;
         List<Token> tokens = new List<Token>();
         ILineContext _context = Substitute.For<ILineContext>();
         List<ILineContext> context = new List<ILineContext>();
@@ -39,6 +38,7 @@ namespace SwiftTests.SyntaxAnalyzerTests
         {
             Add(Global.DataType.IDENTIFIER, "print");
             Add(Global.DataType.OPEN_ROUND_BRACKET);
+            Add(Global.DataType.STRING, "");
             Add(Global.DataType.STRINGINTERPOLATION);
             Add(Global.DataType.IDENTIFIER, "a");
             Add(Global.DataType.STRINGINTERPOLATIONEND);

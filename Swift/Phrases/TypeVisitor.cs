@@ -9,6 +9,7 @@ using Swift.AssTargets;
 using Swift.AST_Nodes.Types;
 using Swift.Instructions;
 using Swift.Instructions.Directives;
+using Swift.Tokens;
 
 namespace Swift.Phrases
 {
@@ -20,7 +21,7 @@ namespace Swift.Phrases
             ASTType t2 = n.e2.accept(this);
             if (t1.GetType() == t2.GetType())
                 return t1;
-            Swift.error("The types of the terms of the expression on line " + n.Context.Line + ", column " + n.Context.Pos + " don't match", 1);
+            Swift.error(new IncompatibleTypesException(n.Context));
             return null;
         }
 
@@ -435,6 +436,12 @@ namespace Swift.Phrases
         public ASTType visit(IntegerConstant n)
         {
             throw new NotImplementedException();
+        }
+
+        [Serializable()]
+        public class IncompatibleTypesException : SwiftException
+        {
+            public IncompatibleTypesException(ILineContext context, string message = "the types of the left-hand and right-hand side of the assignment don't match") : base(context, message) { }
         }
     }
 }

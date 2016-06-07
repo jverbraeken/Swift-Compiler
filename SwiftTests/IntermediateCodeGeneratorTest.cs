@@ -37,7 +37,7 @@ namespace SwiftTests
             Base ast = new Base(null);
             ast.Children.Add(new FunctionCallExp(null));
             ((FunctionCallExp)ast.Children[0]).Name = new Identifier("print");
-            ((FunctionCallExp)ast.Children[0]).Args.Add(new ParameterCall(context, new StringLiteral(null, "Hello World!")));
+            //((FunctionCallExp)ast.Children[0]).Args.Add(new ParameterCall(context, new StringLiteral(null, "Hello World!")));
             Table builtinTable = SemanticAnalyzer.CreateBuiltinSymbols();
             List<Module> modules = generator.GenerateCode("", "", ast, new List<Table>() { builtinTable, new Table(builtinTable, Global.Scope.BuiltinScope, "builtin") });
             List<Instruction> instructions = modules[0].InterCode;
@@ -97,7 +97,7 @@ namespace SwiftTests
             Assert.AreEqual(0, ((ParamRegister)((Lea)instructions[8]).To).Position);
 
             Assert.IsTrue(instructions[9] is Call);
-            Assert.AreEqual("printf", ((Call)instructions[8]).Name); //ff expres fout gedaan om de test te laten mislukken
+            Assert.AreEqual("printf", ((Call)instructions[9]).Name); //ff expres fout gedaan om de test te laten mislukken
         }
     }
 }

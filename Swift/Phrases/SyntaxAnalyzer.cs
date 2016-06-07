@@ -69,7 +69,6 @@ namespace Swift
         private List<ILineContext> context;
         private List<Token> allTokens;
         private List<ILineContext> allContext;
-        private ASTNode node;
         private Base astBase;
         private Global.InstructionSets architecture;
 
@@ -126,7 +125,7 @@ namespace Swift
                     EatDeclaration();
                     break;
                 default:
-                    Swift.error("Syntax error: \"" + tokens[0].value + "\" at line " + context[0].Line.ToString() + ", colomn " + context[0].Pos.ToString() + " could not be identified", 1);
+                    Swift.error(new UnknownNameException(context[0], tokens[0].value + " could not be identified"));
                     break;
             }
         }
@@ -180,32 +179,37 @@ namespace Swift
 
         private Exp EatExpPart(int precedence, Exp lhs)
         {
-            if (tokens.Count <= 1 || tokens[1].type == Global.DataType.CLOSE_ROUND_BRACKET || tokens[1].type == Global.DataType.COMMA/* || (tokens[0].type != Global.DataType.OPERATOR && tokens[0].type != Global.DataType.INT && tokens[0].type != Global.DataType.IDENTIFIER && tokens[0].type != Global.DataType.STRING && tokens[0].type != Global.DataType.DOUBLE)*/)
+            if (tokens.Count < 1 || tokens[0].type == Global.DataType.STRINGINTERPOLATIONEND || tokens[0].type == Global.DataType.CLOSE_ROUND_BRACKET || tokens[0].type == Global.DataType.COMMA/* || (tokens[0].type != Global.DataType.OPERATOR && tokens[0].type != Global.DataType.INT && tokens[0].type != Global.DataType.IDENTIFIER && tokens[0].type != Global.DataType.STRING && tokens[0].type != Global.DataType.DOUBLE)*/)
                 return lhs;
-            if (tokens[0].type != Global.DataType.OPERATOR)
-                Swift.error("Operator expected between the terms in the expression on line " + context[0].Line + ", column" + context[0].Pos, 1);
+            if (tokens[0].type == Global.DataType.STRINGINTERPOLATION)
+            {
+
+            }
+            else if (tokens[0].type != Global.DataType.OPERATOR)
+                Swift.error(new OperatorExpectedException(context[0]));
             string firstOperator = tokens[0].value;
             int tokenPrecedence1 = operatorPrecedence[firstOperator].Item2;
             if (tokenPrecedence1 < precedence)
                 return lhs;
 
             Token op = tokens[0];
+            ILineContext con = context[0];
             CutData(1);
             Exp rhs = EatPrimary();
             
 
             if (tokens.Count == 0)
-                return BinaryExpression(op, lhs, rhs);
+                return BinaryExpression(op, lhs, rhs, con);
             int tokenPrecedence2 = operatorPrecedence[tokens[0].value].Item2;
             if (tokenPrecedence1 < tokenPrecedence2 || (tokenPrecedence1 == tokenPrecedence2 && operatorPrecedence[firstOperator].Item1 == Global.Associativity.RIGHT))
             {
                 Exp newRhs = EatExpPart(tokenPrecedence1, rhs);
-                return EatExpPart(tokenPrecedence1 + 1, BinaryExpression(op, lhs, newRhs));
+                return EatExpPart(tokenPrecedence1 + 1, BinaryExpression(op, lhs, newRhs, con));
             }
-            return EatExpPart(precedence + 1, BinaryExpression(op, lhs, rhs));
+            return EatExpPart(precedence + 1, BinaryExpression(op, lhs, rhs, con));
         }
 
-        private Exp BinaryExpression(Token op, Exp lhs, Exp rhs)
+        private Exp BinaryExpression(Token op, Exp lhs, Exp rhs, ILineContext con)
         {
             switch (op.value)
             {
@@ -227,7 +231,7 @@ namespace Swift
                 case "&-": return new OverflowSubExp(null, lhs, rhs);
                 case "+": return new PlusExp(null, lhs, rhs);
             }
-            Swift.error(new UnknownOperatorException("The operator \"" + op.value + "\" is unknown"));
+            Swift.error(new UnknownOperatorException(con, "The operator \"" + op.value + "\" is unknown"));
             return null;
         }
 
@@ -252,8 +256,7 @@ namespace Swift
                     }
                     break;
                 case Global.DataType.STRING:
-                    Exp literal = new StringLiteral(context[0], tokens[0].value);
-                    CutData(1);
+                    Exp literal = EatStringLiteral(new StringLiteral(context[0]));
                     return literal;
                 case Global.DataType.TRUE:
                     CutData(1);
@@ -262,6 +265,40 @@ namespace Swift
                     CutData(1);
                     return new BoolLiteral(context[0], "false");
             }
+            return null;
+        }
+
+        private IStringLiteral EatStringLiteral(IStringLiteral stringLiteral)
+        {
+            switch (tokens[0].type) {
+                case Global.DataType.ENDSTATEMENT: return stringLiteral;
+                case Global.DataType.STRING:
+                    stringLiteral.Elements.Add(new StringElement(tokens[0].value));
+                    CutData(1);
+                    return EatStringLiteral(stringLiteral);
+                case Global.DataType.STRINGINTERPOLATION:
+                    CutData(1);
+                    stringLiteral.Elements.Add(new StringElement(EatExpression()));
+                    return EatStringLiteral(stringLiteral);
+                case Global.DataType.STRINGINTERPOLATIONEND:
+                    CutData(1);
+                    return stringLiteral;
+                case Global.DataType.ESCAPEDCHARACTER:
+                    switch (tokens[0].value)
+                    {
+                        case "\\0": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.Null)); break;
+                        case "\\\\": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.Backslash)); break;
+                        case "\\t": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.HorizontalTab)); break;
+                        case "\\n": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.LineFeed)); break;
+                        case "\\r": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.CarriageReturn)); break;
+                        case "\\\"": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.DoubleQuote)); break;
+                        case "\\'": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.SingleQuote)); break;
+                        default: Swift.error(new InternalError("Trying to parse the unrecognized character " + tokens[0].value)); break;
+                    }
+                    CutData(1);
+                    return EatStringLiteral(stringLiteral);
+            }
+            Swift.error(new InternalError("Trying to parse a string literal containing illegal tokens"));
             return null;
         }
 
@@ -294,14 +331,14 @@ namespace Swift
         {
             if (tokens[1].type != Global.DataType.IDENTIFIER)
             {
-                Swift.error("Identifier expected at line " + context[0].Line.ToString() + ", colomn " + context[1].Pos.ToString() + ".", 1);
+                Swift.error(new IdentifierExpectedException(context[1], "identifier expected"));
             }
             if (tokens[0].type == Global.DataType.VAR)
             {
                 if (tokens.Count >= 4)
                 {
                     if (tokens[1].type != Global.DataType.IDENTIFIER)
-                        Swift.error("Syntax error: identifier expected after keyword \"var\" on line " + context[1].Line + ", column " + context[1].Pos, 1);
+                        Swift.error(new IdentifierExpectedException(context[1], "identifier expected after keyword \"var\""));
                     if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
                     {
                         VarDeclaration node = new VarDeclaration(context[0]);
@@ -329,11 +366,11 @@ namespace Swift
                         VarDeclaration node = new VarDeclaration(context[1]);
                         node.Name = new Identifier(tokens[1].value);
                         if (tokens.Count < 3)
-                            Swift.error("Syntax error: type expected after the colon on line " + context[2].Line + ", column " + context[2].Pos, 1);
+                            Swift.error(new TypeExpectedException(context[2], "type expected after the colon"));
                         node.Type = getASTTypeFromToken(tokens[3], context[3]);
                         astBase.Children.Add(node);
                         if (tokens.Count == 4)
-                            Swift.error("Syntax error: assignment expected after \"=\" token on line" + context[3].Line + ", column " + context[3].Pos, 1);
+                            Swift.error(new AssignmentExpectedException(context[3], "assignment expected after \"=\" token"));
                         if (tokens.Count > 4 && tokens[4].type == Global.DataType.OPERATOR && tokens[4].value == "=")
                         {
                             CutData(1);
@@ -348,18 +385,18 @@ namespace Swift
                     }
                     else
                     {
-                        Swift.error("Assignment expected after a declaration without a type specification on line " + context[2].Line + ", column " + context[2].Pos, -1);
+                        Swift.error(new AssignmentExpectedException(context[2], "assignment expected after a declaration without a type specification"));
                     }
                 }
                 else
                 {
-                    Swift.error(new NoTypeSpecifiedException("Assignment expected after a declaration without a type specification on line " + context[1].Line + ", column " + context[1].Pos));
+                    Swift.error(new NoTypeSpecifiedException(context[1], "assignment expected after a declaration without a type specification on line " + context[1].Line + ", column " + context[1].Pos));
                 }
             }
             else if (tokens[0].type == Global.DataType.LET)
             {
                 if (tokens.Count <= 2)
-                    Swift.error("Constants must be initialized; error occurerred on line " + context[0].Line + ", column " + context[0].Pos + ".", 1);
+                    Swift.error(new UninitializedConstantException(context[0]));
                 if (tokens.Count >= 4)
                 {
                     if (tokens[2].type == Global.DataType.OPERATOR && tokens[2].value == "=")
@@ -382,10 +419,10 @@ namespace Swift
                                     astBase.Children.Add(node);
                                 }
                                 else
-                                    Swift.error("Syntax error on line " + context[0].Line + ": Constants must be initialized", 1);
+                                    Swift.error(new UninitializedConstantException(context[0].Line, context[0].Pos));
                             }
                             else
-                                Swift.error("Unexpected code after constant declaration on line " + context[0].Line, 1);
+                                Swift.error(new UnexpectedCodeException(context[0].Line, context[0].Pos, "unexpected code after constant declaration"));
                         }
                     }
                     else if (tokens[2].type == Global.DataType.COLON)
@@ -400,12 +437,12 @@ namespace Swift
                     }
                     else
                     {
-                        Swift.error("Constants must be initialized; error occurerred on line " + context[0].Line + ", column " + context[0].Pos + ".", 1);
+                        Swift.error(new UninitializedConstantException(context[0].Line, context[0].Pos));
                     }
                 }
             }
             else {
-                Swift.error("Internal error parsing the variable declaration: " + tokens, 1);
+                Swift.error(new InternalError("Internal error parsing the variable declaration: " + tokens));
                 return;
             }
             //if (tokens.Count > 2)
@@ -458,7 +495,7 @@ namespace Swift
                 case Global.DataType.OUINT64TYPE: return new UInt64Type(true);
                 case Global.DataType.OUINT8TYPE: return new UInt8Type(true);
 
-                default: Swift.error("Syntax error: unknown type found after the colon on line " + context.Line + ", column " + context.Pos, 1);
+                default: Swift.error(new UnknownTypeException(context.Line, context.Pos));
                     return null;
             }
         }
@@ -466,27 +503,88 @@ namespace Swift
 
 
         [Serializable()]
-        public class UnknownTermException : Exception
+        public class UnknownTermException : SwiftException
         {
-            public UnknownTermException() : base() { }
-            public UnknownTermException(string message) : base(message) { }
-            public UnknownTermException(string message, Exception inner) : base(message, inner) { }
+            public UnknownTermException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public UnknownTermException(ILineContext context, string message = "") : base(context, message) { }
         }
 
         [Serializable()]
-        public class UnknownOperatorException : Exception
+        public class UnknownTypeException : SwiftException
         {
-            public UnknownOperatorException() : base() { }
-            public UnknownOperatorException(string message) : base(message) { }
-            public UnknownOperatorException(string message, Exception inner) : base(message, inner) { }
+            public UnknownTypeException(int line, int pos, string message = "unknown type found") : base(line, pos, message) { }
+            public UnknownTypeException(ILineContext context, string message = "unknown type found") : base(context, message) { }
         }
 
         [Serializable()]
-        public class NoTypeSpecifiedException : Exception
+        public class UnknownOperatorException : SwiftException
         {
-            public NoTypeSpecifiedException() : base() { }
-            public NoTypeSpecifiedException(string message) : base(message) { }
-            public NoTypeSpecifiedException(string message, Exception inner) : base(message, inner) { }
+            public UnknownOperatorException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public UnknownOperatorException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class NoTypeSpecifiedException : SwiftException
+        {
+            public NoTypeSpecifiedException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public NoTypeSpecifiedException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class UnknownNameException : SwiftException
+        {
+            public UnknownNameException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public UnknownNameException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class OperatorExpectedException : SwiftException
+        {
+            public OperatorExpectedException(int line, int pos, string message = "operator expected between the terms") : base(line, pos, message) { }
+            public OperatorExpectedException(ILineContext context, string message = "operator expected between the terms") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class IdentifierExpectedException : SwiftException
+        {
+            public IdentifierExpectedException(int line, int pos, string message = "identifier expected") : base(line, pos, message) { }
+            public IdentifierExpectedException(ILineContext context, string message = "identifier expected") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class TypeExpectedException : SwiftException
+        {
+            public TypeExpectedException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public TypeExpectedException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class AssignmentExpectedException : SwiftException
+        {
+            public AssignmentExpectedException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public AssignmentExpectedException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class UninitializedConstantException : SwiftException
+        {
+            public UninitializedConstantException(int line, int pos, string message = "constants must be initialized") : base(line, pos, message) { }
+            public UninitializedConstantException(ILineContext context, string message = "constants must be initialized") : base(context, message) { }
+        }
+
+        [Serializable()]
+        public class UnexpectedCodeException : SwiftException
+        {
+            public UnexpectedCodeException(int line, int pos, string message = "") : base(line, pos, message) { }
+            public UnexpectedCodeException(ILineContext context, string message = "") : base(context, message) { }
+        }
+
+
+        [Serializable()]
+        public class InternalError : SwiftException
+        {
+            public InternalError() : base() { }
+            public InternalError(string message) : base(message) { }
         }
     }
 }

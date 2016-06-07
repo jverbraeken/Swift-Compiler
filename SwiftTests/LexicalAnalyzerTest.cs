@@ -21,11 +21,24 @@ namespace SwiftTests
         [TestMethod]
         public void TestRegex()
         {
-            Assert.AreEqual(true, Regex.Match("print(\"hoi\") //comments", LexicalAnalyzer.regexIdentity).Success);
-            Assert.AreEqual(true, Regex.Match("(", LexicalAnalyzer.regexOpenRoundBracket).Success);
-            Assert.AreEqual(false, Regex.Match("//hoi", LexicalAnalyzer.regexOperator).Success);
-            Assert.AreEqual(true, Regex.Match("//hoi", LexicalAnalyzer.regexComment).Success);
-            Assert.AreEqual(true, Regex.Match("3 + 2", LexicalAnalyzer.regexInt).Success);
+            Assert.IsTrue(Regex.Match("print(\"hoi\") //comments", LexicalAnalyzer.regexIdentity).Success);
+            Assert.IsTrue(Regex.Match("(", LexicalAnalyzer.regexOpenRoundBracket).Success);
+            Assert.IsTrue(Regex.Match("//hoi", LexicalAnalyzer.regexComment).Success);
+            Assert.IsTrue(Regex.Match("3 + 2", LexicalAnalyzer.regexInt).Success);
+            Assert.IsTrue(Regex.Match("/ 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("= 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("- 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("+ 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("! 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("* 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("% 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("< 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("> 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("& 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("| 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("^ 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("? 1", LexicalAnalyzer.regexOperator).Success);
+            Assert.IsTrue(Regex.Match("~ 1", LexicalAnalyzer.regexOperator).Success);
         }
 
         [TestMethod]
@@ -106,20 +119,11 @@ namespace SwiftTests
         [TestMethod]
         public void TestStringInterpolation()
         {
-            string[] input = new string[] { "let multiplier = 3",
-                "let message = \"\\(multiplier) times 2.5 is \\(Double(multiplier) * 2.5)\"",
-                "print(message)" };
+            string[] input = new string[] { "\"\\(multiplier) times 2.5 is \\(Double(multiplier) * 2.5)\"" };
             Tuple<List<Token>, List<ILineContext>> result = lexicalAnalyzer.GetTokens(input);
             List<Token> tokens = result.Item1;
             AssertControl control = new AssertControl(tokens);
-            control.assertNext(Global.DataType.LET);
-            control.assertNext(Global.DataType.IDENTIFIER, "multiplier");
-            control.assertNext(Global.DataType.OPERATOR, "=");
-            control.assertNext(Global.DataType.INT, "3");
-            control.assertNext(Global.DataType.ENDSTATEMENT);
-            control.assertNext(Global.DataType.LET);
-            control.assertNext(Global.DataType.IDENTIFIER, "message");
-            control.assertNext(Global.DataType.OPERATOR, "=");
+            control.assertNext(Global.DataType.STRING, "");
             control.assertNext(Global.DataType.STRINGINTERPOLATION);
             control.assertNext(Global.DataType.IDENTIFIER, "multiplier");
             control.assertNext(Global.DataType.STRINGINTERPOLATIONEND);
@@ -132,11 +136,6 @@ namespace SwiftTests
             control.assertNext(Global.DataType.OPERATOR, "*");
             control.assertNext(Global.DataType.DOUBLE, "2.5");
             control.assertNext(Global.DataType.STRINGINTERPOLATIONEND);
-            control.assertNext(Global.DataType.ENDSTATEMENT);
-            control.assertNext(Global.DataType.IDENTIFIER, "print");
-            control.assertNext(Global.DataType.OPEN_ROUND_BRACKET);
-            control.assertNext(Global.DataType.IDENTIFIER, "message");
-            control.assertNext(Global.DataType.CLOSE_ROUND_BRACKET);
             control.assertNext(Global.DataType.ENDSTATEMENT);
         }
 

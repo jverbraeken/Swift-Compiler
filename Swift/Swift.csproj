@@ -179,6 +179,7 @@
     <Compile Include="Phrases\SemanticAnalyzer.cs" />
     <Compile Include="Phrases\TypeFromExpVisitor.cs" />
     <Compile Include="Phrases\TypeVisitor.cs" />
+    <Compile Include="SwiftException.cs" />
     <Compile Include="Symbols\ConstantSymbol.cs" />
     <Compile Include="Symbols\VariableSymbol.cs" />
     <Compile Include="Symbols\Symbol.cs" />

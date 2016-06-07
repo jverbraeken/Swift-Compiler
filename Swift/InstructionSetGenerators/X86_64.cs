@@ -194,7 +194,7 @@ namespace Swift.InstructionSetGenerators
                 case Global.Registers.STACKPOINTER: return "%rsp";
                 case Global.Registers.DEST_INDEX: return "%rdi";
                 case Global.Registers.SRC_INDEX: return "%rsi";
-                default: Swift.error("Internal error in swift: trying to access unexisting register", 1); break;
+                default: Swift.error(new InternalError("Internal error in swift: trying to access unexisting register")); break;
             }
             return null;
         }
@@ -235,6 +235,17 @@ namespace Swift.InstructionSetGenerators
         {
             return "0x" + n.Value.ToString();
 
+        }
+
+
+
+
+
+        [Serializable()]
+        public class InternalError : SwiftException
+        {
+            public InternalError() : base() { }
+            public InternalError(string message) : base(message) { }
         }
     }
 }
