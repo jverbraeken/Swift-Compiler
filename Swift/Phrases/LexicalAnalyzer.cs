@@ -313,7 +313,10 @@ namespace Swift
                         if (!shouldContinue)
                             Swift.error(new StringInterpolationWithoutEndException(lineX, lineY, "Error in lexical analysis: cannot find the end of the string interpolation"));
                         if (line[0] == '"')
+                        {
+                            line = line.Substring(1); // Remove the "
                             break;
+                        }
                     }
                     else
                     {
