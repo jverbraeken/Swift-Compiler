@@ -9,7 +9,12 @@ using System.Xml.Linq;
 
 namespace Swift
 {
-    public abstract class Literal : ASTNode
+    public interface ILiteral : IASTNode
+    {
+        string Value { get; set; }
+    }
+
+    public abstract class Literal : ASTNode, ILiteral
     {
         public string Value { get; set; }
 

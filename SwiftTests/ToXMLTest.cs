@@ -42,7 +42,7 @@ namespace SwiftTests
     <ParameterCall Name=""param1"" />
     <ParameterCall Name=""param2"" />
   </FunctionCallExp>
-</Base>", node.ToXML(new XMLParser.XMLProperties()).ToString());
+</Base>", node.ToXML(new XMLParser.XMLProperties(false, false)).ToString());
         }
     }
 }

@@ -349,6 +349,11 @@ namespace Swift.InstructionSetGenerators
             throw new NotImplementedException();
         }
 
+        public void visit(StringElement n)
+        {
+            throw new NotImplementedException();
+        }
+
         public void visit(PlusExp n)
         {
             throw new NotImplementedException();

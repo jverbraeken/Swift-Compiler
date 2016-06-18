@@ -252,6 +252,11 @@ namespace Swift
             throw new NotImplementedException();
         }
 
+        public virtual void visit(StringElement n)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void visit(TypeCast t)
         {
             throw new NotImplementedException();

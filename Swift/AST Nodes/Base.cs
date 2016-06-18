@@ -28,7 +28,11 @@ namespace Swift.AST_Nodes
             XMLParser.ParseXMLProperties(this, res, prop);
             foreach (ASTNode child in Children)
             {
-                res.Add(((FunctionCallExp) child).ToXML(prop));
+                var @switch = new Dictionary<Type, Action>
+                {
+                    { typeof(FunctionCallExp), () => res.Add(((FunctionCallExp) child).ToXML(prop)) }
+                };
+                @switch[child.GetType()]();
             }
             return res;
         }

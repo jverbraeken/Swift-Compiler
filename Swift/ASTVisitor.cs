@@ -34,6 +34,10 @@ namespace Swift
         public abstract void visit(UBinaryLiteral n);
         public abstract void visit(UHexaLiteral n);
         public abstract void visit(UInt8Literal n);
+        public void visit(StringElement n)
+        {
+            throw new NotImplementedException();
+        }
 
         public void visit(Literal n)
         {

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NSubstitute;
+using System.Xml.Linq;
 
 namespace SwiftTests.SyntaxAnalyzerTests
 {
@@ -47,13 +48,51 @@ namespace SwiftTests.SyntaxAnalyzerTests
 
             Base ast = syntaxAnalyzer.CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
 
-             TestFunctionCall testFunctionCall = delegate(FunctionCallExp node) {
-                Assert.AreEqual(node.Name, "print");
-            };
+            Check(
+@"<Base>
+  <FunctionCallExp Name=""print"">
+    <ParameterCall>
+      <StringLiteral>
+        <StringElement ElementType = ""quotedTextItem"" Value = """" />
+        <StringElement ElementType = ""interpolation"">
+          <IdentifierExp ID = ""a"" />
+        </StringElement>
+      </StringLiteral>
+    </ParameterCall>
+  </FunctionCallExp>
+</Base> ", ast, false, false);
+        }
 
-            Assert.IsTrue(ast.Children[0] is FunctionCallExp);
-            testFunctionCall((FunctionCallExp)ast.Children[0]);
-    }
+        [TestMethod]
+        public void TestVariableString()
+        {
+            Add(Global.DataType.IDENTIFIER, "print");
+            Add(Global.DataType.OPEN_ROUND_BRACKET);
+            Add(Global.DataType.STRING, "");
+            Add(Global.DataType.STRINGINTERPOLATION);
+            Add(Global.DataType.IDENTIFIER, "a");
+            Add(Global.DataType.STRINGINTERPOLATIONEND);
+            Add(Global.DataType.STRING, "foo");
+            Add(Global.DataType.CLOSE_ROUND_BRACKET);
+            Add(Global.DataType.ENDSTATEMENT);
+
+            Base ast = syntaxAnalyzer.CheckSyntax(tokens, context, Global.InstructionSets.X86_64);
+
+            Check(
+@"<Base>
+  <FunctionCallExp Name=""print"">
+    <ParameterCall>
+      <StringLiteral>
+        <StringElement ElementType = ""quotedTextItem"" Value = """" />
+        <StringElement ElementType = ""interpolation"">
+          <IdentifierExp ID = ""a"" />
+        </StringElement>
+        <StringElement ElementType = ""quotedTextItem"" Value = ""foo"" />
+      </StringLiteral>
+    </ParameterCall>
+  </FunctionCallExp>
+</Base> ", ast, false, false);
+        }
 
         private void Add(Global.DataType type)
         {
@@ -67,9 +106,9 @@ namespace SwiftTests.SyntaxAnalyzerTests
             context.Add(_context);
         }
 
-        private void Check(ASTNode node, Type type)
+        private void Check(string str, ASTNode ast, bool parseLineContext, bool parseLineScope)
         {
-            
+            Assert.AreEqual(str.Replace(" ", ""), ast.ToXML(new XMLParser.XMLProperties(parseLineContext, parseLineScope)).ToString().Replace(" ", ""));
         }
     }
 }

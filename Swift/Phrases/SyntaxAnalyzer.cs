@@ -273,12 +273,12 @@ namespace Swift
             switch (tokens[0].type) {
                 case Global.DataType.ENDSTATEMENT: return stringLiteral;
                 case Global.DataType.STRING:
-                    stringLiteral.Elements.Add(new StringElement(tokens[0].value));
+                    stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, tokens[0].value));
                     CutData(1);
                     return EatStringLiteral(stringLiteral);
                 case Global.DataType.STRINGINTERPOLATION:
                     CutData(1);
-                    stringLiteral.Elements.Add(new StringElement(EatExpression()));
+                    stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, EatExpression()));
                     return EatStringLiteral(stringLiteral);
                 case Global.DataType.STRINGINTERPOLATIONEND:
                     CutData(1);
@@ -286,13 +286,13 @@ namespace Swift
                 case Global.DataType.ESCAPEDCHARACTER:
                     switch (tokens[0].value)
                     {
-                        case "\\0": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.Null)); break;
-                        case "\\\\": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.Backslash)); break;
-                        case "\\t": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.HorizontalTab)); break;
-                        case "\\n": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.LineFeed)); break;
-                        case "\\r": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.CarriageReturn)); break;
-                        case "\\\"": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.DoubleQuote)); break;
-                        case "\\'": stringLiteral.Elements.Add(new StringElement(Global.EscapedCharacter.SingleQuote)); break;
+                        case "\\0": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.Null)); break;
+                        case "\\\\": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.Backslash)); break;
+                        case "\\t": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.HorizontalTab)); break;
+                        case "\\n": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.LineFeed)); break;
+                        case "\\r": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.CarriageReturn)); break;
+                        case "\\\"": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.DoubleQuote)); break;
+                        case "\\'": stringLiteral.Elements.Add(new StringElement(stringLiteral.Context, Global.EscapedCharacter.SingleQuote)); break;
                         default: Swift.error(new InternalError("Trying to parse the unrecognized character " + tokens[0].value)); break;
                     }
                     CutData(1);

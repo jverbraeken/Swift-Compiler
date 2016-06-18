@@ -73,6 +73,7 @@ namespace Swift
         void visit(UInt16Literal n);
         void visit(UInt32Literal n);
         void visit(UInt64Literal n);
+        void visit(StringElement n);
         // AST Nodes - Types
         void visit(TypeCast n);
         void visit(BoolType t);

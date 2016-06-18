@@ -30,7 +30,11 @@ namespace Swift.AST_Nodes
 
         public override XElement ToXML(XMLParser.XMLProperties prop)
         {
-            XElement res = new XElement(GetType().Name, new XAttribute("Name", Name));
+            XElement res;
+            if (Name == null)
+                res = new XElement(GetType().Name);
+            else
+                res = new XElement(GetType().Name, new XAttribute("Name", Name));
             XMLParser.ParseXMLProperties(this, res, prop);
             res.Add(Value.ToXML(prop));
             return res;
